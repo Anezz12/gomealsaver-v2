@@ -154,7 +154,7 @@ export default function Navbar() {
                   href="/"
                 >
                   <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-                    Harsena Argretya
+                    GoMealSaver
                   </span>
                 </Link>
               </div>
@@ -278,9 +278,9 @@ export default function Navbar() {
                   className="md:hidden p-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   {isMobileMenuOpen ? (
-                    <X className="h-6 w-6" />
+                    <X className="h-6 w-6 text-black" />
                   ) : (
-                    <Menu className="h-6 w-6" />
+                    <Menu className="h-6 w-6 text-black" />
                   )}
                 </button>
               </div>
@@ -394,7 +394,7 @@ export default function Navbar() {
               onClick={() => setisLoginModelOpen(false)}
               className="absolute top-4 right-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
             >
-              <X className="h-6 w-6" />
+              <X className="h-6 w-6 text-gray-600" />
             </button>
             <div className="flex items-center justify-center mb-6">
               <span className="text-2xl font-semibold text-gray-900 dark:text-gray-100">

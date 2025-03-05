@@ -27,7 +27,6 @@ export default function LoginForm() {
         return;
       }
 
-      // Redirect to home page
       router.push('/');
     } catch {
       setError('An error occurred, please try again');
@@ -43,26 +42,40 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="flex items-center justify-center bg-gray-50 dark:bg-zinc-800">
-      <div className="w-full max-w-sm">
-        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-md dark:shadow-zinc-800/50 px-6 py-8">
-          <h1 className="text-xl font-semibold mb-4 text-center text-gray-900 dark:text-gray-100">
+    <div className="flex min-h-[450px] items-center justify-center">
+      <div className="w-full max-w-md">
+        <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-lg dark:shadow-zinc-950/20 px-6 py-8 border border-zinc-100 dark:border-zinc-700/50 transition-all duration-300 hover:shadow-xl">
+          <h1 className="text-2xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-500 dark:from-blue-400 dark:to-indigo-300">
             Sign in to your account
           </h1>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400 rounded">
+            <div className="mb-6 p-3.5 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg border border-red-100 dark:border-red-800/50 flex items-center">
+              <svg
+                className="w-5 h-5 mr-2 text-red-500"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5"
               >
-                Your email
+                Email address
               </label>
               <input
                 type="email"
@@ -70,18 +83,27 @@ export default function LoginForm() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@exemple.com"
+                placeholder="name@example.com"
                 required
-                className="mt-1 w-full rounded-md border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 dark:focus:ring-blue-400 text-gray-900 dark:text-gray-100 text-sm px-3 py-2 placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-4 py-2.5 text-zinc-900 dark:text-zinc-100 shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 outline-none transition-all duration-200 text-base placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               />
             </div>
+
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-              >
-                Password
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                >
+                  Password
+                </label>
+                <a
+                  href="#"
+                  className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
+                >
+                  Forgot password?
+                </a>
+              </div>
               <input
                 type="password"
                 name="password"
@@ -90,33 +112,34 @@ export default function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="mt-1 w-full rounded-md border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 dark:focus:ring-blue-400 text-gray-900 dark:text-gray-100 text-sm px-3 py-2 placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-4 py-2.5 text-zinc-900 dark:text-zinc-100 shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 outline-none transition-all duration-200 text-base placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               />
             </div>
+
             <button
               type="submit"
-              className="w-full py-2 px-4 rounded-md text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+              className="w-full py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center"
             >
-              Sign in
+              <span>Sign in</span>
             </button>
           </form>
 
-          <div className="mt-4">
+          <div className="my-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300 dark:border-zinc-700"></div>
+                <div className="w-full border-t border-zinc-200 dark:border-zinc-700"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white dark:bg-zinc-800 text-gray-500 dark:text-gray-400">
+                <span className="px-3 bg-white dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 font-medium">
                   Or continue with
                 </span>
               </div>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-5">
               <button
                 onClick={handleGoogleSignIn}
-                className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 dark:border-zinc-700 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700/50 transition-colors"
+                className="w-full flex items-center justify-center py-2.5 px-4 border border-zinc-300 dark:border-zinc-700 rounded-lg shadow-sm text-sm font-medium text-zinc-700 dark:text-zinc-200 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all duration-200 hover:shadow-md"
               >
                 <svg
                   className="w-5 h-5 mr-2"
@@ -146,23 +169,24 @@ export default function LoginForm() {
             </div>
           </div>
 
-          <div className="mt-4 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {"Don't have an account?"}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              {"Don't have an account? "}
               <Link
                 href="/register"
-                className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
+                className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
               >
-                Register
+                Register now
               </Link>
             </p>
           </div>
-          <div className="mt-4 text-center">
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+
+          <div className="mt-5 text-center">
+            <p className="text-xs text-zinc-500 dark:text-zinc-500">
               This site is protected by reCAPTCHA and the Google{' '}
               <a
                 href="https://policies.google.com/privacy"
-                className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-500"
+                className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -171,7 +195,7 @@ export default function LoginForm() {
               and{' '}
               <a
                 href="https://policies.google.com/terms"
-                className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-500"
+                className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
