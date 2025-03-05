@@ -1,23 +1,38 @@
 import mongoose from 'mongoose';
 
-let connected = false;
+let isConnected = false;
 
 const connectDB = async () => {
-  mongoose.set('strictQuery', true);
-  //   if the database is already connected, dont connect again
-
-  if (connected) {
-    console.log('MongoDB already connected');
+  // Prevent unnecessary connection attempts
+  if (isConnected) {
+    console.log('MongoDB is already connected');
     return;
   }
 
-  //   connect to the MongoDB database
+  // Check if MongoDB URI is defined
+  if (!process.env.MONGODB_URL) {
+    throw new Error('MONGODB_URL is not defined in environment variables');
+  }
+
+  mongoose.set('strictQuery', true);
+
   try {
-    await mongoose.connect(process.env.MONGODB_URI as string);
-    connected = true;
-    console.log('MongoDB connected successfully');
+    const connection = await mongoose.connect(process.env.MONGODB_URL);
+
+    isConnected = true;
+    console.log(`MongoDB connected: ${connection.connection.host}`);
+
+    // Setup disconnect handler to update state
+    mongoose.connection.on('disconnected', () => {
+      console.log('MongoDB disconnected');
+      isConnected = false;
+    });
+
+    return connection;
   } catch (error) {
-    console.error('MongoDB connection failed:', error);
+    console.error('MongoDB connection error:', error);
+    isConnected = false;
+    throw new Error('Failed to connect to database');
   }
 };
 
