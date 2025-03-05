@@ -9,6 +9,19 @@ const config = {
   theme: {
     extend: {
       colors: {
+        fontFamily: {
+          sans: [
+            'Poppins',
+            'system-ui',
+            '-apple-system',
+            'BlinkMacSystemFont',
+            'Segoe UI',
+            'Roboto',
+            'Helvetica Neue',
+            'Arial',
+            'sans-serif',
+          ],
+        },
         background: {
           DEFAULT: '#ffffff',
           dark: '#000000',

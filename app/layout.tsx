@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen antialiased transition-colors duration-300">
+      <body className="">
         <AuthProvider>
           <Navbar />
           <main>{children}</main>

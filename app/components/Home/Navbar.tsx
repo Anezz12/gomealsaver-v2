@@ -4,10 +4,9 @@ import Link from 'next/link';
 import { useState, useEffect, useRef, MouseEvent } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
-import Container from '../Login/Container';
 import { usePathname } from 'next/navigation';
 import LoginForm from '../Login/LoginForm';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import AdBanner from './AdBanner';
 import ProfileDefault from '@/public/profile.png';
 
@@ -19,17 +18,13 @@ export default function Navbar() {
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   // Tentukan tipe untuk ref
   const authMenuRef = useRef<HTMLDivElement>(null);
   const loginModalRef = useRef<HTMLDivElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const dekstopMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-
-  const toggleDropdown = (): void => setIsDropdownOpen(!isDropdownOpen);
 
   useEffect(() => {
     const handleScroll = (): void => {
@@ -62,9 +57,7 @@ export default function Navbar() {
       ) {
         setisLoginModelOpen(false);
       }
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
+
       if (
         mobileMenuRef.current &&
         !mobileMenuRef.current.contains(event.target)
@@ -75,7 +68,7 @@ export default function Navbar() {
         dekstopMenuRef.current &&
         !dekstopMenuRef.current.contains(event.target)
       ) {
-        setIsDropdownOpen(false);
+        setIsAuthMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -129,7 +122,7 @@ export default function Navbar() {
         onClick={() => setisLoginModelOpen(true)}
         className="hidden md:flex items-center space-x-2 bg-blue-600 dark:bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-700 dark:hover:bg-blue-600 transition-all duration-200 hover:scale-105"
       >
-        <span className="font-semibold">Login</span>
+        <span className="font-semibold">Sign In</span>
       </button>
     );
   };
@@ -153,9 +146,9 @@ export default function Navbar() {
                   className="flex items-center space-x-2 transition-transform hover:scale-105"
                   href="/"
                 >
-                  <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+                  <p className="text-xl font-bold bg-amber-500 bg-clip-text text-transparent">
                     GoMealSaver
-                  </span>
+                  </p>
                 </Link>
               </div>
 
@@ -165,9 +158,9 @@ export default function Navbar() {
                   href="/"
                   className={`${
                     pathname === '/'
-                      ? 'text-blue-600 dark:text-blue-400'
+                      ? 'text-amber-500 dark:text-amber-500'
                       : 'text-gray-700 dark:text-gray-200'
-                  } hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
+                  } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
                 >
                   Home
                 </Link>
@@ -175,76 +168,31 @@ export default function Navbar() {
                   href="/project"
                   className={`${
                     pathname === '/project'
-                      ? 'text-blue-600 dark:text-blue-400'
+                      ? 'text-amber-500 dark:text-amber-500'
                       : 'text-gray-700 dark:text-gray-200'
-                  } hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
+                  } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
                 >
                   Project
                 </Link>
-                {session && (
-                  <div className="relative">
-                    <button
-                      onClick={toggleDropdown}
-                      className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-semibold  flex items-center transition-all duration-200 hover:scale-105"
-                    >
-                      Tools
-                      <ChevronDown
-                        className={`ml-1 h-4 w-4 transition-transform duration-200 ${
-                          isDropdownOpen ? 'rotate-180' : ''
-                        }`}
-                      />
-                    </button>
-
-                    {isDropdownOpen && (
-                      <div
-                        ref={dekstopMenuRef}
-                        className="absolute right-0 mt-2 w-48 rounded-xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-gray-200 dark:border-gray-800 shadow-lg"
-                      >
-                        <div className="py-1">
-                          <Link
-                            href="/404"
-                            className={`${
-                              pathname === '/services/web'
-                                ? 'text-blue-600 dark:text-blue-400'
-                                : 'text-gray-700 dark:text-gray-200'
-                            } block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-800 hover:text-blue-600 dark:hover:text-blue-400 font-semibold`}
-                          >
-                            Coming Soon
-                          </Link>
-                          <Link
-                            href="/404"
-                            className={`${
-                              pathname === '/services/mobile'
-                                ? 'text-blue-600 dark:text-blue-400'
-                                : 'text-gray-700 dark:text-gray-200'
-                            } block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-800 hover:text-blue-600 dark:hover:text-blue-400 font-semibold`}
-                          >
-                            Coming Soon
-                          </Link>
-                          <Link
-                            href="/404"
-                            className={`${
-                              pathname === '/services/design'
-                                ? 'text-blue-600 dark:text-blue-400'
-                                : 'text-gray-700 dark:text-gray-200'
-                            } block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-800 hover:text-blue-600 dark:hover:text-blue-400 font-semibold`}
-                          >
-                            Coming Soon
-                          </Link>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
                 <Link
                   href="/blogs"
                   className={`${
                     pathname === '/blogs'
-                      ? 'text-blue-600 dark:text-blue-400'
+                      ? 'text-amber-500 dark:text-amber-500'
                       : 'text-gray-700 dark:text-gray-200'
-                  } hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
+                  } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
                 >
                   Blogs
+                </Link>
+                <Link
+                  href="/contact"
+                  className={`${
+                    pathname === '/contact'
+                      ? 'text-amber-500 dark:text-amber-500'
+                      : 'text-gray-700 dark:text-gray-200'
+                  } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
+                >
+                  Contact
                 </Link>
               </div>
               {/* Auth Button */}
@@ -278,9 +226,9 @@ export default function Navbar() {
                   className="md:hidden p-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   {isMobileMenuOpen ? (
-                    <X className="h-6 w-6 text-black" />
+                    <X className="h-6 w-6 text-black dark:text-gray-200" />
                   ) : (
-                    <Menu className="h-6 w-6 text-black" />
+                    <Menu className="h-6 w-6 text-black dark:text-gray-200" />
                   )}
                 </button>
               </div>
@@ -314,48 +262,6 @@ export default function Navbar() {
                 </Link>
                 {session && (
                   <>
-                    <div className="relative">
-                      <button
-                        onClick={toggleDropdown}
-                        className="w-full text-left text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-between"
-                      >
-                        Tools
-                        <ChevronDown
-                          className={`h-5 w-5 transition-transform duration-200 ${
-                            isDropdownOpen ? 'rotate-180' : ''
-                          }`}
-                        />
-                      </button>
-
-                      {isDropdownOpen && (
-                        <div
-                          // ref={dropdownRef}
-                          className="mt-2 rounded-lg bg-gray-50 dark:bg-zinc-800 overflow-hidden"
-                        >
-                          <Link
-                            href="/services/web"
-                            className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-700 hover:text-blue-600 dark:hover:text-blue-400"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            Coming Soon
-                          </Link>
-                          <Link
-                            href="/services/mobile"
-                            className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-700 hover:text-blue-600 dark:hover:text-blue-400"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            Coming Soon
-                          </Link>
-                          <Link
-                            href="/services/design"
-                            className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-700 hover:text-blue-600 dark:hover:text-blue-400"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            Coming Soon
-                          </Link>
-                        </div>
-                      )}
-                    </div>
                     <button
                       onClick={() => {
                         handleSignOut();
@@ -377,7 +283,7 @@ export default function Navbar() {
                       }}
                       className="w-full text-center bg-blue-600 dark:bg-blue-500 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-blue-700 dark:hover:bg-blue-600"
                     >
-                      Login
+                      Sign In
                     </button>
                   )}
                 </div>
@@ -388,21 +294,21 @@ export default function Navbar() {
       </header>
       {/* Login Modal */}
       {isLoginModelOpen && (
-        <section className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-[60]">
-          <Container>
+        <section className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-[60]">
+          <div className="relative mx-4 w-full max-w-[90%] sm:max-w-[450px] bg-white dark:bg-zinc-800 rounded-xl shadow-xl p-4 sm:p-6 md:p-8 overflow-hidden">
             <button
               onClick={() => setisLoginModelOpen(false)}
-              className="absolute top-4 right-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
+              className="absolute top-3 right-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
             >
-              <X className="h-6 w-6 text-gray-600" />
+              <X className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
             </button>
-            <div className="flex items-center justify-center mb-6">
-              <span className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+            <div className="flex items-center justify-center mb-4 sm:mb-6">
+              <span className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">
                 GoMealSaver
               </span>
             </div>
             <LoginForm />
-          </Container>
+          </div>
         </section>
       )}
     </>
