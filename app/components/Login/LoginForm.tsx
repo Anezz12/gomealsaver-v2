@@ -43,9 +43,9 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="flex items-center justify-center pt-32 pb-36 bg-gray-50 dark:bg-zinc-950">
+    <div className="flex items-center justify-center bg-gray-50 dark:bg-zinc-800">
       <div className="w-full max-w-sm">
-        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-md dark:shadow-zinc-800/50 px-6 py-8 border border-gray-100 dark:border-zinc-700">
+        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-md dark:shadow-zinc-800/50 px-6 py-8">
           <h1 className="text-xl font-semibold mb-4 text-center text-gray-900 dark:text-gray-100">
             Sign in to your account
           </h1>
@@ -160,23 +160,23 @@ export default function LoginForm() {
           <div className="mt-4 text-center">
             <p className="text-xs text-gray-500 dark:text-gray-400">
               This site is protected by reCAPTCHA and the Google{' '}
-              <Link
+              <a
                 href="https://policies.google.com/privacy"
                 className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-500"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Privacy Policy
-              </Link>{' '}
+              </a>{' '}
               and{' '}
-              <Link
+              <a
                 href="https://policies.google.com/terms"
                 className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-500"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Terms of Service
-              </Link>{' '}
+              </a>{' '}
               apply.
             </p>
           </div>
