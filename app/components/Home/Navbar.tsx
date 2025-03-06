@@ -223,7 +223,7 @@ export default function Navbar() {
                 {/* Mobile Menu Button */}
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="md:hidden p-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  className="md:hidden p-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
                 >
                   {isMobileMenuOpen ? (
                     <X className="h-6 w-6 text-black dark:text-gray-200" />
@@ -281,7 +281,7 @@ export default function Navbar() {
                         setisLoginModelOpen(true);
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full text-center bg-blue-600 dark:bg-blue-500 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-blue-700 dark:hover:bg-blue-600"
+                      className="w-full text-center bg-blue-600 dark:bg-blue-500 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-blue-700 dark:hover:bg-blue-600 cursor-pointer"
                     >
                       Sign In
                     </button>
@@ -300,10 +300,10 @@ export default function Navbar() {
               onClick={() => setisLoginModelOpen(false)}
               className="absolute top-3 right-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
             >
-              <X className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+              <X className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600 cursor-pointer" />
             </button>
             <div className="flex items-center justify-center mb-4 sm:mb-6">
-              <span className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">
+              <span className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-amber-500">
                 GoMealSaver
               </span>
             </div>
