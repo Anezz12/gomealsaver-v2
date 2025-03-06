@@ -120,7 +120,7 @@ export default function Navbar() {
     return (
       <button
         onClick={() => setisLoginModelOpen(true)}
-        className="hidden md:flex items-center space-x-2 bg-blue-600 dark:bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-700 dark:hover:bg-blue-600 transition-all duration-200 hover:scale-105"
+        className="hidden md:flex items-center space-x-2 bg-amber-500 dark:bg-amber-500 text-white px-6 py-2 rounded-full hover:bg-amber-600 dark:hover:bg-amber-400 transition-all duration-200 hover:scale-105 cursor-pointer"
       >
         <span className="font-semibold">Sign In</span>
       </button>

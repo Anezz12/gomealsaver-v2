@@ -29,7 +29,7 @@ export default function AdBanner() {
     <div
       role="alert"
       aria-live="polite"
-      className="sticky top-0 z-40 bg-indigo-600"
+      className="sticky top-0 z-40 bg-amber-500"
     >
       <div className="max-w-7xl mx-auto py-3 px-3 sm:px-6 lg:px-8">
         <div className="pr-16 sm:text-center sm:px-16">
@@ -56,7 +56,7 @@ export default function AdBanner() {
             type="button"
             onClick={closeBanner}
             aria-label="Close announcement"
-            className="flex p-2 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white transition-colors"
+            className="flex p-2 rounded-md hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-white transition-colors cursor-pointer"
           >
             <svg
               className="h-6 w-6 text-white"

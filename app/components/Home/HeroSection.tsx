@@ -31,7 +31,7 @@ export default function HeroSection() {
             />
             <button
               type="submit"
-              className="w-full max-w-[200px] rounded-full bg-amber-500 px-6 py-4 text-lg font-semibold md:w-auto md:px-10 md:py-5 md:text-[20px]"
+              className="w-full max-w-[200px] rounded-full bg-amber-500 px-6 py-4 text-lg font-semibold md:w-auto md:px-10 md:py-5 md:text-[20px] cursor-pointer"
             >
               Jelajahi
             </button>
@@ -87,7 +87,7 @@ export default function HeroSection() {
             </div>
 
             {/* High Security */}
-            <div className="flex items-center space-x-2 md:space-x-4">
+            <section className="flex items-center space-x-2 md:space-x-4">
               <div className="flex h-[50px] w-[50px] items-center justify-center rounded-full bg-amber-500 md:h-[60px] md:w-[60px] lg:h-[70px] lg:w-[70px]">
                 <Image
                   src="/images/icons/security-user.svg"
@@ -105,10 +105,10 @@ export default function HeroSection() {
                   Keamanan Tinggi
                 </p>
               </div>
-            </div>
+            </section>
 
             {/* Cities */}
-            <div className="flex items-center space-x-2 md:space-x-4">
+            <section className="flex items-center space-x-2 md:space-x-4">
               <div className="flex h-[50px] w-[50px] items-center justify-center rounded-full bg-amber-500 md:h-[60px] md:w-[60px] lg:h-[70px] lg:w-[70px]">
                 <Image
                   src="/images/icons/global.svg"
@@ -126,7 +126,7 @@ export default function HeroSection() {
                   Kota Terjangkau
                 </p>
               </div>
-            </div>
+            </section>
           </div>
         </div>
       </div>
