@@ -281,7 +281,7 @@ export default function Navbar() {
                         setisLoginModelOpen(true);
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full text-center bg-blue-600 dark:bg-blue-500 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-blue-700 dark:hover:bg-blue-600 cursor-pointer"
+                      className="w-full text-center bg-amber-500 dark:bg-amber-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-amber-700 dark:hover:bg-amber-600 cursor-pointer"
                     >
                       Sign In
                     </button>

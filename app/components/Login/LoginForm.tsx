@@ -4,8 +4,11 @@ import { FormEvent, useState } from 'react';
 import { signIn, SignInResponse } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+interface LoginFormProps {
+  onClose?: () => void;
+}
 
-export default function LoginForm() {
+export default function LoginForm({ onClose }: LoginFormProps) {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -38,6 +41,13 @@ export default function LoginForm() {
       await signIn('google', { callbackUrl: '/' });
     } catch {
       setError('An error occurred, please try again');
+    }
+  };
+
+  // Handle register click - close modal and navigate
+  const handleRegisterClick = () => {
+    if (onClose) {
+      onClose();
     }
   };
 
@@ -174,6 +184,7 @@ export default function LoginForm() {
               {"Don't have an account? "}
               <Link
                 href="/register"
+                onClick={handleRegisterClick}
                 className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
               >
                 Register now
