@@ -18,6 +18,7 @@ declare module 'next-auth' {
       username: string;
       image: string;
       provider: string;
+      password: string;
     };
   }
 
@@ -29,6 +30,7 @@ declare module 'next-auth' {
     username: string;
     image: string;
     provider: string;
+    password: string;
   }
 }
 // define costume types for extending JWT
@@ -101,6 +103,7 @@ export const authOptions: NextAuthOptions = {
               role: newUser.role,
               username: newUser.username,
               provider: 'credentials',
+              password: '',
               image: '',
             };
           } catch (error) {
@@ -129,6 +132,7 @@ export const authOptions: NextAuthOptions = {
           username: existingUser.username,
           image: existingUser.image,
           provider: existingUser.provider || 'credentials',
+          password: '',
         };
       },
     }),
@@ -144,12 +148,13 @@ export const authOptions: NextAuthOptions = {
 
           if (!userExists) {
             await User.create({
+              username: profile.name,
               email: profile.email,
               name: profile.name,
               image: profile.image,
-              password: '',
               role: 'user',
               provider: 'google',
+              password: '',
             });
           }
         }
@@ -174,6 +179,7 @@ export const authOptions: NextAuthOptions = {
             username: user.username,
             image: user.image,
             provider: user.provider,
+            password: user.password,
           };
         }
         return session;
