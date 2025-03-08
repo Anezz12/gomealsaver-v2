@@ -103,7 +103,7 @@ export default function Navbar() {
       return (
         <button
           onClick={() => setIsAuthMenuOpen(!isAuthMenuOpen)}
-          className="flex items-center space-x-2 bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-600 dark:hover:bg-blue-700 transition-all duration-200"
+          className="flex items-center space-x-2 bg-amber-500 dark:bg-amber-600 text-white px-4 py-2 rounded-full hover:bg-amber-600 dark:hover:bg-amber-700 transition-all duration-200"
         >
           <Image
             src={ProfileDefault}
@@ -204,7 +204,7 @@ export default function Navbar() {
                     <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 shadow-lg py-1 z-50">
                       <Link
                         href="/profile"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-800 hover:text-blue-600 dark:hover:text-blue-400 font-semibold"
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-800 hover:text-amber-600 dark:hover:text-amber-400 font-semibold"
                         onClick={() => setIsAuthMenuOpen(false)}
                       >
                         Profile
@@ -248,14 +248,14 @@ export default function Navbar() {
               <div className="px-4 py-3 space-y-3">
                 <Link
                   href="/"
-                  className="block text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-800 hover:text-amber-600 dark:hover:text-amber-400 font-semibold"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Home
                 </Link>
                 <Link
                   href="/project"
-                  className="block text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-800 hover:text-amber-600 dark:hover:text-amber-400 font-semibold"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Project
@@ -267,7 +267,7 @@ export default function Navbar() {
                         handleSignOut();
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                      className="w-full text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
                     >
                       Sign Out
                     </button>
