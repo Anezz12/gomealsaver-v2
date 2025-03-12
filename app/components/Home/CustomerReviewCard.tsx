@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 // Customer review card component
-interface review {
+interface Review {
   id: number;
   content: string;
   name: string;
@@ -11,50 +11,52 @@ interface review {
 }
 
 export default function CustomerReviewCard() {
-  // Array of reviews with unique customer data
-  const reviews: review[] = [
+  // Array of reviews with unique customer data focused on food experience
+  const reviews: Review[] = [
     {
       id: 1,
       content:
-        'I was not so sure if there was a beautiful bedroom, but it was really great experience.',
-      name: 'Evelin Bie',
-      role: 'Full-Time Traveler',
+        'Makanan dari GoMealSaver masih sangat segar dan lezat. Saya senang bisa membantu mengurangi limbah makanan sambil menikmati hidangan yang enak.',
+      name: 'Putri Kartika',
+      role: 'Mahasiswa',
       avatarUrl: '/images/photos/photo-1.png',
     },
     {
       id: 2,
-      content: "It's just amazing, will be back.",
-      name: 'Michael Wong',
+      content:
+        'Harganya sangat terjangkau untuk makanan berkualitas. Saya pasti akan pesan lagi!',
+      name: 'Budi Santoso',
       role: 'Food Blogger',
       avatarUrl: '/images/photos/photo-2.png',
     },
     {
       id: 3,
       content:
-        'I was not so sure if there was a beautiful bedroom, but it was really great experience.',
+        'Sebagai pemilik restoran, saya sangat mendukung konsep GoMealSaver. Ini membantu bisnis kami mengurangi limbah dan menjangkau lebih banyak pelanggan.',
       name: 'Diana Chen',
-      role: 'Restaurant Owner',
+      role: 'Pemilik Restoran',
       avatarUrl: '/images/photos/photo-3.png',
     },
     {
       id: 4,
-      content: 'Price was too low yet luxury.',
+      content:
+        'Harga terjangkau tapi kualitas tetap premium. Cocok untuk budget mahasiswa seperti saya.',
       name: 'Ari Santoso',
-      role: 'Student',
+      role: 'Mahasiswa',
       avatarUrl: '/images/photos/photo-4.png',
     },
     {
       id: 5,
       content:
-        'I was not so sure if there was a beautiful bedroom, but it was really great experience.',
+        'Aplikasi yang mudah digunakan dan pengiriman cepat. Makanan masih hangat saat sampai di rumah.',
       name: 'Jessica Kim',
-      role: 'Office Worker',
+      role: 'Pegawai Kantor',
       avatarUrl: '/images/photos/photo-5.png',
     },
     {
       id: 6,
       content:
-        'During covid I was stayed here and I got a lot of full of supports that I need to keep my body healthy.',
+        'Selama WFH, GoMealSaver menjadi andalan saya untuk makan siang. Hemat uang dan waktu, plus mendukung lingkungan.',
       name: 'Rahmat Hidayat',
       role: 'Digital Nomad',
       avatarUrl: '/images/photos/photo-6.png',
@@ -62,22 +64,23 @@ export default function CustomerReviewCard() {
     {
       id: 7,
       content:
-        'I was not so sure if there was a beautiful bedroom, but it was really great experience.',
+        'Sebagai kritikus makanan, saya sangat mengapresiasi kualitas hidangan dari GoMealSaver. Ini membuktikan bahwa makanan surplus tidak berarti kurang lezat.',
       name: 'Sarah Johnson',
-      role: 'Food Critic',
+      role: 'Kritikus Makanan',
       avatarUrl: '/images/photos/photo-7.png',
     },
     {
       id: 8,
-      content: "It's just amazing, will be back.",
+      content:
+        'Konsep yang sangat inovatif dan dibutuhkan di era saat ini. Lezat, terjangkau, dan ramah lingkungan!',
       name: 'David Lee',
-      role: 'Tech Entrepreneur',
+      role: 'Pengusaha Tech',
       avatarUrl: '/images/photos/photo-8.png',
     },
     {
       id: 9,
       content:
-        'I was not so sure if there was a beautiful bedroom, but it was really great experience.',
+        'Saya selalu mencari cara untuk mendukung bisnis berkelanjutan. GoMealSaver adalah solusi sempurna untuk menikmati makanan enak sambil berkontribusi positif.',
       name: 'Natasha Singh',
       role: 'Travel Influencer',
       avatarUrl: '/images/photos/photo-9.png',
@@ -85,7 +88,7 @@ export default function CustomerReviewCard() {
   ];
 
   // Reusable review card component
-  const ReviewCard = ({ review }: { review: review }) => (
+  const ReviewCard = ({ review }: { review: Review }) => (
     <div className="mb-[30px] space-y-[20px] rounded-[20px] bg-[#141414] px-5 py-4">
       <Image
         src="/images/icons/stars.svg"
@@ -118,10 +121,10 @@ export default function CustomerReviewCard() {
     <section className="mx-auto mt-[60px] md:mt-[100px] max-w-[1280px] space-y-[20px] md:space-y-[30px] px-4 sm:px-6 md:px-[75px]">
       <div className="text-center">
         <h1 className="text-[22px] md:text-[28px] font-bold text-white">
-          Happy Customers
+          Pelanggan Kami yang Puas
         </h1>
         <p className="text-base md:text-lg text-[#A8A8AB]">
-          {"  We'd love to come back again soon"}
+          Bergabunglah dan rasakan manfaatnya
         </p>
       </div>
 
@@ -155,7 +158,7 @@ export default function CustomerReviewCard() {
           href="/reviews"
           className="inline-block px-4 py-2 md:px-6 md:py-3 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-full transition-colors"
         >
-          View All Reviews
+          Lihat Semua Ulasan
         </Link>
       </div>
     </section>

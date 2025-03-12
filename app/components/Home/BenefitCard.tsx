@@ -6,7 +6,7 @@ export default function BenefiteCard() {
     <section className="mx-auto mt-[60px] md:mt-[100px] flex flex-col md:flex-row max-w-[1280px] justify-between px-4 sm:px-6 md:px-[75px] gap-8 md:gap-0">
       <div className="max-w-full md:max-w-[383px] space-y-[20px] md:space-y-[30px]">
         <h1 className="text-[22px] md:text-[28px] font-bold text-white">
-          Huge Benefits That Make You Feel Happier
+          Solusi Cerdas untuk Mengurangi Limbah Makanan
         </h1>
         <ul className="space-y-3 md:space-y-5">
           <li className="flex items-center text-base md:text-lg font-semibold text-white">
@@ -17,7 +17,7 @@ export default function BenefiteCard() {
               height={24}
               className="mr-3"
             />
-            Checking faster without depositing
+            Harga terjangkau untuk semua orang
           </li>
           <li className="flex items-center text-base md:text-lg font-semibold text-white">
             <Image
@@ -27,7 +27,7 @@ export default function BenefiteCard() {
               height={24}
               className="mr-3"
             />
-            24/7 security guarding your place
+            Makanan berkualitas dari restoran terpercaya
           </li>
           <li className="flex items-center text-base md:text-lg font-semibold text-white">
             <Image
@@ -37,7 +37,7 @@ export default function BenefiteCard() {
               height={24}
               className="mr-3"
             />
-            Fast-internet access without lagging
+            Pengiriman cepat ke lokasi Anda
           </li>
           <li className="flex items-center text-base md:text-lg font-semibold text-white">
             <Image
@@ -47,7 +47,7 @@ export default function BenefiteCard() {
               height={24}
               className="mr-3"
             />
-            High standard of layout of houses
+            Membantu mengurangi limbah makanan
           </li>
           <li className="flex items-center text-base md:text-lg font-semibold text-white">
             <Image
@@ -57,7 +57,7 @@ export default function BenefiteCard() {
               height={24}
               className="mr-3"
             />
-            All other benefits, we promise
+            Mendukung keberlanjutan lingkungan
           </li>
         </ul>
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:space-x-[14px]">
@@ -72,13 +72,13 @@ export default function BenefiteCard() {
               height={20}
               className="mr-[10px]"
             />
-            Call Sales
+            Hubungi Kami
           </Link>
           <Link
             href="#"
             className="w-full sm:w-auto flex items-center justify-center px-5 py-3 bg-transparent border border-white/20 hover:bg-white/10 text-white font-medium rounded-full transition-colors"
           >
-            All Benefits
+            Tentang GoMealSaver
           </Link>
         </div>
       </div>
@@ -89,7 +89,7 @@ export default function BenefiteCard() {
             <div className="absolute flex h-full w-full items-end space-y-[14px] bg-gradient-to-b from-white/10 from-[46%] to-[#050211] to-[86%] p-5">
               <div className="flex w-full items-center justify-between">
                 <h1 className="w-[170px] text-lg md:text-xl font-bold">
-                  House for Office and Living
+                  Hidangan Indonesia Tradisional
                 </h1>
                 <div className="flex items-center space-x-1">
                   <Image
@@ -103,8 +103,8 @@ export default function BenefiteCard() {
               </div>
             </div>
             <Image
-              src="/images/thumbnails/cover-5.png"
-              alt="House for Office and Living"
+              src="/food/gado-gado.jpeg"
+              alt="Gado-gado tradisional"
               fill
               className="object-cover"
             />
@@ -116,7 +116,7 @@ export default function BenefiteCard() {
             <div className="absolute flex h-full w-full items-end space-y-[14px] bg-gradient-to-b from-white/10 from-[46%] to-[#050211] to-[86%] p-5">
               <div className="flex w-full items-center justify-between">
                 <h1 className="w-[170px] text-lg md:text-xl font-bold">
-                  House Nearby with Mall
+                  Hidangan Berkuah Lezat
                 </h1>
                 <div className="flex items-center space-x-1">
                   <Image
@@ -130,8 +130,8 @@ export default function BenefiteCard() {
               </div>
             </div>
             <Image
-              src="/images/thumbnails/cover-6.png"
-              alt="House Nearby with Mall"
+              src="/food/bakso.jpg"
+              alt="Bakso berkuah"
               fill
               className="object-cover"
             />
@@ -143,7 +143,7 @@ export default function BenefiteCard() {
             <div className="absolute flex h-full w-full items-end space-y-[14px] bg-gradient-to-b from-white/10 from-[46%] to-[#050211] to-[86%] p-5">
               <div className="flex w-full items-center justify-between">
                 <h1 className="w-[170px] text-lg md:text-xl font-bold">
-                  House Historical Building
+                  Hidangan Panggang Populer
                 </h1>
                 <div className="flex items-center space-x-1">
                   <Image
@@ -157,8 +157,8 @@ export default function BenefiteCard() {
               </div>
             </div>
             <Image
-              src="/images/thumbnails/cover-7.png"
-              alt="House Historical Building"
+              src="/food/ayam-bakar.jpg"
+              alt="Ayam bakar spesial"
               fill
               className="object-cover"
             />
@@ -170,7 +170,7 @@ export default function BenefiteCard() {
             <div className="absolute flex h-full w-full items-end space-y-[14px] bg-gradient-to-b from-white/10 from-[46%] to-[#050211] to-[86%] p-5">
               <div className="flex w-full items-center justify-between">
                 <h1 className="w-[170px] text-lg md:text-xl font-bold">
-                  Landed House with Park
+                  Sup Tradisional Indonesia
                 </h1>
                 <div className="flex items-center space-x-1">
                   <Image
@@ -184,8 +184,8 @@ export default function BenefiteCard() {
               </div>
             </div>
             <Image
-              src="/images/thumbnails/cover-8.png"
-              alt="Landed House with Park"
+              src="/food/soto.jpg"
+              alt="Soto ayam spesial"
               fill
               className="object-cover"
             />
