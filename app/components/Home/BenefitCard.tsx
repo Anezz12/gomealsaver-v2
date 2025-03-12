@@ -1,7 +1,71 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+interface MealItem {
+  id: number;
+  title: string;
+  price: number;
+  imgUrl: string; // Add new property
+}
+
 export default function BenefiteCard() {
+  const meals: MealItem[] = [
+    {
+      id: 1,
+      title: 'Hidangan Indonesia Tradisional',
+      price: 15000,
+      imgUrl: '/food/gado-gado.jpeg',
+    },
+    {
+      id: 2,
+      title: 'Hidangan Berkuah Lezat',
+      price: 12000,
+      imgUrl: '/food/bakso.jpg',
+    },
+    {
+      id: 3,
+      title: 'Hidangan Panggang Populer',
+      price: 20000,
+      imgUrl: '/food/ayam-bakar.jpg',
+    },
+    {
+      id: 4,
+      title: 'Sup Tradisional Indonesia',
+      price: 18000,
+      imgUrl: '/food/soto.jpg',
+    },
+  ];
+
+  const MealCard = ({ meal }: { meal: MealItem }) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-[30px] text-white mt-8 md:mt-0">
+      <Link href={`/meals/${meal.id}`}>
+        <div className="relative h-[200px] w-full md:w-[310px] overflow-hidden rounded-3xl text-white">
+          <div className="absolute flex h-full w-full items-end space-y-[14px] bg-gradient-to-b from-white/10 from-[46%] to-[#050211] to-[86%] p-5">
+            <div className="flex w-full items-center justify-between">
+              <h1 className="w-[170px] text-lg md:text-xl font-bold">
+                {meal.title}
+              </h1>
+              <div className="flex items-center space-x-1">
+                <Image
+                  src="/images/icons/profile-2user copy.svg"
+                  alt="User Icon"
+                  width={16}
+                  height={16}
+                />
+                <p className="text-sm md:text-base">{meal.price}</p>
+              </div>
+            </div>
+          </div>
+          <Image
+            src={meal.imgUrl}
+            alt={meal.title}
+            fill
+            className="object-cover"
+          />
+        </div>
+      </Link>
+    </div>
+  );
   return (
     <section className="mx-auto mt-[60px] md:mt-[100px] flex flex-col md:flex-row max-w-[1280px] justify-between px-4 sm:px-6 md:px-[75px] gap-8 md:gap-0">
       <div className="max-w-full md:max-w-[383px] space-y-[20px] md:space-y-[30px]">
@@ -82,115 +146,10 @@ export default function BenefiteCard() {
           </Link>
         </div>
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-[30px] text-white mt-8 md:mt-0">
-        <Link href="#">
-          <div className="relative h-[200px] w-full md:w-[310px] overflow-hidden rounded-3xl text-white">
-            <div className="absolute flex h-full w-full items-end space-y-[14px] bg-gradient-to-b from-white/10 from-[46%] to-[#050211] to-[86%] p-5">
-              <div className="flex w-full items-center justify-between">
-                <h1 className="w-[170px] text-lg md:text-xl font-bold">
-                  Hidangan Indonesia Tradisional
-                </h1>
-                <div className="flex items-center space-x-1">
-                  <Image
-                    src="/images/icons/profile-2user copy.svg"
-                    alt="User Icon"
-                    width={16}
-                    height={16}
-                  />
-                  <p className="text-sm md:text-base">18,309</p>
-                </div>
-              </div>
-            </div>
-            <Image
-              src="/food/gado-gado.jpeg"
-              alt="Gado-gado tradisional"
-              fill
-              className="object-cover"
-            />
-          </div>
-        </Link>
-
-        <Link href="#">
-          <div className="relative h-[200px] w-full md:w-[310px] overflow-hidden rounded-3xl text-white">
-            <div className="absolute flex h-full w-full items-end space-y-[14px] bg-gradient-to-b from-white/10 from-[46%] to-[#050211] to-[86%] p-5">
-              <div className="flex w-full items-center justify-between">
-                <h1 className="w-[170px] text-lg md:text-xl font-bold">
-                  Hidangan Berkuah Lezat
-                </h1>
-                <div className="flex items-center space-x-1">
-                  <Image
-                    src="/images/icons/profile-2user copy.svg"
-                    alt="User Icon"
-                    width={16}
-                    height={16}
-                  />
-                  <p className="text-sm md:text-base">84,209</p>
-                </div>
-              </div>
-            </div>
-            <Image
-              src="/food/bakso.jpg"
-              alt="Bakso berkuah"
-              fill
-              className="object-cover"
-            />
-          </div>
-        </Link>
-
-        <Link href="#">
-          <div className="relative h-[200px] w-full md:w-[310px] overflow-hidden rounded-3xl text-white">
-            <div className="absolute flex h-full w-full items-end space-y-[14px] bg-gradient-to-b from-white/10 from-[46%] to-[#050211] to-[86%] p-5">
-              <div className="flex w-full items-center justify-between">
-                <h1 className="w-[170px] text-lg md:text-xl font-bold">
-                  Hidangan Panggang Populer
-                </h1>
-                <div className="flex items-center space-x-1">
-                  <Image
-                    src="/images/icons/profile-2user copy.svg"
-                    alt="User Icon"
-                    width={16}
-                    height={16}
-                  />
-                  <p className="text-sm md:text-base">22,409</p>
-                </div>
-              </div>
-            </div>
-            <Image
-              src="/food/ayam-bakar.jpg"
-              alt="Ayam bakar spesial"
-              fill
-              className="object-cover"
-            />
-          </div>
-        </Link>
-
-        <Link href="#">
-          <div className="relative h-[200px] w-full md:w-[310px] overflow-hidden rounded-3xl text-white">
-            <div className="absolute flex h-full w-full items-end space-y-[14px] bg-gradient-to-b from-white/10 from-[46%] to-[#050211] to-[86%] p-5">
-              <div className="flex w-full items-center justify-between">
-                <h1 className="w-[170px] text-lg md:text-xl font-bold">
-                  Sup Tradisional Indonesia
-                </h1>
-                <div className="flex items-center space-x-1">
-                  <Image
-                    src="/images/icons/profile-2user copy.svg"
-                    alt="User Icon"
-                    width={16}
-                    height={16}
-                  />
-                  <p className="text-sm md:text-base">47,583</p>
-                </div>
-              </div>
-            </div>
-            <Image
-              src="/food/soto.jpg"
-              alt="Soto ayam spesial"
-              fill
-              className="object-cover"
-            />
-          </div>
-        </Link>
+      <div className="grid grid-cols-1 sm:grid-cols-2 px-4">
+        {meals.map((meal) => (
+          <MealCard key={meal.id} meal={meal} />
+        ))}
       </div>
     </section>
   );
