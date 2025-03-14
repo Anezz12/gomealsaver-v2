@@ -67,7 +67,7 @@ export default async function MealsPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {serializedMeals.map((meal) => (
+              {serializedMeals.map((meal: any) => (
                 <MealsPageRender key={meal._id} meal={meal} />
               ))}
             </div>
