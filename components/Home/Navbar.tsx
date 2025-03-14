@@ -165,9 +165,9 @@ export default function Navbar() {
                   Beranda
                 </Link>
                 <Link
-                  href="/makanan"
+                  href="/meals"
                   className={`${
-                    pathname === '/makanan'
+                    pathname === '/meals'
                       ? 'text-amber-500 dark:text-amber-500'
                       : 'text-gray-700 dark:text-gray-200'
                   } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
