@@ -162,37 +162,37 @@ export default function Navbar() {
                       : 'text-gray-700 dark:text-gray-200'
                   } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
                 >
-                  Home
+                  Beranda
                 </Link>
                 <Link
-                  href="/project"
+                  href="/makanan"
                   className={`${
-                    pathname === '/project'
+                    pathname === '/makanan'
                       ? 'text-amber-500 dark:text-amber-500'
                       : 'text-gray-700 dark:text-gray-200'
                   } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
                 >
-                  Project
+                  Makanan
                 </Link>
                 <Link
-                  href="/blogs"
+                  href="/promo"
                   className={`${
-                    pathname === '/blogs'
+                    pathname === '/promo'
                       ? 'text-amber-500 dark:text-amber-500'
                       : 'text-gray-700 dark:text-gray-200'
                   } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
                 >
-                  Blogs
+                  Promo
                 </Link>
                 <Link
-                  href="/contact"
+                  href="/aboutus"
                   className={`${
-                    pathname === '/contact'
+                    pathname === '/aboutus'
                       ? 'text-amber-500 dark:text-amber-500'
                       : 'text-gray-700 dark:text-gray-200'
                   } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
                 >
-                  Contact
+                  About Us
                 </Link>
               </div>
               {/* Auth Button */}
@@ -254,11 +254,11 @@ export default function Navbar() {
                   Home
                 </Link>
                 <Link
-                  href="/project"
+                  href="/makanan"
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-800 hover:text-amber-600 dark:hover:text-amber-400 font-semibold"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Project
+                  Makanan
                 </Link>
                 {session && (
                   <>
