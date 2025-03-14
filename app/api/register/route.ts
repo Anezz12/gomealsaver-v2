@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/app/config/database';
-import User from '@/app/models/User';
+import connectDB from '@/config/database';
+import User from '@/models/User';
 
 interface RegisterRequestBody {
   username: string;
