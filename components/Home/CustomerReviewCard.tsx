@@ -19,7 +19,7 @@ export default function CustomerReviewCard() {
         'Makanan dari GoMealSaver masih sangat segar dan lezat. Saya senang bisa membantu mengurangi limbah makanan sambil menikmati hidangan yang enak.',
       name: 'Putri Kartika',
       role: 'Mahasiswa',
-      avatarUrl: '/images/photos/photo-1.png',
+      avatarUrl: '/profile.png',
     },
     {
       id: 2,
@@ -27,7 +27,7 @@ export default function CustomerReviewCard() {
         'Harganya sangat terjangkau untuk makanan berkualitas. Saya pasti akan pesan lagi!',
       name: 'Budi Santoso',
       role: 'Food Blogger',
-      avatarUrl: '/images/photos/photo-2.png',
+      avatarUrl: '/photos/photo-2.png',
     },
     {
       id: 3,
@@ -35,7 +35,7 @@ export default function CustomerReviewCard() {
         'Sebagai pemilik restoran, saya sangat mendukung konsep GoMealSaver. Ini membantu bisnis kami mengurangi limbah dan menjangkau lebih banyak pelanggan.',
       name: 'Diana Chen',
       role: 'Pemilik Restoran',
-      avatarUrl: '/images/photos/photo-3.png',
+      avatarUrl: '/profile.png',
     },
     {
       id: 4,
@@ -43,7 +43,7 @@ export default function CustomerReviewCard() {
         'Harga terjangkau tapi kualitas tetap premium. Cocok untuk budget mahasiswa seperti saya.',
       name: 'Ari Santoso',
       role: 'Mahasiswa',
-      avatarUrl: '/images/photos/photo-4.png',
+      avatarUrl: '/profile.png',
     },
     {
       id: 5,
@@ -51,7 +51,7 @@ export default function CustomerReviewCard() {
         'Aplikasi yang mudah digunakan dan pengiriman cepat. Makanan masih hangat saat sampai di rumah.',
       name: 'Jessica Kim',
       role: 'Pegawai Kantor',
-      avatarUrl: '/images/photos/photo-5.png',
+      avatarUrl: '/profile.png',
     },
     {
       id: 6,
@@ -59,7 +59,7 @@ export default function CustomerReviewCard() {
         'Selama WFH, GoMealSaver menjadi andalan saya untuk makan siang. Hemat uang dan waktu, plus mendukung lingkungan.',
       name: 'Rahmat Hidayat',
       role: 'Digital Nomad',
-      avatarUrl: '/images/photos/photo-6.png',
+      avatarUrl: '/profile.png',
     },
     {
       id: 7,
@@ -67,7 +67,7 @@ export default function CustomerReviewCard() {
         'Sebagai kritikus makanan, saya sangat mengapresiasi kualitas hidangan dari GoMealSaver. Ini membuktikan bahwa makanan surplus tidak berarti kurang lezat.',
       name: 'Sarah Johnson',
       role: 'Kritikus Makanan',
-      avatarUrl: '/images/photos/photo-7.png',
+      avatarUrl: '/profile.png',
     },
     {
       id: 8,
@@ -75,7 +75,7 @@ export default function CustomerReviewCard() {
         'Konsep yang sangat inovatif dan dibutuhkan di era saat ini. Lezat, terjangkau, dan ramah lingkungan!',
       name: 'David Lee',
       role: 'Pengusaha Tech',
-      avatarUrl: '/images/photos/photo-8.png',
+      avatarUrl: '/profile.png',
     },
     {
       id: 9,
@@ -83,7 +83,7 @@ export default function CustomerReviewCard() {
         'Saya selalu mencari cara untuk mendukung bisnis berkelanjutan. GoMealSaver adalah solusi sempurna untuk menikmati makanan enak sambil berkontribusi positif.',
       name: 'Natasha Singh',
       role: 'Travel Influencer',
-      avatarUrl: '/images/photos/photo-9.png',
+      avatarUrl: '/profile.png',
     },
   ];
 
