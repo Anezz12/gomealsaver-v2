@@ -23,6 +23,7 @@ export default function LoginForm() {
         redirect: false,
         email,
         password,
+        mode: 'login',
       })) as SignInResponse;
 
       if (result?.error) {

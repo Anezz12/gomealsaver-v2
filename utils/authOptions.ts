@@ -76,6 +76,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
+        mode: { label: 'Mode', type: 'text' }, // Optional: can be 'login' or 'register'
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -85,70 +86,76 @@ export const authOptions: NextAuthOptions = {
         // Connect to the database
         await connectDB();
 
-        // Check if the user exists
-        const existingUser = await User.findOne({ email: credentials.email });
+        try {
+          // Check if the user exists
+          const existingUser = await User.findOne({ email: credentials.email });
 
-        // Register the user if it doesn't exist & regster Flow
+          // If this is explicitly a login request
+          const isLoginMode = credentials.mode === 'login';
 
-        if (!existingUser) {
-          try {
-            // Hash the password
-            const hashedPassword = await bcrypt.hash(credentials.password, 12);
-
-            // Create Username from email
-            const username = credentials.email.split('@')[0];
-
-            //  Create a new user
-            const newUser = await User.create({
-              email: credentials.email,
-              password: hashedPassword,
-              username: username,
-              role: 'user',
-              provider: 'credentials',
-            });
-
-            return {
-              id: newUser._id.toString(),
-              email: newUser.email,
-              name: newUser.name,
-              role: newUser.role,
-              username: newUser.username,
-              provider: 'credentials',
-              password: '',
-              image: '',
-            };
-          } catch (error) {
-            const err = error as Error;
-            throw new Error('Registration failed: ' + err.message);
+          // Handle login attempt for non-existent user
+          if (
+            !existingUser &&
+            (isLoginMode || credentials.mode === undefined)
+          ) {
+            throw new Error(
+              'No account found with this email. Please register first.'
+            );
           }
+
+          // Handle registration attempt for existing user
+          if (existingUser && credentials.mode === 'register') {
+            throw new Error(
+              'An account with this email already exists. Please log in instead.'
+            );
+          }
+
+          // Login flow - user exists, verify password
+          if (existingUser) {
+            // Check if this is a social login account trying to use password
+            if (existingUser.provider === 'google' && !existingUser.password) {
+              throw new Error(
+                'This account uses Google login. Please sign in with Google.'
+              );
+            }
+
+            const isPasswordValid = await bcrypt.compare(
+              credentials.password,
+              existingUser.password
+            );
+
+            if (!isPasswordValid) {
+              throw new Error('Incorrect password. Please try again.');
+            }
+
+            // Return the user if login successful
+            return {
+              id: existingUser._id.toString(),
+              email: existingUser.email,
+              name: existingUser.name,
+              role: existingUser.role,
+              username: existingUser.username,
+              image: existingUser.image,
+              provider: existingUser.provider || 'credentials',
+              password: '',
+            };
+          }
+
+          // This should never execute if we have proper mode checking above
+          throw new Error('Authentication error. Please try again.');
+        } catch (error) {
+          // Re-throw authentication errors
+          if (error instanceof Error) {
+            throw new Error(error.message);
+          }
+          throw new Error(
+            'An unexpected error occurred. Please try again later.'
+          );
         }
-
-        //   Login Flow
-        // Check if the password is correct
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          existingUser.password
-        );
-
-        if (!isPasswordValid) {
-          throw new Error('Invalid password');
-        }
-
-        // Return the user if the password is correct
-        return {
-          id: existingUser._id.toString(),
-          email: existingUser.email,
-          name: existingUser.name,
-          role: existingUser.role,
-          username: existingUser.username,
-          image: existingUser.image,
-          provider: existingUser.provider || 'credentials',
-          password: '',
-        };
       },
     }),
   ],
-
+  // Database connection
   //   Callbacks for session and JWT
   callbacks: {
     async signIn({ account, profile }) {

@@ -25,6 +25,7 @@ export default function LoginForm({ onClose }: LoginFormProps) {
         redirect: false,
         email,
         password,
+        mode: 'login',
       })) as SignInResponse;
 
       if (result?.error) {
