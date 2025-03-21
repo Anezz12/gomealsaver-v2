@@ -12,11 +12,13 @@ export default function LoginForm({ onClose }: LoginFormProps) {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     try {
       const result = (await signIn('credentials', {
@@ -33,6 +35,8 @@ export default function LoginForm({ onClose }: LoginFormProps) {
       router.push('/');
     } catch {
       setError('An error occurred, please try again');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -52,15 +56,15 @@ export default function LoginForm({ onClose }: LoginFormProps) {
   };
 
   return (
-    <div className="flex min-h-[450px] items-center justify-center">
+    <div className="flex min-h-[450px] items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-lg dark:shadow-zinc-950/20 px-6 py-8 border border-zinc-100 dark:border-zinc-700/50 transition-all duration-300 hover:shadow-xl">
-          <h1 className="text-2xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-500 dark:from-blue-400 dark:to-indigo-300">
+        <div className="bg-[#141414] rounded-xl shadow-lg shadow-amber-900/10 px-6 py-8 border border-gray-800 transition-all duration-300 hover:shadow-xl">
+          <h1 className="text-2xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-amber-600">
             Sign in to your account
           </h1>
 
           {error && (
-            <div className="mb-6 p-3.5 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg border border-red-100 dark:border-red-800/50 flex items-center">
+            <div className="mb-6 p-3.5 bg-red-900/20 border border-red-900/30 text-red-400 rounded-lg flex items-center">
               <svg
                 className="w-5 h-5 mr-2 text-red-500"
                 xmlns="http://www.w3.org/2000/svg"
@@ -83,64 +87,122 @@ export default function LoginForm({ onClose }: LoginFormProps) {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5"
+                className="block text-sm font-medium text-gray-300 mb-1.5"
               >
                 Email address
               </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@example.com"
-                required
-                className="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-4 py-2.5 text-zinc-900 dark:text-zinc-100 shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 outline-none transition-all duration-200 text-base placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-gray-500"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                  </svg>
+                </div>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com"
+                  required
+                  className="w-full pl-10 rounded-lg border border-gray-700 bg-[#1A1A1A] px-4 py-2.5 text-gray-100 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all duration-200 text-base placeholder:text-gray-500"
+                />
+              </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                  className="block text-sm font-medium text-gray-300"
                 >
                   Password
                 </label>
-                <a
-                  href="#"
-                  className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
+                <Link
+                  href="/forgot-password"
+                  className="text-xs font-medium text-amber-500 hover:text-amber-400 transition-colors"
                 >
                   Forgot password?
-                </a>
+                </Link>
               </div>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-4 py-2.5 text-zinc-900 dark:text-zinc-100 shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 outline-none transition-all duration-200 text-base placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-gray-500"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className="w-full pl-10 rounded-lg border border-gray-700 bg-[#1A1A1A] px-4 py-2.5 text-gray-100 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all duration-200 text-base placeholder:text-gray-500"
+                />
+              </div>
             </div>
 
             <button
               type="submit"
-              className="w-full py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+              disabled={isLoading}
+              className={`w-full py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center ${
+                isLoading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
             >
-              <span>Sign in</span>
+              {isLoading ? (
+                <span className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Signing in...
+                </span>
+              ) : (
+                <span>Sign in</span>
+              )}
             </button>
           </form>
 
           <div className="my-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-zinc-200 dark:border-zinc-700"></div>
+                <div className="w-full border-t border-gray-700"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-3 bg-white dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 font-medium">
+                <span className="px-3 bg-[#141414] text-gray-400 font-medium">
                   Or continue with
                 </span>
               </div>
@@ -149,7 +211,7 @@ export default function LoginForm({ onClose }: LoginFormProps) {
             <div className="mt-5">
               <button
                 onClick={handleGoogleSignIn}
-                className="w-full flex items-center justify-center py-2.5 px-4 border border-zinc-300 dark:border-zinc-700 rounded-lg shadow-sm text-sm font-medium text-zinc-700 dark:text-zinc-200 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all duration-200 hover:shadow-md"
+                className="w-full flex items-center justify-center py-2.5 px-4 border border-gray-700 rounded-lg shadow-sm text-sm font-medium text-gray-200 bg-[#1A1A1A] hover:bg-[#202020] transition-all duration-200 hover:shadow-md"
               >
                 <svg
                   className="w-5 h-5 mr-2"
@@ -180,12 +242,12 @@ export default function LoginForm({ onClose }: LoginFormProps) {
           </div>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            <p className="text-sm text-gray-400">
               {"Don't have an account? "}
               <Link
                 href="/register"
                 onClick={handleRegisterClick}
-                className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
+                className="font-medium text-amber-500 hover:text-amber-400 transition-colors"
               >
                 Register now
               </Link>
@@ -193,11 +255,11 @@ export default function LoginForm({ onClose }: LoginFormProps) {
           </div>
 
           <div className="mt-5 text-center">
-            <p className="text-xs text-zinc-500 dark:text-zinc-500">
+            <p className="text-xs text-gray-500">
               This site is protected by reCAPTCHA and the Google{' '}
               <a
                 href="https://policies.google.com/privacy"
-                className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                className="text-amber-500 hover:text-amber-400 transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -206,7 +268,7 @@ export default function LoginForm({ onClose }: LoginFormProps) {
               and{' '}
               <a
                 href="https://policies.google.com/terms"
-                className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                className="text-amber-500 hover:text-amber-400 transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
