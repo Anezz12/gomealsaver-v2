@@ -39,7 +39,20 @@ declare module 'next-auth/jwt' {
     name: string;
     username: string;
     role: string;
+    image: string;
+    provider: string;
   }
+}
+// Add type definition for Google profile
+interface GoogleProfile {
+  email: string;
+  email_verified: boolean;
+  name: string;
+  picture: string;
+  given_name?: string;
+  family_name?: string;
+  locale?: string;
+  sub: string;
 }
 
 export const authOptions: NextAuthOptions = {
@@ -92,7 +105,6 @@ export const authOptions: NextAuthOptions = {
               username: username,
               role: 'user',
               provider: 'credentials',
-              image: '',
             });
 
             return {
@@ -143,14 +155,15 @@ export const authOptions: NextAuthOptions = {
       try {
         await connectDB();
         if (account?.provider === 'google' && profile) {
-          const userExists = await User.findOne({ email: profile.email });
+          const googleProfile = profile as unknown as GoogleProfile;
+          const userExists = await User.findOne({ email: googleProfile.email });
 
           if (!userExists) {
             await User.create({
-              username: profile.name,
-              email: profile.email,
-              name: profile.name,
-              image: profile.image,
+              username: googleProfile.name,
+              email: googleProfile.email,
+              name: googleProfile.name,
+              image: googleProfile.picture,
               role: 'user',
               provider: 'google',
               password: '',
@@ -204,6 +217,8 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.username = user.username;
         token.role = user.role;
+        token.image = user.image;
+        token.provider = user.provider;
       }
       return token;
     },

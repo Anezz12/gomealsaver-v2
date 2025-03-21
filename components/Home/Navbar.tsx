@@ -106,7 +106,7 @@ export default function Navbar() {
           className="flex items-center space-x-2 bg-amber-500 dark:bg-amber-600 text-white px-4 py-2 rounded-full hover:bg-amber-600 dark:hover:bg-amber-700 transition-all duration-200"
         >
           <Image
-            src={ProfileDefault}
+            src={session.user?.image || ProfileDefault}
             alt="Profile"
             width={32}
             height={32}
