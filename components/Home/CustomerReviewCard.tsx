@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 
 // Customer review card component
 interface Review {
@@ -153,14 +152,14 @@ export default function CustomerReviewCard() {
         </div>
       </div>
 
-      <div className="text-center mt-6 md:mt-8">
+      {/* <div className="text-center mt-6 md:mt-8">
         <Link
           href="/reviews"
           className="inline-block px-4 py-2 md:px-6 md:py-3 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-full transition-colors"
         >
           Lihat Semua Ulasan
         </Link>
-      </div>
+      </div> */}
     </section>
   );
 }
