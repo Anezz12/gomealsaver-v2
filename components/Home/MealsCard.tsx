@@ -99,10 +99,7 @@ export default function MealsCard() {
 
   // Create a meal card component for reuse
   const MealCard = ({ meal }: { meal: MealItem }) => (
-    <Link
-      href={`/meals/${meal.id}`}
-      className="block transition-transform hover:scale-105"
-    >
+    <Link href={`/meals/${meal.id}`} className="block transition-transform">
       <div className="relative h-[280px] sm:h-[320px] w-full overflow-hidden rounded-3xl">
         <div className="absolute flex h-full w-full flex-col justify-end space-y-[14px] bg-gradient-to-b from-transparent from-[46%] to-black to-[96%] p-5">
           <div className="flex items-center justify-between">

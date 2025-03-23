@@ -92,7 +92,7 @@ export default function HeroSection() {
             </div>
             <button
               type="submit"
-              className="h-14 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 px-8 py-4 text-lg font-semibold whitespace-nowrap cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-amber-500/30"
+              className="h-14 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 px-8 py-4 text-lg font-semibold whitespace-nowrap cursor-pointer transition-all duration-300 shadow-lg hover:shadow-amber-500/30"
             >
               <div className="flex items-center justify-center gap-2">
                 <FiSearch className="h-5 w-5" />

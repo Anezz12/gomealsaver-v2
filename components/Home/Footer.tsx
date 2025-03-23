@@ -9,21 +9,11 @@ export default function Footer() {
           <div className="space-y-3">
             <h1 className="text-base font-semibold text-white">Solutions</h1>
             <ul className="space-y-3 text-base text-[#A8A8AB]">
-              <li className="hover:font-semibold hover:text-amber-500">
-                Credit Rewards
-              </li>
-              <li className="hover:font-semibold hover:text-amber-500">
-                P2P Renting
-              </li>
-              <li className="hover:font-semibold hover:text-amber-500">
-                Open for Listing
-              </li>
-              <li className="hover:font-semibold hover:text-amber-500">
-                AI Automation
-              </li>
-              <li className="hover:font-semibold hover:text-amber-500">
-                APIs Developer
-              </li>
+              <li className="hover:text-amber-500">Credit Rewards</li>
+              <li className="hover:text-amber-500">P2P Renting</li>
+              <li className="hover:text-amber-500">Open for Listing</li>
+              <li className="hover:text-amber-500">AI Automation</li>
+              <li className="hover:text-amber-500">APIs Developer</li>
             </ul>
           </div>
 
@@ -31,19 +21,19 @@ export default function Footer() {
           <div className="space-y-3">
             <h1 className="text-base font-semibold text-white">Product</h1>
             <ul className="space-y-3 text-base text-[#A8A8AB]">
-              <li className="hover:font-semibold hover:text-amber-500">
+              <li className="hover:text-amber-500 cursor-pointer">
                 Featured Meals
               </li>
-              <li className="hover:font-semibold hover:text-amber-500">
+              <li className="hover:text-amber-500 cursor-pointer">
                 Browse Categories
               </li>
-              <li className="hover:font-semibold hover:text-amber-500">
+              <li className="hover:text-amber-500 cursor-pointer">
                 Special Offers
               </li>
-              <li className="hover:font-semibold hover:text-amber-500">
+              <li className="hover:text-amber-500 cursor-pointer">
                 Local Restaurants
               </li>
-              <li className="hover:font-semibold hover:text-amber-500">
+              <li className="hover:text-amber-500 cursor-pointer">
                 Exclusive Dishes
               </li>
             </ul>
@@ -53,19 +43,15 @@ export default function Footer() {
           <div className="space-y-3">
             <h1 className="text-base font-semibold text-white">Company</h1>
             <ul className="space-y-3 text-base text-[#A8A8AB]">
-              <li className="hover:font-semibold hover:text-amber-500">
-                About Us
-              </li>
-              <li className="hover:font-semibold hover:text-amber-500">
+              <li className="hover:text-amber-500 cursor-pointer">About Us</li>
+              <li className="hover:text-amber-500 cursor-pointer">
                 Our Partners
               </li>
-              <li className="hover:font-semibold hover:text-amber-500">
+              <li className="hover:text-amber-500 cursor-pointer">
                 Missions 2025
               </li>
-              <li className="hover:font-semibold hover:text-amber-500">
-                Careers
-              </li>
-              <li className="hover:font-semibold hover:text-amber-500">
+              <li className="hover:text-amber-500 cursor-pointer">Careers</li>
+              <li className="hover:text-amber-500 cursor-pointer">
                 Media Press
               </li>
             </ul>

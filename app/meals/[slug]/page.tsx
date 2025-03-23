@@ -196,6 +196,7 @@ import { convertToObject } from '@/utils/convertToObject';
 import BookmarkButton from '@/components/meals/BookmarkButton';
 import ShareButton from '@/components/meals/ShareButton';
 import MealsImages from '@/components/meals/MealsImage';
+import ErrorPage from '@/app/error';
 
 interface Params {
   slug: string;
@@ -207,40 +208,41 @@ export default async function MealPage({ params }: { params: Params }) {
   // Invalid Meal ID Handler
   if (!isValidObjectId(params.slug)) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0A0A0A] p-4">
-        <div className="w-full max-w-md rounded-xl bg-[#141414] p-8 shadow-xl border border-gray-800">
-          <div className="text-center">
-            <div className="mx-auto mb-6 h-16 w-16 rounded-full bg-amber-500/20 flex items-center justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-10 w-10 text-amber-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-amber-500">
-              Invalid Meal ID
-            </h2>
-            <p className="mt-2 text-gray-400">
-              The meal identifier you provided is not valid.
-            </p>
-            <Link
-              href="/meals"
-              className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-white hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20"
-            >
-              Return to Meals
-            </Link>
-          </div>
-        </div>
-      </div>
+      // <div className="flex min-h-screen items-center justify-center bg-[#0A0A0A] p-4">
+      //   <div className="w-full max-w-md rounded-xl bg-[#141414] p-8 shadow-xl border border-gray-800">
+      //     <div className="text-center">
+      //       <div className="mx-auto mb-6 h-16 w-16 rounded-full bg-amber-500/20 flex items-center justify-center">
+      //         <svg
+      //           xmlns="http://www.w3.org/2000/svg"
+      //           className="h-10 w-10 text-amber-500"
+      //           fill="none"
+      //           viewBox="0 0 24 24"
+      //           stroke="currentColor"
+      //         >
+      //           <path
+      //             strokeLinecap="round"
+      //             strokeLinejoin="round"
+      //             strokeWidth={2}
+      //             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+      //           />
+      //         </svg>
+      //       </div>
+      //       <h2 className="text-2xl font-bold text-amber-500">
+      //         Invalid Meal ID
+      //       </h2>
+      //       <p className="mt-2 text-gray-400">
+      //         The meal identifier you provided is not valid.
+      //       </p>
+      //       <Link
+      //         href="/meals"
+      //         className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-white hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20"
+      //       >
+      //         Return to Meals
+      //       </Link>
+      //     </div>
+      //   </div>
+      // </div>
+      <ErrorPage error={new Error('Invalid Meal ID')} />
     );
   }
 
@@ -250,40 +252,41 @@ export default async function MealPage({ params }: { params: Params }) {
     // Meal Not Found Handler
     if (!mealDoc) {
       return (
-        <div className="flex min-h-screen items-center justify-center bg-[#0A0A0A] p-4">
-          <div className="w-full max-w-md rounded-xl bg-[#141414] p-8 shadow-xl border border-gray-800">
-            <div className="text-center">
-              <div className="mx-auto mb-6 h-16 w-16 rounded-full bg-amber-500/20 flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-10 w-10 text-amber-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-amber-500">
-                Meal Not Found
-              </h2>
-              <p className="mt-2 text-gray-400">
-                The meal you are looking for does not exist.
-              </p>
-              <Link
-                href="/meals"
-                className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-white hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20"
-              >
-                Back to Meals
-              </Link>
-            </div>
-          </div>
-        </div>
+        // <div className="flex min-h-screen items-center justify-center bg-[#0A0A0A] p-4">
+        //   <div className="w-full max-w-md rounded-xl bg-[#141414] p-8 shadow-xl border border-gray-800">
+        //     <div className="text-center">
+        //       <div className="mx-auto mb-6 h-16 w-16 rounded-full bg-amber-500/20 flex items-center justify-center">
+        //         <svg
+        //           xmlns="http://www.w3.org/2000/svg"
+        //           className="h-10 w-10 text-amber-500"
+        //           fill="none"
+        //           viewBox="0 0 24 24"
+        //           stroke="currentColor"
+        //         >
+        //           <path
+        //             strokeLinecap="round"
+        //             strokeLinejoin="round"
+        //             strokeWidth={2}
+        //             d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        //           />
+        //         </svg>
+        //       </div>
+        //       <h2 className="text-2xl font-bold text-amber-500">
+        //         Meal Not Found
+        //       </h2>
+        //       <p className="mt-2 text-gray-400">
+        //         The meal you are looking for does not exist.
+        //       </p>
+        //       <Link
+        //         href="/meals"
+        //         className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-white hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20"
+        //       >
+        //         Back to Meals
+        //       </Link>
+        //     </div>
+        //   </div>
+        // </div>
+        <ErrorPage error={new Error('Meal Not Found')} />
       );
     }
 

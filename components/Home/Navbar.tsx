@@ -120,7 +120,7 @@ export default function Navbar() {
     return (
       <button
         onClick={() => setisLoginModelOpen(true)}
-        className="hidden md:flex items-center space-x-2 bg-amber-500 dark:bg-amber-500 text-white px-6 py-2 rounded-full hover:bg-amber-600 dark:hover:bg-amber-400 transition-all duration-200 hover:scale-105 cursor-pointer"
+        className="hidden md:flex items-center space-x-2 bg-amber-500 dark:bg-amber-500 text-white px-6 py-2 rounded-full hover:bg-amber-600 dark:hover:bg-amber-400 transition-all duration-200 cursor-pointer"
       >
         <span className="font-semibold">Sign In</span>
       </button>
@@ -143,7 +143,7 @@ export default function Navbar() {
               {/* Logo Section */}
               <div className="flex items-center">
                 <Link
-                  className="flex items-center space-x-2 transition-transform hover:scale-105"
+                  className="flex items-center space-x-2 transition-transform"
                   href="/"
                 >
                   <p className="text-xl font-bold bg-amber-500 bg-clip-text text-transparent">
@@ -160,7 +160,7 @@ export default function Navbar() {
                     pathname === '/'
                       ? 'text-amber-500 dark:text-amber-500'
                       : 'text-gray-700 dark:text-gray-200'
-                  } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
+                  } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200`}
                 >
                   Beranda
                 </Link>
@@ -170,7 +170,7 @@ export default function Navbar() {
                     pathname === '/meals'
                       ? 'text-amber-500 dark:text-amber-500'
                       : 'text-gray-700 dark:text-gray-200'
-                  } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
+                  } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200`}
                 >
                   Makanan
                 </Link>
@@ -180,7 +180,7 @@ export default function Navbar() {
                     pathname === '/promo'
                       ? 'text-amber-500 dark:text-amber-500'
                       : 'text-gray-700 dark:text-gray-200'
-                  } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
+                  } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200`}
                 >
                   Promo
                 </Link>
@@ -190,7 +190,7 @@ export default function Navbar() {
                     pathname === '/aboutus'
                       ? 'text-amber-500 dark:text-amber-500'
                       : 'text-gray-700 dark:text-gray-200'
-                  } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105`}
+                  } hover:text-amber-600 dark:hover:text-amber-500 px-3 py-2 text-sm font-semibold transition-all duration-200`}
                 >
                   About Us
                 </Link>
