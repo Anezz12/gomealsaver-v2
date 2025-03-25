@@ -29,7 +29,10 @@ export default function Page() {
                   <p className="text-gray-400 text-center mb-6">
                     Update your password to keep your account secure
                   </p>
-                  <Link href="/profile/setting/password" className="w-full">
+                  <Link
+                    href="/profile/setting/changepassword"
+                    className="w-full"
+                  >
                     <button className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-2.5 px-4 rounded-lg hover:from-amber-700 hover:to-amber-800 transition duration-300">
                       Change Password
                     </button>
