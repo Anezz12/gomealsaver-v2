@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { User, Settings } from 'lucide-react';
+import { User, Settings, LucideBadgeDollarSign } from 'lucide-react';
 import Link from 'next/link';
 import ProfileDefault from '@/public/profile.png';
 
@@ -37,6 +37,11 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
   const navigation = [
     { name: 'Profile', href: '/profile', icon: User },
     { name: 'Settings', href: '/profile/setting', icon: Settings },
+    {
+      name: 'Transaction',
+      href: '/profile/transaction',
+      icon: LucideBadgeDollarSign,
+    },
   ];
 
   return (

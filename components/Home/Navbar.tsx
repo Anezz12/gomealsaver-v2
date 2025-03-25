@@ -254,7 +254,7 @@ export default function Navbar() {
                   Home
                 </Link>
                 <Link
-                  href="/makanan"
+                  href="/meals"
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-800 hover:text-amber-600 dark:hover:text-amber-400 font-semibold"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
