@@ -1,5 +1,4 @@
 'use client';
-
 import Link from 'next/link';
 import { useState, useEffect, useRef, MouseEvent } from 'react';
 import { signOut, useSession } from 'next-auth/react';
@@ -295,7 +294,10 @@ export default function Navbar() {
       {/* Login Modal */}
       {isLoginModelOpen && (
         <section className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-[60]">
-          <div className="relative mx-4 w-full max-w-[90%] sm:max-w-[450px] bg-white dark:bg-zinc-800 rounded-xl shadow-xl p-4 sm:p-6 md:p-8 overflow-hidden">
+          <div
+            ref={loginModalRef}
+            className="relative mx-4 w-full max-w-[90%] sm:max-w-[450px] bg-white dark:bg-zinc-800 rounded-xl shadow-xl p-4 sm:p-6 md:p-8 overflow-hidden"
+          >
             <button
               onClick={() => setisLoginModelOpen(false)}
               className="absolute top-3 right-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
@@ -307,7 +309,7 @@ export default function Navbar() {
                 GoMealSaver
               </span>
             </div>
-            <LoginForm />
+            <LoginForm onClose={() => setisLoginModelOpen(false)} />
           </div>
         </section>
       )}

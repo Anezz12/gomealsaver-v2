@@ -1,7 +1,8 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent } from 'react';
 import { signIn, SignInResponse } from 'next-auth/react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 interface LoginFormProps {
@@ -31,6 +32,10 @@ export default function LoginForm({ onClose }: LoginFormProps) {
       if (result?.error) {
         setError(result.error);
         return;
+      }
+
+      if (onClose) {
+        onClose();
       }
 
       router.push('/');
