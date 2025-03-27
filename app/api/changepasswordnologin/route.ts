@@ -4,10 +4,16 @@ import bcrypt from 'bcryptjs';
 import PasswordReset from '@/models/passwordReset';
 import User from '@/models/User';
 
+interface PasswordChangeRequest {
+  resetToken: string;
+  newPassword: string;
+}
+
 export async function POST(request: Request) {
   try {
     await connectDB();
-    const { resetToken, newPassword } = await request.json();
+    const { resetToken, newPassword }: PasswordChangeRequest =
+      await request.json();
 
     // temukan record reset password dengan token yang diberikan
 
@@ -19,6 +25,17 @@ export async function POST(request: Request) {
     if (!passwordReset) {
       return NextResponse.json(
         { message: 'Invalid or expired reset token' },
+        { status: 400 }
+      );
+    }
+    // Validate new password
+    const passwordPattern: RegExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!passwordPattern.test(newPassword)) {
+      return NextResponse.json(
+        {
+          message:
+            'New password must be at least 8 characters long and contain letters and numbers.',
+        },
         { status: 400 }
       );
     }
