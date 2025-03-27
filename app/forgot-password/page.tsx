@@ -32,7 +32,10 @@ export default function ForgotPasswordPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong');
+        throw new Error(
+          data.error ||
+            'Something went wrong, please check your email address and try again'
+        );
       }
 
       toast.success('Verification code sent to your email');

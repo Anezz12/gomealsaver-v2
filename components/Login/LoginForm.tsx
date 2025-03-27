@@ -132,6 +132,7 @@ export default function LoginForm({ onClose }: LoginFormProps) {
                 </label>
                 <Link
                   href="/forgot-password"
+                  onClick={handleRegisterClick}
                   className="text-xs font-medium text-amber-500 hover:text-amber-400 transition-colors"
                 >
                   Forgot password?

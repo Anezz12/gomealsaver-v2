@@ -79,9 +79,9 @@ export async function POST(request: Request) {
       `,
     });
 
-    console.log(
-      `Email sent to ${email} with verification code: ${verificationCode}`
-    );
+    // console.log(
+    //   `Email sent to ${email} with verification code: ${verificationCode}`
+    // );
 
     return NextResponse.json({
       success: true,
