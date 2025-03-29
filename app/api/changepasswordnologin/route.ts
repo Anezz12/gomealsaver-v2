@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import connectDB from '@/config/database';
 import bcrypt from 'bcryptjs';
 import PasswordReset from '@/models/passwordReset';
@@ -9,7 +9,7 @@ interface PasswordChangeRequest {
   newPassword: string;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     await connectDB();
     const { resetToken, newPassword }: PasswordChangeRequest =

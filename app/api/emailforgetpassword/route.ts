@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import nodemailer from 'nodemailer';
 import User from '@/models/User';
 import connectDB from '@/config/database';
 import crypto from 'crypto';
 import PasswordReset from '@/models/passwordReset';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     await connectDB();
     const { email } = await request.json();

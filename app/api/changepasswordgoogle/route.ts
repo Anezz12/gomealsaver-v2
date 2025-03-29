@@ -18,13 +18,23 @@ interface SessionUser {
   };
 }
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
+interface UpdateResponse {
+  success: boolean;
+  message: string;
+}
+
+export async function POST(
+  req: NextRequest
+): Promise<NextResponse<UpdateResponse>> {
   await connectDB();
   try {
     const session = ((await getSessionUser()) as SessionUser) || null;
     if (!session) {
       return NextResponse.json(
-        { message: 'Not authenticated' },
+        {
+          message: 'Not authenticated',
+          success: false,
+        },
         { status: 401 }
       );
     }
@@ -34,13 +44,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const user = await User.findOne({ email: session.user.email });
 
     if (!user) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+      return NextResponse.json(
+        {
+          message: 'User not found',
+          success: false,
+        },
+        { status: 404 }
+      );
     }
 
     // Verifikasi bahwa pengguna menggunakan provider Google
     if (user.provider !== 'google') {
       return NextResponse.json(
-        { message: 'This endpoint is only for Google accounts' },
+        {
+          message: 'This endpoint is only for Google accounts',
+          success: false,
+        },
         { status: 400 }
       );
     }
@@ -50,8 +69,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (!passwordPattern.test(newPassword)) {
       return NextResponse.json(
         {
-          message:
-            'New password must be at least 8 characters long and contain letters and numbers.',
+          message: 'This endpoint is only for Google accounts',
+          success: false,
         },
         { status: 400 }
       );
@@ -68,13 +87,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       {
         message:
           'Password updated successfully. You can now login with email and password.',
+        success: true,
       },
       { status: 200 }
     );
   } catch (error: unknown) {
     console.error('Password update error:', error);
     return NextResponse.json(
-      { message: 'Error updating password' },
+      { message: 'Error updating password', success: false },
       { status: 500 }
     );
   }
