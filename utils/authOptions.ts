@@ -41,6 +41,8 @@ declare module 'next-auth/jwt' {
     role: string;
     image: string;
     provider: string;
+    phone: string;
+    address: string;
   }
 }
 // Add type definition for Google profile
@@ -199,6 +201,8 @@ export const authOptions: NextAuthOptions = {
             image: user.image,
             provider: user.provider,
             password: user.password,
+            phone: user.phone || '',
+            address: user.address || '',
           };
         }
         return session;
@@ -218,7 +222,17 @@ export const authOptions: NextAuthOptions = {
     //   return token;
     // },
 
-    async jwt({ token, user }: { token: JWT; user: any }) {
+    async jwt({
+      token,
+      user,
+      trigger,
+      session,
+    }: {
+      token: JWT;
+      user: any;
+      trigger?: string;
+      session?: any;
+    }) {
       if (user) {
         token.id = user.id;
         token.name = user.name;
@@ -226,6 +240,24 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.image = user.image;
         token.provider = user.provider;
+        token.phone = user.phone || '';
+        token.address = user.address || '';
+      }
+
+      // If the trigger is "update", it means the user has updated their profile
+
+      // Handle pembaruan session (termasuk ketika role berubah)
+      if (trigger === 'update' && session) {
+        // Jika role diperbarui dalam session, update juga token
+        if (session.user?.role) {
+          token.role = session.user.role;
+        }
+
+        // Perbarui field lain jika ada update
+        if (session.user?.name) token.name = session.user.name;
+        if (session.user?.image) token.picture = session.user.image;
+        if (session.user?.username) token.username = session.user.username;
+        if (session.user?.phone !== undefined) token.phone = session.user.phone;
       }
       return token;
     },

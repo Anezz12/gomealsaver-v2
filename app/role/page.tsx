@@ -4,22 +4,67 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { toast } from 'react-hot-toast';
 
 export default function RoleSelection() {
   const [selectedRole, setSelectedRole] = useState<'user' | 'seller' | null>(
     null
   );
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { data: session, update } = useSession();
 
   const handleRoleSelection = (role: 'user' | 'seller') => {
     setSelectedRole(role);
   };
 
-  const handleContinue = () => {
-    if (selectedRole === 'user') {
-      router.push('/dashboard');
-    } else if (selectedRole === 'seller') {
-      router.push('/seller/onboarding');
+  const handleContinue = async () => {
+    if (!selectedRole || !session) return;
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/change-role', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ role: selectedRole }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to change role');
+      }
+      // Update session dengan role baru
+      await update({
+        ...session,
+        user: {
+          ...session.user,
+          role: selectedRole,
+        },
+      });
+
+      toast.success(
+        `Peran berhasil diubah menjadi ${
+          selectedRole === 'user' ? 'Pengguna' : 'Penjual'
+        }`
+      );
+
+      // Redirect ke halaman yang sesuai
+      setTimeout(() => {
+        if (selectedRole === 'user') {
+          router.push('/dashboard');
+        } else if (selectedRole === 'seller') {
+          router.push('/seller/onboarding');
+        }
+      }, 1000);
+    } catch (error: any) {
+      toast.error('Terjadi kesalahan, silakan coba lagi.' + error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -135,7 +180,7 @@ export default function RoleSelection() {
         <div className="flex flex-col items-center space-y-4">
           <button
             onClick={handleContinue}
-            disabled={!selectedRole}
+            disabled={!selectedRole || loading}
             className={`w-full sm:w-auto px-8 py-3 rounded-full font-medium transition-all ${
               selectedRole
                 ? 'bg-amber-500 hover:bg-amber-600 text-white'
