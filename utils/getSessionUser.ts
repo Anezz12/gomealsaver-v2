@@ -16,14 +16,19 @@ interface SessionUser {
 }
 
 export const getSessionUser = async (): Promise<SessionUser | null> => {
-  const session = await getServerSession(authOptions);
+  try {
+    const session = await getServerSession(authOptions);
 
-  if (!session || !session.user) {
+    if (!session || !session.user || !session.user.id) {
+      return null;
+    }
+
+    return {
+      user: session.user,
+      userId: session.user.id,
+    };
+  } catch (error) {
+    console.error('Error in getSessionUser:', error);
     return null;
   }
-
-  return {
-    userId: session.user.id,
-    user: session.user,
-  };
 };

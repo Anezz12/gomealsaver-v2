@@ -8,6 +8,9 @@ import Image from 'next/image';
 import { Calendar, Mail, Shield, Clock, User as UserIcon } from 'lucide-react';
 import ProfileDefault from '@/public/profile.png';
 
+// Tambahkan export konfigurasi untuk set dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export default async function ProfilePage() {
   try {
     await connectDB();

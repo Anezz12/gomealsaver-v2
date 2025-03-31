@@ -7,7 +7,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-// import updateUser from '@/app/actions/updateUser';
+
+// Tambahkan export konfigurasi untuk set dynamic rendering
+export const dynamic = 'force-dynamic';
 
 interface UpdateResponse {
   success: boolean;

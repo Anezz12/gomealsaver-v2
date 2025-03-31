@@ -7,6 +7,9 @@ import { Eye, EyeOff, Shield } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ChangePasswordGmail from './ChangePasswordGoggle';
 
+// Tambahkan export konfigurasi untuk set dynamic rendering
+export const dynamic = 'force-dynamic';
+
 interface FormData {
   oldPassword: string;
   newPassword: string;
