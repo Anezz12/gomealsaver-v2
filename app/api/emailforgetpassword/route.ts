@@ -5,6 +5,13 @@ import connectDB from '@/config/database';
 import crypto from 'crypto';
 import PasswordReset from '@/models/passwordReset';
 
+interface ExistingReset {
+  token: string;
+  user: string;
+  expiresAt: Date;
+  save(): Promise<void>;
+}
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     await connectDB();
@@ -28,7 +35,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     expiresAt.setMinutes(expiresAt.getMinutes() + 15);
 
     // Cari jika ada reset token yang sudah ada untuk user ini
-    const existingReset = await PasswordReset.findOne({ user: user._id });
+    const existingReset: ExistingReset | null = await PasswordReset.findOne({
+      user: user._id,
+    });
 
     if (existingReset) {
       // Update jika sudah ada

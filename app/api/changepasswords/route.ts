@@ -18,6 +18,13 @@ interface SessionUser {
   };
 }
 
+interface User {
+  id: string;
+  password: string;
+  provider: string;
+  save(): Promise<void>;
+}
+
 export async function POST(req: NextRequest): Promise<NextResponse> {
   await connectDB();
   try {
@@ -32,7 +39,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const { oldPassword, newPassword }: PasswordChangeRequest =
       await req.json();
 
-    const user = await User.findOne({ email: session.user.email });
+    const user: User | null = await User.findOne({ email: session.user.email });
 
     if (!user) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
