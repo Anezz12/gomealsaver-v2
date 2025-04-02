@@ -10,6 +10,7 @@ import BookmarkButton from '@/components/meals/BookmarkButton';
 import ShareButton from '@/components/meals/ShareButton';
 import MealsImages from '@/components/meals/MealsImage';
 import ErrorPage from '@/app/error';
+export const dynamic = 'force-dynamic';
 
 type Params = Promise<{ slug: string }>;
 

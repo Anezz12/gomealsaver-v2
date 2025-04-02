@@ -1,11 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { Send, ArrowLeft, Key, Mail } from 'lucide-react';
 import Link from 'next/link';
 
+interface EmailForgetPasswordResponse {
+  error?: string;
+  message: string;
+  success?: boolean;
+}
+
+interface VerifyCodeResponse {
+  error?: string;
+  resetToken: string;
+  success?: boolean;
+}
+
+interface ResetPasswordResponse {
+  error?: string;
+  message: string;
+  success?: boolean;
+}
 export default function ForgotPasswordPage() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [email, setEmail] = useState('');
@@ -29,7 +46,7 @@ export default function ForgotPasswordPage() {
         body: JSON.stringify({ email }),
       });
 
-      const data = await response.json();
+      const data: EmailForgetPasswordResponse = await response.json();
 
       if (!response.ok) {
         throw new Error(
@@ -47,7 +64,9 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  const handleVerifyCode = async (e: React.FormEvent) => {
+  const handleVerifyCode = async (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -60,7 +79,7 @@ export default function ForgotPasswordPage() {
         body: JSON.stringify({ email, code: verificationCode }),
       });
 
-      const data = await response.json();
+      const data: VerifyCodeResponse = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || 'Invalid verification code');
@@ -76,7 +95,9 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  const handleResetPassword = async (e: React.FormEvent) => {
+  const handleResetPassword = async (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
@@ -100,7 +121,7 @@ export default function ForgotPasswordPage() {
         body: JSON.stringify({ resetToken, newPassword }),
       });
 
-      const data = await response.json();
+      const data: ResetPasswordResponse = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || 'Failed to reset password');
