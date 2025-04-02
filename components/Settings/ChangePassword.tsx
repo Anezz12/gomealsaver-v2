@@ -306,7 +306,7 @@ export default function ChangePassword() {
                     Updating...
                   </span>
                 ) : (
-                  'Update Password'
+                  'Update'
                 )}
               </button>
             </div>

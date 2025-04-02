@@ -19,7 +19,9 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <Navbar />
-          <main>{children}</main>
+          <main className="min-h-screen px-4 sm:px-8 bg-[#0A0A0A] text-white py-16">
+            {children}
+          </main>
           <Toaster />
           <Footer />
         </AuthProvider>

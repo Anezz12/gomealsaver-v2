@@ -298,7 +298,7 @@ export default function ChangePasswordGmail() {
                       Updating...
                     </span>
                   ) : (
-                    'Update Password'
+                    'Update'
                   )}
                 </button>
               </div>
