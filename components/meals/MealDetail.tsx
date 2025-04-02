@@ -12,6 +12,7 @@ import {
   FaChevronRight,
 } from 'react-icons/fa';
 import MealMap from './MealMap';
+import NotFoundImage from '@/public/food/not-found.png';
 
 interface Restaurant {
   name: string;
@@ -69,7 +70,7 @@ export default function MealDetail({ meal }: MealDetailProps) {
         {/* Main Image */}
         <div className="relative w-full h-[300px] md:h-[400px] bg-black">
           <Image
-            src={meal.image[currentImageIndex]}
+            src={meal.image[currentImageIndex] || NotFoundImage}
             alt={meal.name}
             fill
             className="object-cover"
