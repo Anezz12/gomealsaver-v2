@@ -25,26 +25,6 @@ export default function Navbar() {
   const dekstopMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
-  // Daftar path yang tidak menampilkan navbar
-  // const hideNavbarPaths = [
-  //   '/login',
-  //   '/register',
-  //   '/forgot-password',
-  //   '/reset-password',
-  //   '/profile/setting',
-  //   '/profile/dashboard',
-  // ];
-
-  // // Periksa apakah halaman saat ini dalam daftar hideNavbarPaths
-  // const shouldHideNavbar = hideNavbarPaths.some((path) =>
-  //   pathname?.startsWith(path)
-  // );
-
-  // // Jika halaman saat ini dalam daftar, jangan render navbar
-  // if (shouldHideNavbar) {
-  //   return null; // Kembalikan null tanpa menjalankan hooks
-  // }
-
   useEffect(() => {
     const handleScroll = (): void => {
       const currentScrollPos = window.scrollY;
