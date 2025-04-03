@@ -11,12 +11,12 @@ import ProfileDefault from '@/public/profile.png';
 
 export default function Navbar() {
   const { data: session, status } = useSession();
-  const [isAuthMenuOpen, setIsAuthMenuOpen] = useState<boolean>(false);
-  const [isLoginModelOpen, setisLoginModelOpen] = useState<boolean>(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
-  const [isVisible, setIsVisible] = useState<boolean>(true);
-  const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
-  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const [isAuthMenuOpen, setIsAuthMenuOpen] = useState(false);
+  const [isLoginModelOpen, setisLoginModelOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Tentukan tipe untuk ref
   const authMenuRef = useRef<HTMLDivElement>(null);
