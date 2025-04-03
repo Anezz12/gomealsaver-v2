@@ -122,7 +122,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 bg-[#0A0A0A] pt-32">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 bg-[#0A0A0A] ">
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
         {/* Background overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-amber-900/20 via-black to-black z-0"></div>
@@ -137,7 +137,7 @@ export default function RegisterPage() {
         <div className="flex justify-center mb-8">
           <div className="bg-[#141414] rounded-full p-3 shadow-lg shadow-amber-500/20">
             <Image
-              src="/logo.png"
+              src="/images/logos/logo.svg"
               alt="GoMealSaver Logo"
               width={48}
               height={48}

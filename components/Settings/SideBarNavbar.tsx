@@ -42,6 +42,7 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
       href: '/profile/transaction',
       icon: LucideBadgeDollarSign,
     },
+    { name: 'Dashboard', href: '/profile/dashboard', icon: User },
   ];
 
   return (

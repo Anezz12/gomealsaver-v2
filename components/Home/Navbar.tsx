@@ -25,6 +25,26 @@ export default function Navbar() {
   const dekstopMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
+  // Daftar path yang tidak menampilkan navbar
+  // const hideNavbarPaths = [
+  //   '/login',
+  //   '/register',
+  //   '/forgot-password',
+  //   '/reset-password',
+  //   '/profile/setting',
+  //   '/profile/dashboard',
+  // ];
+
+  // // Periksa apakah halaman saat ini dalam daftar hideNavbarPaths
+  // const shouldHideNavbar = hideNavbarPaths.some((path) =>
+  //   pathname?.startsWith(path)
+  // );
+
+  // // Jika halaman saat ini dalam daftar, jangan render navbar
+  // if (shouldHideNavbar) {
+  //   return null; // Kembalikan null tanpa menjalankan hooks
+  // }
+
   useEffect(() => {
     const handleScroll = (): void => {
       const currentScrollPos = window.scrollY;
@@ -92,7 +112,7 @@ export default function Navbar() {
     if (status === 'loading') {
       return (
         <div className="flex items-center space-x-2 animate-pulse">
-          <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+          <div className="h-8 w-8 bg-gray-700 rounded-full"></div>
           <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded hidden md:block"></div>
         </div>
       );
@@ -296,7 +316,7 @@ export default function Navbar() {
         <section className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-[60]">
           <div
             ref={loginModalRef}
-            className="relative mx-4 w-full max-w-[90%] sm:max-w-[450px] bg-white dark:bg-zinc-800 rounded-xl shadow-xl p-4 sm:p-6 md:p-8 overflow-hidden"
+            className="relative mx-4 w-full max-w-[90%] sm:max-w-[450px] bg-[#141414] shadow-amber-900/10 rounded-xl shadow-xl p-4 sm:p-6 md:p-8 overflow-hidden"
           >
             <button
               onClick={() => setisLoginModelOpen(false)}

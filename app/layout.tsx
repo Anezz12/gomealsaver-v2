@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import '@/assets/styles/globals.css';
-import Navbar from '@/components/Home/Navbar';
-import AuthProvider from './(auth)/login/AuthProvider';
+import AuthProvider from '@/context/AuthProvider';
 import Footer from '@/components/Home/Footer';
 import { Toaster } from 'react-hot-toast';
 export const metadata: Metadata = {
@@ -18,10 +17,8 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <Navbar />
-          <main className="min-h-screen px-4 sm:px-8 bg-[#0A0A0A] text-white py-16">
-            {children}
-          </main>
+          {/* <Navbar /> */}
+          <main>{children}</main>
           <Toaster />
           <Footer />
         </AuthProvider>
