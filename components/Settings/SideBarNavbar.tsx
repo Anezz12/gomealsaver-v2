@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { User, Settings, LucideBadgeDollarSign } from 'lucide-react';
@@ -21,19 +21,6 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   const navigation = [
     { name: 'Profile', href: '/profile', icon: User },
     { name: 'Settings', href: '/profile/setting', icon: Settings },
@@ -42,7 +29,7 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
       href: '/profile/transaction',
       icon: LucideBadgeDollarSign,
     },
-    { name: 'Dashboard', href: '/profile/dashboard', icon: User },
+    { name: 'Dashboard', href: '/dashboard', icon: User },
   ];
 
   return (

@@ -12,7 +12,7 @@ export default async function MainContainer({
     redirect('/login');
   }
   return (
-    <div>
+    <div className="pt-16">
       <SideBarNavbar user={session.user}>{children}</SideBarNavbar>
     </div>
   );
