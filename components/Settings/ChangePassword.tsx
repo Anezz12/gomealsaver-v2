@@ -147,7 +147,7 @@ export default function ChangePassword() {
   }
 
   return (
-    <div className="min-h-52 pt-16 pb-10 px-4 bg-[#0A0A0A]">
+    <div className="min-h-52 bg-[#0A0A0A]">
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2 bg-amber-900/20 rounded-full">

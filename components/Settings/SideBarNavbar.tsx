@@ -46,7 +46,7 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] sm:px-8 pt-20 sm:mt-0 pb-24 lg:pb-0">
+    <div className="min-h-screen bg-[#0A0A0A] sm:px-8 px-8 pt-16 sm:pt-20 sm:mt-0">
       <div className="flex flex-col lg:flex-row">
         {/* Desktop Sidebar */}
         <div className="hidden lg:block lg:w-64 bg-[#141414] border border-gray-800 shadow-md shadow-amber-900/10 rounded-xl">
@@ -120,7 +120,7 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 lg:pl-8">{children}</div>
+        <div className="lg:pl-8">{children}</div>
       </div>
     </div>
   );

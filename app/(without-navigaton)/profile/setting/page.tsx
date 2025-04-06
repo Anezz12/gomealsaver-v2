@@ -6,7 +6,7 @@ export default function Page() {
   return (
     <>
       <MainContainer>
-        <div className="min-h-52 pt-8 px-6 bg-[#0A0A0A]">
+        <div className="px-6 bg-[#0A0A0A]">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold mb-8 text-white">Settings</h1>
 
