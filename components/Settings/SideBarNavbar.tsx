@@ -34,9 +34,9 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] sm:px-8 px-8 pt-16 sm:pt-20 sm:mt-0">
-      <div className="flex flex-col lg:flex-row">
-        {/* Desktop Sidebar */}
-        <div className="hidden lg:block lg:w-64 bg-[#141414] border border-gray-800 shadow-md shadow-amber-900/10 rounded-xl">
+      <div className="flex flex-col lg:flex-row ">
+        {/* <div className="hidden lg:block lg:w-64 bg-[#141414] border border-gray-800 shadow-md shadow-amber-900/10 rounded-xl lg:h-[calc(100vh-8rem)] flex-shrink-0 sticky top-20 self-start overflow-y-auto"> */}
+        <div className="hidden lg:block lg:w-64 bg-[#141414] border border-gray-800 shadow-md shadow-amber-900/10 rounded-xl lg:h-[calc(100vh-6rem)] flex-shrink-0 sticky top-20 self-start overflow-y-auto">
           <div className="p-5">
             <div className="relative" ref={dropdownRef}>
               <button
@@ -106,7 +106,7 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
           </nav>
         </div>
 
-        {/* Main Content */}
+        {/* Main Content - Menambahkan flex-grow untuk mengisi ruang tersisa */}
         <div className="lg:pl-8">{children}</div>
       </div>
     </div>
