@@ -139,13 +139,18 @@ export default function HeroSection() {
           >
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-amber-500/30 to-transparent rounded-full blur-md"></div>
-              <Image
-                src="/food/gado-gado.jpeg"
-                alt="Delicious Food"
-                width={180}
-                height={180}
-                className="rounded-full border-2 border-white/20 object-cover shadow-2xl"
-              />
+
+              {/* Container ukuran tetap untuk memastikan bentuk lingkaran sempurna */}
+              <div className="w-[180px] h-[180px] relative overflow-hidden rounded-full border-2 border-white/20 shadow-2xl">
+                <Image
+                  src="/food/gado-gado.jpeg"
+                  alt="Delicious Food"
+                  fill
+                  sizes="180px"
+                  className="object-cover"
+                />
+              </div>
+
               <div className="absolute -right-2 -top-2 bg-amber-500 text-white text-xs font-bold rounded-full px-2 py-1 shadow-lg">
                 -50%
               </div>
@@ -160,15 +165,20 @@ export default function HeroSection() {
           >
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-amber-500/30 to-transparent rounded-full blur-md"></div>
-              <Image
-                src="/food/bakso.jpg"
-                alt="Special Dish"
-                width={140}
-                height={140}
-                className="rounded-full border-2 border-white/20 object-cover shadow-2xl"
-              />
+
+              {/* Container ukuran tetap untuk memastikan bentuk lingkaran sempurna */}
+              <div className="w-[180px] h-[180px] relative overflow-hidden rounded-full border-2 border-white/20 shadow-2xl">
+                <Image
+                  src="/food/salad.jpg"
+                  alt="Delicious Food"
+                  fill
+                  sizes="180px"
+                  className="object-cover"
+                />
+              </div>
+
               <div className="absolute -right-2 -top-2 bg-amber-500 text-white text-xs font-bold rounded-full px-2 py-1 shadow-lg">
-                -30%
+                -50%
               </div>
             </div>
           </motion.div>
@@ -181,15 +191,19 @@ export default function HeroSection() {
           >
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-amber-500/30 to-transparent rounded-full blur-md"></div>
-              <Image
-                src="/food/ayam-bakar.jpg"
-                alt="Featured Meal"
-                width={160}
-                height={160}
-                className="rounded-full border-2 border-white/20 object-cover shadow-2xl"
-              />
+              {/* Container ukuran tetap untuk memastikan bentuk lingkaran sempurna */}
+              <div className="w-[180px] h-[180px] relative overflow-hidden rounded-full border-2 border-white/20 shadow-2xl">
+                <Image
+                  src="/food/gado-gado.jpeg"
+                  alt="Delicious Food"
+                  fill
+                  sizes="180px"
+                  className="object-cover"
+                />
+              </div>
+
               <div className="absolute -right-2 -top-2 bg-amber-500 text-white text-xs font-bold rounded-full px-2 py-1 shadow-lg">
-                -40%
+                -30%
               </div>
             </div>
           </motion.div>
@@ -202,15 +216,19 @@ export default function HeroSection() {
           >
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-amber-500/30 to-transparent rounded-full blur-md"></div>
-              <Image
-                src="/food/sate.jpg"
-                alt="Featured Meal"
-                width={130}
-                height={130}
-                className="rounded-full border-2 border-white/20 object-cover shadow-2xl"
-              />
+
+              {/* Container ukuran tetap untuk memastikan bentuk lingkaran sempurna */}
+              <div className="w-[180px] h-[180px] relative overflow-hidden rounded-full border-2 border-white/20 shadow-2xl">
+                <Image
+                  src="/food/soto.jpg"
+                  alt="Delicious Food"
+                  fill
+                  sizes="180px"
+                  className="object-cover"
+                />
+              </div>
               <div className="absolute -right-2 -top-2 bg-amber-500 text-white text-xs font-bold rounded-full px-2 py-1 shadow-lg">
-                -35%
+                -50%
               </div>
             </div>
           </motion.div>
@@ -223,7 +241,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="bg-[#141414] rounded-2xl p-6 md:p-8 text-white shadow-2xl border border-white/5 backdrop-blur-lg"
+          className="bg-[#141414]  p-6 md:p-8 text-white shadow-2xl border border-white/5 backdrop-blur-lg"
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {/* Stats Items */}
@@ -258,14 +276,14 @@ export default function HeroSection() {
                 className="flex items-center gap-4 hover:-translate-y-1 transition-transform duration-300"
               >
                 <div
-                  className={`flex h-14 w-14 items-center justify-center rounded-full ${stat.color}`}
+                  className={`flex h-10 w-10 items-center justify-center rounded-full md:w-14 md:h-14 md:rounded-full ${stat.color}`}
                 >
                   <Image
                     src={`/images/icons/${stat.icon}`}
                     alt={stat.label}
                     width={28}
                     height={28}
-                    className="w-7 h-7"
+                    className="w-5 h-5 md:w-8 md:h-8"
                   />
                 </div>
                 <div>
