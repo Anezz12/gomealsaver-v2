@@ -1,6 +1,29 @@
+'use client';
+
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
+  // Daftar path yang tidak menampilkan footer
+  const pathname = usePathname();
+  const excludedPaths = [
+    '/register',
+    '/forgot-password',
+    '/dashboard',
+    '/profile/setting',
+    '/profile',
+  ];
+
+  // Periksa apakah halaman saat ini dalam daftar hideNavbarPaths
+  const isExcludedPath = excludedPaths.some((path) =>
+    pathname?.startsWith(path)
+  );
+
+  // Jika halaman saat ini dalam daftar, jangan render navbar
+  if (isExcludedPath) {
+    return null; // Kembalikan null tanpa menjalankan hooks
+  }
+
   return (
     <footer className="mt-[100px] space-y-[30px] md:space-y-[50px] bg-[#141414] py-[50px] md:py-[100px]">
       <div className="mx-auto max-w-[1280px] px-4 md:px-[75px]">

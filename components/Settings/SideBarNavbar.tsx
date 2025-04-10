@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { User, Settings, LucideBadgeDollarSign } from 'lucide-react';
+import { User, Settings, LucideBadgeDollarSign, Home } from 'lucide-react';
 import Link from 'next/link';
 import ProfileDefault from '@/public/profile.png';
 
@@ -36,7 +36,7 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
     <div className="min-h-screen bg-[#0A0A0A] sm:px-8 px-8 pt-16 sm:pt-20 sm:mt-0">
       <div className="flex flex-col lg:flex-row ">
         {/* <div className="hidden lg:block lg:w-64 bg-[#141414] border border-gray-800 shadow-md shadow-amber-900/10 rounded-xl lg:h-[calc(100vh-8rem)] flex-shrink-0 sticky top-20 self-start overflow-y-auto"> */}
-        <div className="hidden lg:block lg:w-64 bg-[#141414] border border-gray-800 shadow-md shadow-amber-900/10 rounded-xl lg:h-[calc(100vh-6rem)] flex-shrink-0 sticky top-20 self-start overflow-y-auto">
+        <div className="hidden lg:block lg:w-64 bg-[#141414] border border-gray-800 shadow-md shadow-amber-900/10 rounded-xl  flex-shrink-0 sticky top-20 self-start overflow-y-auto">
           <div className="p-5">
             <div className="relative" ref={dropdownRef}>
               <button
@@ -56,7 +56,7 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
               </button>
             </div>
 
-            <nav className="space-y-2">
+            <nav className="space-y-2 flex-grow">
               {navigation.map((item) => {
                 const isActive = pathname === item.href;
                 const Icon = item.icon;
@@ -78,6 +78,17 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
                 );
               })}
             </nav>
+            <div className="mt-auto pt-6 border-t border-gray-800">
+              {' '}
+              {/* Border atas dan margin */}
+              <Link
+                href="/"
+                className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-300 hover:bg-[#1A1A1A] w-full"
+              >
+                <Home size={20} />
+                <span>Back to Home</span>
+              </Link>
+            </div>
           </div>
         </div>
 
