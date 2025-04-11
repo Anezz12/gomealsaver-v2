@@ -102,7 +102,7 @@ export default function RoleSelection() {
           >
             <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-amber-500/20">
               <Image
-                src="/images/icons/user-profile.svg"
+                src="/profile.png"
                 alt="User icon"
                 width={28}
                 height={28}
@@ -144,7 +144,7 @@ export default function RoleSelection() {
           >
             <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-amber-500/20">
               <Image
-                src="/images/icons/shop.svg"
+                src="/profile.png"
                 alt="Shop icon"
                 width={28}
                 height={28}
