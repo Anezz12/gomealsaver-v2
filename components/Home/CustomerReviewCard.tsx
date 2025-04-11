@@ -26,7 +26,7 @@ export default function CustomerReviewCard() {
         'Harganya sangat terjangkau untuk makanan berkualitas. Saya pasti akan pesan lagi!',
       name: 'Budi Santoso',
       role: 'Food Blogger',
-      avatarUrl: '/photos/photo-2.png',
+      avatarUrl: '/profile.png',
     },
     {
       id: 3,
