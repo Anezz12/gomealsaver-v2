@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import { Camera, User, Mail, Phone, Save, X } from 'lucide-react';
+import { Camera, User, Mail, Phone, Save, X, Shield } from 'lucide-react';
 
 // Dynamic rendering configuration
 export const dynamic = 'force-dynamic';
@@ -158,20 +158,48 @@ export default function ProfileSettingProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] ">
-      <div className="max-w-2xl mx-auto md:max-w-xl">
-        {/* Header with larger text and better spacing */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-white">
+    <div className="min-h-52 bg-gray-50 dark:bg-[#0A0A0A] ">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-amber-900/20 rounded-full">
+            <Shield className="w-7 h-7 text-amber-500" />
+          </div>
+          <h1 className="text-3xl font-bold  text-gray-800 dark:text-white">
             Edit Your Profile
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl">
-            Customize your profile information to help others recognize you
-            better.
-          </p>
+        </div>
+        <p className="max-w-lg text-lg font-medium text-gray-400 mb-8">
+          Customize your profile information to help others recognize you
+          better.
+        </p>
+
+        {/* Additional guidance note */}
+        <div className="hidden lg:block">
+          <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-xl p-4 flex items-start mb-6 ">
+            <div className="text-blue-500 dark:text-blue-400 mr-3 mt-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <p className="text-sm text-blue-800 dark:text-blue-300 ">
+              Your profile information helps others identify you. Make sure to
+              use a clear profile picture and your real name for better
+              recognition. All information is secured with industry-standard
+              encryption.
+            </p>
+          </div>
         </div>
 
-        {/* Main content area with improved card design */}
+        {/* Main content area */}
         <div className="bg-white dark:bg-zinc-800/60 rounded-2xl shadow-xl dark:shadow-zinc-800/30 border border-gray-100 dark:border-zinc-700/50 overflow-hidden">
           <form
             onSubmit={handleSubmit}
@@ -373,28 +401,30 @@ export default function ProfileSettingProfilePage() {
             </div>
           </form>
         </div>
-
         {/* Additional guidance note */}
-        <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-xl p-4 flex items-start">
-          <div className="text-blue-500 dark:text-blue-400 mr-3 mt-1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
-                clipRule="evenodd"
-              />
-            </svg>
+        <div className="block lg:hidden">
+          <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-xl p-4 flex items-start mb-6">
+            <div className="text-blue-500 dark:text-blue-400 mr-3 mt-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <p className="text-sm text-blue-800 dark:text-blue-300">
+              Your profile information helps others identify you. Make sure to
+              use a clear profile picture and your real name for better
+              recognition. All information is secured with industry-standard
+              encryption.
+            </p>
           </div>
-          <p className="text-sm text-blue-800 dark:text-blue-300">
-            Your profile information helps others identify you. Make sure to use
-            a clear profile picture and your real name for better recognition.
-            All information is secured with industry-standard encryption.
-          </p>
         </div>
       </div>
     </div>
