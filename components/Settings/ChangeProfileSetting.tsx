@@ -31,7 +31,6 @@ export default function ProfileSettingProfilePage() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const profileImage = session?.user?.image || ProfileDefault;
 
-  // Implementation remains the same
   async function updateUser(formData: FormData): Promise<UpdateResponse> {
     // Same implementation
     try {
@@ -159,8 +158,8 @@ export default function ProfileSettingProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] p-6 sm:p-8 md:p-10">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] ">
+      <div className="max-w-2xl mx-auto md:max-w-xl">
         {/* Header with larger text and better spacing */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-white">
@@ -183,17 +182,13 @@ export default function ProfileSettingProfilePage() {
               <div className="relative group mb-6">
                 <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-full overflow-hidden border-4 border-gray-200 dark:border-zinc-700">
                   <Image
-                    src={
-                      selectedImage
-                        ? URL.createObjectURL(selectedImage)
-                        : profileImage
-                    }
+                    src={profileImage}
                     alt="Profile"
                     width={192}
                     height={192}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 rounded-full flex items-center justify-center">
+                  <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 rounded-full flex items-center justify-center">
                     <label
                       htmlFor="avatar"
                       className="opacity-0 group-hover:opacity-100 cursor-pointer p-3 bg-blue-600 rounded-full transform translate-y-2 group-hover:translate-y-0 transition-transform shadow-lg"
