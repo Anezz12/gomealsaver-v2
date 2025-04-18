@@ -8,7 +8,8 @@ import { convertToObject } from '@/utils/convertToObject';
 // import MealsHeaderImage from '@/components/meals/MealHeaderImage';
 import BookmarkButton from '@/components/meals/BookmarkButton';
 import ShareButton from '@/components/meals/ShareButton';
-import MealsImages from '@/components/meals/MealsImage';
+// import MealsImages from '@/components/meals/MealsImage';
+import Review from '@/components/meals/Review';
 import ErrorPage from '@/app/error';
 export const dynamic = 'force-dynamic';
 
@@ -101,9 +102,14 @@ export default async function MealPage({ params }: { params: Params }) {
           </div>
 
           {/* Image Gallery Section */}
-          <div className="bg-[#141414] rounded-xl p-4 sm:p-6 md:p-8 shadow-xl mb-8 border border-gray-800">
+          {/* <div className="bg-[#141414] rounded-xl p-4 sm:p-6 md:p-8 shadow-xl mb-8 border border-gray-800">
             <h2 className="text-2xl font-bold text-white mb-6">Gallery</h2>
             <MealsImages images={meal.image} />
+          </div> */}
+          {/* Review Section */}
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-6">Reviews</h2>
+            <Review meal={meal._id} />
           </div>
         </div>
       </div>
