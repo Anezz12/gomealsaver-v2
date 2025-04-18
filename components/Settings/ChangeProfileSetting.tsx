@@ -80,7 +80,6 @@ export default function ProfileSettingProfilePage() {
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    // Same implementation
     e.preventDefault();
     setIsLoading(true);
 
