@@ -44,16 +44,16 @@ export default function MealsCard({ meal }: MealCardProps) {
         </header>
 
         {/* Price Section */}
-        <div className="absolute top-[10px] right-[10px] bg-[#141414]/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md border border-gray-800">
+        <div className="absolute top-[10px] right-[10px] bg-[#141414]/80 backdrop-blur px-3 py-2 rounded-xl shadow-sm border border-gray-800/50">
           <div className="flex flex-col items-end">
-            <div className="text-amber-500 font-bold text-xl">
+            <div className="text-amber-500 font-semibold text-lg">
               Rp{meal.price.toLocaleString('id-ID')}
             </div>
-            <div className="text-gray-400 text-sm line-through">
+            <div className="text-gray-500 text-xs line-through mb-0.5">
               Rp{meal.originalPrice.toLocaleString('id-ID')}
             </div>
-            <div className="text-red-500 text-sm font-medium">
-              -{meal.discountPercentage}% OFF
+            <div className="text-xs font-medium bg-red-500/20 text-red-400 rounded-full px-2 py-0.5">
+              {meal.discountPercentage}% OFF
             </div>
           </div>
         </div>
