@@ -10,12 +10,6 @@ export default function AdBanner() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Periksa localStorage untuk status banner
-    const bannerClosed = localStorage.getItem('adBannerClosed');
-    if (bannerClosed === 'true') {
-      setIsVisible(false);
-    }
-
     const timer = setTimeout((): void => {
       setIsLoading(false);
     }, 1000); // Simulate loading for 1 second
@@ -27,8 +21,6 @@ export default function AdBanner() {
 
   const closeBanner = () => {
     setIsVisible(false);
-    // Simpan preferensi pengguna
-    localStorage.setItem('adBannerClosed', 'true');
   };
 
   if (!isVisible) return null;
