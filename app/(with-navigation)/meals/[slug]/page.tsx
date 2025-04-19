@@ -13,9 +13,13 @@ import Review from '@/components/meals/Review';
 import ErrorPage from '@/app/error';
 export const dynamic = 'force-dynamic';
 
-type Params = Promise<{ slug: string }>;
+// type Params = Promise<{ slug: string }>;
 
-export default async function MealPage({ params }: { params: Params }) {
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export default async function MealPage({ params }: PageProps) {
   await connectDB();
   // Check if the slug is valid
 

@@ -6,10 +6,15 @@ import Meal from '@/models/Meals';
 import { convertToObject } from '@/utils/convertToObject';
 import { FaArrowAltCircleLeft, FaSearchMinus } from 'react-icons/fa';
 
-interface SearchParams {
-  location: string;
-  mealType: string;
-  meal: string;
+// Dynamic rendering configuration
+export const dynamic = 'force-dynamic';
+
+// Gunakan interface generik untuk searchParams
+interface PageProps {
+  searchParams: Promise<{
+    location?: string;
+    mealType?: string;
+  }>;
 }
 
 interface MealQuery {
@@ -41,11 +46,14 @@ export interface Meal {
 //   meal: Meal;
 // }
 
-export default async function SearchResultsPage({
-  searchParams: { location, mealType },
-}: {
-  searchParams: SearchParams;
-}) {
+export default async function SearchResultsPage({ searchParams }: PageProps) {
+  // Resolve promise
+  const params = await searchParams;
+
+  // Akses properti dengan nilai default
+  const location = params.location || '';
+  const mealType = params.mealType || 'All';
+
   await connectDB();
   const locationPattern = new RegExp(location, 'i');
   const query: MealQuery = {
