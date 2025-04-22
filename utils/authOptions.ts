@@ -18,6 +18,7 @@ declare module 'next-auth' {
       image: string;
       provider: string;
       password: string;
+      phone: string;
     };
   }
 
@@ -30,6 +31,7 @@ declare module 'next-auth' {
     image: string;
     provider: string;
     password: string;
+    phone: string;
   }
 }
 // define costume types for extending JWT
@@ -140,6 +142,7 @@ export const authOptions: NextAuthOptions = {
               image: existingUser.image,
               provider: existingUser.provider || 'credentials',
               password: '',
+              phone: existingUser.phone || '',
             };
           }
 
@@ -176,6 +179,7 @@ export const authOptions: NextAuthOptions = {
               role: 'user',
               provider: 'google',
               password: '',
+              phone: '',
             });
           }
         }

@@ -339,7 +339,7 @@ export default function ProfileSettingProfilePage() {
                   id="phone"
                   name="phone"
                   disabled={isLoading}
-                  defaultValue={''}
+                  defaultValue={session?.user?.phone}
                   className="w-full px-4 py-3 text-lg bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-gray-100 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
                   placeholder="Enter your phone number (optional)"
                 />
