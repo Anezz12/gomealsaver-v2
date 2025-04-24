@@ -29,7 +29,7 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
       href: '/profile/transaction',
       icon: LucideBadgeDollarSign,
     },
-    { name: 'Dashboard', href: '/dashboard', icon: User },
+    { name: 'Dashboard', href: '/dashboard-seller', icon: User },
   ];
 
   return (

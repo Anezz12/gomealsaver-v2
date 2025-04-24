@@ -295,7 +295,7 @@ export default async function ProfilePage() {
                   <span>Edit Profile</span>
                 </Link>
                 <Link
-                  href="/profile/dashboard"
+                  href="/dashboard-seller"
                   className="flex-1 flex items-center justify-center gap-2 py-4 border-2 border-amber-600/70 hover:border-amber-600 bg-transparent hover:bg-amber-950/30 text-amber-500 rounded-xl font-medium transition-all"
                 >
                   <Award size={18} />
