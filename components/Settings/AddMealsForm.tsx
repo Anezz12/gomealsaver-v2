@@ -531,7 +531,7 @@ export default function AddMealForm() {
                   Features
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {availableFeatures.map((feature, index) => (
+                  {availableFeatures.map((feature) => (
                     <button
                       key={feature}
                       type="button"
