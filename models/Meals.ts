@@ -36,7 +36,7 @@ const MealSchema = new Schema(
       required: true,
     },
     timeRemaining: {
-      type: Number,
+      type: String,
       required: true,
     },
     features: [String],

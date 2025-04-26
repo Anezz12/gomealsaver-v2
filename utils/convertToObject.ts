@@ -1,6 +1,3 @@
-/**
- * Converts MongoDB documents to plain serializable JavaScript objects
- */
 export function convertToObject(data: any): any {
   // Handle null/undefined
   if (!data) return null;

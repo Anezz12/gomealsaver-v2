@@ -2,7 +2,13 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { User, Settings, LucideBadgeDollarSign, Home } from 'lucide-react';
+import {
+  User,
+  Settings,
+  LucideBadgeDollarSign,
+  Home,
+  PlusCircle,
+} from 'lucide-react';
 import Link from 'next/link';
 import ProfileDefault from '@/public/profile.png';
 
@@ -30,6 +36,7 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
       icon: LucideBadgeDollarSign,
     },
     { name: 'Dashboard', href: '/dashboard-seller', icon: User },
+    { name: 'Add Meals', href: '/profile/add-meals', icon: PlusCircle },
   ];
 
   return (
