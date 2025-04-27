@@ -20,8 +20,7 @@ interface FoodItem {
   stockQuantity: number;
   expiryDate: string;
   image: string[];
-
-  status: 'available' | 'pending' | 'sold';
+  available: boolean; // Updated status values
 }
 
 export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
@@ -32,6 +31,18 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
   // Handle case when meals is undefined or not an array
   const foodItems = Array.isArray(meals) ? meals : [];
 
+  // Then update the status handling functions
+  const getStatusLabel = (available: boolean) => {
+    return available === true ? 'Tersedia' : 'Tidak Tersedia';
+  };
+
+  const getStatusStyle = (status: boolean) => {
+    return status === true
+      ? 'bg-green-900 text-green-300'
+      : 'bg-red-900 text-red-300';
+  };
+
+  // Update the filter code
   const filteredFoodItems = foodItems.filter((item) => {
     // Filter by search query
     const matchesSearch = item.name
@@ -40,36 +51,12 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
 
     // Filter by status
     const matchesStatus =
-      filterStatus === 'all' || item.status === filterStatus;
+      filterStatus === 'all' ||
+      (filterStatus === 'available' && item.available === true) ||
+      (filterStatus === 'unavailable' && item.available === false);
 
     return matchesSearch && matchesStatus;
   });
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'available':
-        return 'Tersedia';
-      case 'pending':
-        return 'Dipesan';
-      case 'sold':
-        return 'Terjual';
-      default:
-        return status;
-    }
-  };
-
-  const getStatusStyle = (status: string) => {
-    switch (status) {
-      case 'available':
-        return 'bg-green-900 text-green-300';
-      case 'pending':
-        return 'bg-amber-900 text-amber-300';
-      case 'sold':
-        return 'bg-gray-900 text-gray-300';
-      default:
-        return 'bg-gray-900 text-gray-300';
-    }
-  };
 
   return (
     <div className="md:ml-72 lg:ml-80 pt-16 md:pt-6 min-h-screen">
@@ -123,7 +110,6 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
 
               {isFilterOpen && (
                 <div className="absolute z-10 mt-1 w-full bg-gray-900 border border-gray-800 rounded-lg shadow-lg py-1">
-                  {/* Fixed: Added unique key to each button in the filter dropdown */}
                   <button
                     key="filter-all"
                     className={`px-4 py-2 text-sm w-full text-left hover:bg-gray-800 ${
@@ -146,31 +132,19 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
                       setIsFilterOpen(false);
                     }}
                   >
-                    Available
+                    Tersedia
                   </button>
                   <button
-                    key="filter-pending"
+                    key="filter-unavailable"
                     className={`px-4 py-2 text-sm w-full text-left hover:bg-gray-800 ${
-                      filterStatus === 'pending' ? 'text-amber-500' : ''
+                      filterStatus === 'unavailable' ? 'text-amber-500' : ''
                     }`}
                     onClick={() => {
-                      setFilterStatus('pending');
+                      setFilterStatus('unavailable');
                       setIsFilterOpen(false);
                     }}
                   >
-                    Pending
-                  </button>
-                  <button
-                    key="filter-sold"
-                    className={`px-4 py-2 text-sm w-full text-left hover:bg-gray-800 ${
-                      filterStatus === 'sold' ? 'text-amber-500' : ''
-                    }`}
-                    onClick={() => {
-                      setFilterStatus('sold');
-                      setIsFilterOpen(false);
-                    }}
-                  >
-                    Sold
+                    Tidak Tersedia
                   </button>
                 </div>
               )}
@@ -188,7 +162,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
                   <tr className="text-left text-gray-400 border-b border-gray-800">
                     <th className="p-4">Product</th>
                     <th className="p-4">Price</th>
-                    <th className="p-4">stockQuantity</th>
+                    <th className="p-4">Quantity</th>
                     <th className="p-4">Expiry Date</th>
                     <th className="p-4">Status</th>
                     <th className="p-4">Actions</th>
@@ -229,10 +203,10 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
                       <td className="p-4">
                         <span
                           className={`px-2 py-1 rounded-full text-xs ${getStatusStyle(
-                            item.status
+                            item.available
                           )}`}
                         >
-                          {getStatusLabel(item.status)}
+                          {getStatusLabel(item.available)}
                         </span>
                       </td>
                       <td className="p-4">
@@ -278,7 +252,6 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
                             <MoreVertical size={18} />
                           </button>
                           <div className="absolute right-0 top-full mt-1 hidden group-hover:block bg-gray-800 rounded-lg shadow-lg overflow-hidden z-10">
-                            {/* Fixed: Added keys to the buttons in the dropdown menu */}
                             <button
                               key={`edit-${item.id}`}
                               className="flex items-center px-4 py-2 text-sm hover:bg-gray-700 w-full text-left"
@@ -313,10 +286,10 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
                         </div>
                         <span
                           className={`px-2 py-0.5 rounded-full text-xs ${getStatusStyle(
-                            item.status
+                            item.available
                           )}`}
                         >
-                          {getStatusLabel(item.status)}
+                          {getStatusLabel(item.available)}
                         </span>
                       </div>
                     </div>
