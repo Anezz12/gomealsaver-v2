@@ -32,7 +32,7 @@ export default function Footer() {
           <div className="space-y-3">
             <h1 className="text-base font-semibold text-white">Solutions</h1>
             <ul className="space-y-3 text-base text-[#A8A8AB]">
-              <li className="hover:text-amber-500">Credit Rewards</li>
+              <li className="hover:text-amber-500">Solusi alokasi makanan sisa menjadi uang </li>
               <li className="hover:text-amber-500">P2P Renting</li>
               <li className="hover:text-amber-500">Open for Listing</li>
               <li className="hover:text-amber-500">AI Automation</li>
