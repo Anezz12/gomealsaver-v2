@@ -60,10 +60,10 @@ export default function SearchMeals() {
             }}
           >
             <option value="All">Semua Makanan</option>
-            <option value="Asian Cuisine">Masakan Asia</option>
-            <option value="Indonesian Cuisine">Masakan Indonesia</option>
-            <option value="Western Cuisine">Masakan Barat</option>
-            <option value="Local Delights">Hidangan Lokal</option>
+            <option value="Asia">Masakan Asia</option>
+            <option value="Indonesia">Masakan Indonesia</option>
+            <option value="Western">Masakan Barat</option>
+            <option value="Local">Hidangan Lokal</option>
             <option value="Other">Lainnya</option>
           </select>
         </div>
