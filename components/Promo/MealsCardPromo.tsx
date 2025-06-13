@@ -16,8 +16,8 @@ interface Meal {
   image: string[];
   price: number;
   originalPrice: number;
-  discountPercentage?: number;
   timeRemaining: string;
+  discountPercentage: number;
   portionSize: string;
   features: string[];
   restaurant: Restaurant;
@@ -27,7 +27,7 @@ interface MealCardProps {
   meal: Meal;
   isLoading?: boolean;
 }
-export default function MealsCard({ meal }: MealCardProps) {
+export default function MealsCardPromo({ meal }: MealCardProps) {
   return (
     <div className="bg-[#141414] rounded-xl shadow-md relative border border-gray-800 hover:shadow-amber-900/20 hover:shadow-lg transition-all duration-300">
       <Image
@@ -48,6 +48,12 @@ export default function MealsCard({ meal }: MealCardProps) {
           <div className="flex flex-col items-end">
             <div className="text-amber-500 font-semibold text-lg">
               Rp{meal.price.toLocaleString('id-ID')}
+            </div>
+            <div className="text-gray-500 text-xs line-through mb-0.5">
+              Rp{meal.originalPrice.toLocaleString('id-ID')}
+            </div>
+            <div className="text-xs font-medium bg-red-500/20 text-red-400 rounded-full px-2 py-0.5">
+              {meal.discountPercentage}% OFF
             </div>
           </div>
         </div>
