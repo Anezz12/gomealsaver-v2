@@ -38,7 +38,7 @@ export default function Footer() {
               <span className="text-blue-300">✉️</span>
               <Link
                 href="mailto:contact@gomealsaver.com"
-                className="text-sm md:text-base text-gray-300 hover:text-blue-300 transition-colors"
+                className="text-sm md:text-base text-gray-300 hover:text-amber-500 transition-colors"
               >
                 contact@gomealsaver.com
               </Link>
@@ -90,7 +90,7 @@ export default function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white p-2 rounded-full text-yellow-600 hover:bg-blue-300 hover:scale-110 transition-all duration-300"
+                  className="bg-[#ec9104] p-2 rounded-full text-black hover:bg-amber-400 hover:scale-110 transition-all duration-300"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -119,11 +119,11 @@ export default function Footer() {
             <Image
               src="/images/logos/GMS-transparent.png"
               alt="Logo"
-              height={35}
-              width={35}
+              height={30}
+              width={30}
               className="w-auto h-auto"
             />
-            <h1 className="text-lg md:text-xl font-semibold text-[#ea8500]">GoMealSaver</h1>
+            <h1 className="text-lg md:text-3xl font-semibold text-[#ec9104]">GoMealSaver</h1>
           </div>
           <p className="text-center md:text-right text-sm md:text-base text-[#A8A8A8]">
             All Rights Reserved GoMealSaver 2025
