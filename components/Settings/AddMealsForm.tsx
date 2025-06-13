@@ -3,6 +3,7 @@
 import React, { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { toast } from 'react-hot-toast';
 import {
   X,
   ArrowLeft,
@@ -197,17 +198,30 @@ export default function AddMealForm() {
       });
 
       const data = await response.json();
+      if (data.success) {
+        toast.success('Meal added successfully! 🎉', {
+          duration: 5000,
+          position: 'top-center',
+          style: {
+            background: '#10B981',
+            color: '#FFFFFF',
+            padding: '16px',
+            borderRadius: '10px',
+          },
+          icon: '👍',
+        });
+      }
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to add meal');
       }
 
       // Success - redirect to products page
-      alert('Meal added successfully!');
+      toast.success('Meal added successfully!');
       router.push('/dashboard-seller/products');
     } catch (error: any) {
       console.error('Error adding meal:', error);
-      alert(`Failed to add meal: ${error.message}`);
+      toast.error(`Failed to add meal: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }
