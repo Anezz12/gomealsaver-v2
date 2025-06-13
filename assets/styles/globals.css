@@ -88,3 +88,13 @@ html,
 body {
   scroll-behavior: smooth;
 }
+
+.bg-tabs {
+  width: 2000px;
+  height: 300px;
+  right: 60%;
+  position: absolute;
+  border-radius: 0 9999px 9999px 0;
+  top: 15rem;
+  background-color: #f59e0b;
+}

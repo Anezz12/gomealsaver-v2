@@ -9,23 +9,12 @@ import Link from 'next/link';
 
 const HeroSection: React.FC = () => {
   return (
-    <section className="relative bg-[#141414] py-24 md:py-32">
-      {/* Background pattern/overlay */}
-      <div className="absolute inset-0 bg-black/30 z-10"></div>
-      <div className="absolute inset-0 overflow-hidden">
-        <Image
-          src="/images/backgrounds/bg.png"
-          alt="Background Pattern"
-          fill
-          className="object-cover opacity-20"
-          priority
-        />
-      </div>
+    <section className="relative py-6 md:py-8 lg:py-10">
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
         <div className="flex flex-col-reverse items-center lg:flex-row gap-8 lg:gap-12">
           {/* Content Column */}
           <div className="w-full lg:w-1/2 text-center lg:text-left space-y-6">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-zinc-100">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-amber-500">
               <TypedText
                 strings={['Go Meal Saver']}
                 typeSpeed={50}
@@ -56,8 +45,8 @@ const HeroSection: React.FC = () => {
             >
               <Link
                 href="/"
-                className="px-4 py-3 text-sm font-semibold text-white bg-fern-green-500 rounded-lg shadow-md 
-                           hover:bg-white hover:text-fern-green-500 hover:border-fern-green-500 
+                className="px-4 py-3 text-sm font-semibold text-amber-500 rounded-lg shadow-md 
+                           hover:bg-white hover:text-amber-500
                            border-2 border-transparent transition-all duration-300 
                            inline-block text-center w-full sm:w-auto"
               >
@@ -65,8 +54,8 @@ const HeroSection: React.FC = () => {
               </Link>
               <a
                 href="/register"
-                className="px-4 py-3 text-sm font-semibold text-white bg-gray-500 rounded-lg shadow-md 
-                           hover:bg-white hover:text-fern-green-500 hover:border-gray-500 
+                className="px-4 py-3 text-sm font-semibold text-white bg-amber-500 rounded-lg shadow-md 
+                           hover:bg-amber-500 hover:text-fern-green-500 hover:border-gray-500 
                            border-2 border-transparent transition-all duration-300 
                            inline-block text-center w-full sm:w-auto"
               >
