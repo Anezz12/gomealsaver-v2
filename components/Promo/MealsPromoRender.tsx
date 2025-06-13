@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 
-import MelasCardSkeleton from '../Skeleton/MelasCardSkeleton';
-import MealsCard from './MealsCard';
+import MealsPromoSkeleton from './MealsPromoSkeleton';
+import MealsCardPromo from './MealsCardPromo';
 
 interface Restaurant {
   name: string;
@@ -16,7 +16,7 @@ interface Meal {
   image: string[];
   price: number;
   originalPrice: number;
-  discountPercentage?: number;
+  discountPercentage: number;
   timeRemaining: string;
   portionSize: string;
   features: string[];
@@ -28,8 +28,7 @@ interface MealCardProps {
   isLoading?: boolean;
 }
 
-// Main MealCard component
-export default function MealsPageRender({ meal }: MealCardProps) {
+export default function MealsPromoPageRender({ meal }: MealCardProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -44,8 +43,8 @@ export default function MealsPageRender({ meal }: MealCardProps) {
 
   // If loading, show skeleton
   if (isLoading) {
-    return <MelasCardSkeleton />;
+    return <MealsPromoSkeleton />;
   }
 
-  return <MealsCard meal={meal} />;
+  return <MealsCardPromo meal={meal} />;
 }

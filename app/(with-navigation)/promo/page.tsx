@@ -1,15 +1,13 @@
 import SearchMeals from '@/components/meals/SearchMeals';
-import MealsPageRender from '@/components/meals/MealsPage';
+import MealsPromoPageRender from '@/components/Promo/MealsPromoRender';
 import connectDB from '@/config/database';
 import Meal from '@/models/Meals';
 import Image from 'next/image';
 import { convertToObject } from '@/utils/convertToObject';
 
-export default async function MealsPage() {
+export default async function PromoPage() {
   await connectDB();
-
   const meals = await Meal.find({}).sort({ createdAt: -1 }).lean();
-
   const serializedMeals = convertToObject(meals);
   return (
     <>
@@ -66,7 +64,7 @@ export default async function MealsPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {serializedMeals.map((meal: any) => (
-                <MealsPageRender key={meal._id} meal={meal} />
+                <MealsPromoPageRender key={meal._id} meal={meal} />
               ))}
             </div>
           )}
