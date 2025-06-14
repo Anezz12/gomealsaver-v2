@@ -47,7 +47,7 @@ export default function MealsCard({ meal }: MealCardProps) {
         <div className="absolute top-[10px] right-[10px] bg-[#141414]/80 backdrop-blur px-3 py-2 rounded-xl shadow-sm border border-gray-800/50">
           <div className="flex flex-col items-end">
             <div className="text-amber-500 font-semibold text-lg">
-              Rp{meal.price.toLocaleString('id-ID')}
+              Rp{meal.originalPrice.toLocaleString('id-ID')}
             </div>
           </div>
         </div>

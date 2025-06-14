@@ -191,9 +191,6 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
                       <td className="p-4">
                         <div>
                           <div className="text-amber-500 font-medium">
-                            Rp{item.price.toLocaleString()}
-                          </div>
-                          <div className="text-gray-500 text-sm line-through">
                             Rp{item.originalPrice.toLocaleString()}
                           </div>
                         </div>

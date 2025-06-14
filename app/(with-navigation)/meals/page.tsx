@@ -8,7 +8,27 @@ import { convertToObject } from '@/utils/convertToObject';
 export default async function MealsPage() {
   await connectDB();
 
-  const meals = await Meal.find({}).sort({ createdAt: -1 }).lean();
+  const meals = await Meal.find({
+    $and: [
+      {
+        $or: [
+          { discountPercentage: { $exists: false } },
+          { discountPercentage: 0 },
+          { discountPercentage: null },
+        ],
+      },
+      {
+        $or: [
+          { price: { $exists: false } },
+          { price: 0 },
+          { price: null },
+          { $expr: { $lte: ['$price', '$price'] } }, // price <= price
+        ],
+      },
+    ],
+  })
+    .sort({ createdAt: -1 })
+    .lean();
 
   const serializedMeals = convertToObject(meals);
   return (

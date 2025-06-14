@@ -129,7 +129,7 @@ export default function AddMealForm() {
     if (!formData.name.trim()) newErrors.name = 'Name is required';
     if (!formData.description.trim())
       newErrors.description = 'Description is required';
-    if (formData.price <= 0) newErrors.price = 'Price must be greater than 0';
+    if (formData.price < 0) newErrors.price = 'Price must be greater than 0';
     if (formData.originalPrice <= 0)
       newErrors.originalPrice = 'Original price must be greater than 0';
     if (formData.stockQuantity <= 0)
