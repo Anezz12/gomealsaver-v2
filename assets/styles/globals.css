@@ -98,3 +98,15 @@ body {
   top: 15rem;
   background-color: #f59e0b;
 }
+
+/* Add this to your existing global CSS */
+
+/* Hide scrollbar for horizontal scroll */
+.scrollbar-none {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
