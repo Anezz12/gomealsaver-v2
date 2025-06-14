@@ -56,12 +56,7 @@ export default async function MealsCard() {
                 )}
                 {meal.originalPrice && (
                   <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                    -
-                    {Math.round(
-                      ((meal.originalPrice - meal.price) / meal.originalPrice) *
-                        100
-                    )}
-                    %
+                    {meal.discountPercentage}% OFF
                   </span>
                 )}
               </div>
