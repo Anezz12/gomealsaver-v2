@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
+
 import { useState, useEffect } from 'react';
 
 export default function Asked() {
@@ -24,7 +25,8 @@ export default function Asked() {
   }, []);
 
   return (
-    <section id="faq-accordion">
+    <section id="faq-accordion" className="w-full">
+      <div className="w-full border-t border-amber-500" />
       {/* Title Section */}
       <div className="text-center mb-8 pt-8">
         <h2 className="text-3xl font-bold text-amber-500 mb-4">FAQ</h2>
@@ -59,10 +61,14 @@ export default function Asked() {
           ].map((item, index) => (
             <div key={index} className="py-1 border-b outline-none group">
               <div
-                className="flex items-center justify-between py-3 text-amber-600 transition duration-500 cursor-pointer group ease"
+                className="flex items-center justify-between py-3 cursor-pointer group"
                 onClick={() => handleTabClick(index + 1)}
               >
-                <div className="transition duration-500 ease group-hover:text-fern-green-500">
+                <div
+                  className={`transition duration-500 ease group-hover:text-white ${
+                    openTab === index + 1 ? 'text-white' : 'text-amber-500'
+                  }`}
+                >
                   {item.question}
                 </div>
                 <div
@@ -98,6 +104,7 @@ export default function Asked() {
           ))}
         </div>
       </div>
+      <div className="w-full border-b border-amber-500 mt-12" />
     </section>
   );
 }

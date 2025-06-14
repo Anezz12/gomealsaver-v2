@@ -10,8 +10,8 @@ import Link from 'next/link';
 const HeroSection: React.FC = () => {
   return (
     <section className="relative py-6 md:py-8 lg:py-10">
-      <div className="container mx-auto px-4 md:px-6 lg:px-8">
-        <div className="flex flex-col-reverse items-center lg:flex-row gap-8 lg:gap-12">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
+        <div className="flex flex-col lg:flex-row justify-center items-center gap-8 lg:gap-12">
           {/* Content Column */}
           <div className="w-full lg:w-1/2 text-center lg:text-left space-y-6">
             <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-amber-500">
