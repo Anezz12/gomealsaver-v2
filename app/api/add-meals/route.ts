@@ -85,14 +85,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     };
 
     // Validation
-    if (!mealData.name || !mealData.price || !mealData.restaurant?.name) {
+    if (!mealData.name || !mealData.restaurant?.name) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
-    if ((mealData.price ?? 0) < 0 || (mealData.originalPrice ?? 0) < 0) {
+    if ((mealData.originalPrice ?? 0) < 0) {
       return NextResponse.json(
         { error: 'Price cannot be negative' },
         { status: 400 }

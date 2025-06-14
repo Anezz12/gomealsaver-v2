@@ -7,7 +7,30 @@ import { convertToObject } from '@/utils/convertToObject';
 
 export default async function PromoPage() {
   await connectDB();
-  const meals = await Meal.find({}).sort({ createdAt: -1 }).lean();
+  // ✅ Query untuk makanan yang MEMILIKI PROMO
+  const meals = await Meal.find({
+    $or: [
+      // Makanan dengan discount percentage > 0
+      {
+        discountPercentage: { $gt: 0 },
+      },
+      // Makanan dengan original price > current price
+      {
+        $expr: { $gt: ['$originalPrice', '$price'] },
+      },
+      // Makanan dengan original price ada dan > 0, dan berbeda dengan price
+      {
+        $and: [
+          { originalPrice: { $exists: true } },
+          { originalPrice: { $gt: 0 } },
+          { $expr: { $ne: ['$originalPrice', '$price'] } },
+        ],
+      },
+    ],
+  })
+    .sort({ discountPercentage: -1, createdAt: -1 }) // Sort by discount tertinggi dulu
+    .lean();
+
   const serializedMeals = convertToObject(meals);
 
   return (
