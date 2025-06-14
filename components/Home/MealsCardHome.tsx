@@ -1,8 +1,5 @@
-import Link from 'next/link';
 import Image from 'next/image';
-import { convertToObject } from '@/utils/convertToObject';
-import connectDB from '@/config/database';
-import Meal from '@/models/Meals';
+import Link from 'next/link';
 import NotFoundImage from '@/public/food/not-found.png';
 
 interface Restaurant {
@@ -10,7 +7,7 @@ interface Restaurant {
   address: string;
 }
 
-interface MealType {
+interface Meal {
   _id: string;
   name: string;
   cuisine?: string;
@@ -24,13 +21,10 @@ interface MealType {
   restaurant?: Restaurant;
 }
 
-export default async function MealsCard() {
-  await connectDB();
-  const meals = await Meal.find({}).limit(10).lean(); // Limit to 10 meals
-  const serializedMeals = convertToObject(meals);
+export default function MealsCardHome({ meal }: { meal: Meal }) {
+  // Calculate discount percentage if not provided
 
-  // Create a meal card component for reuse
-  const MealCard = ({ meal }: { meal: MealType }) => (
+  return (
     <Link
       href={`/meals/${meal._id}`}
       className="block transition-transform hover:scale-105"
@@ -53,16 +47,6 @@ export default async function MealsCard() {
                   <p className="text-xs text-gray-300 line-through">
                     Rp {meal.originalPrice.toLocaleString('id-ID')}
                   </p>
-                )}
-                {meal.originalPrice && (
-                  <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                    -
-                    {Math.round(
-                      ((meal.originalPrice - meal.price) / meal.originalPrice) *
-                        100
-                    )}
-                    %
-                  </span>
                 )}
               </div>
             </div>
@@ -111,7 +95,7 @@ export default async function MealsCard() {
 
           {meal.features && meal.features.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {meal.features.slice(0, 2).map((feature, index) => (
+              {meal.features.slice(0, 3).map((feature, index) => (
                 <span
                   key={index}
                   className="bg-white/20 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm"
@@ -119,9 +103,9 @@ export default async function MealsCard() {
                   {feature}
                 </span>
               ))}
-              {meal.features.length > 2 && (
+              {meal.features.length > 3 && (
                 <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
-                  +{meal.features.length - 2}
+                  +{meal.features.length - 3}
                 </span>
               )}
             </div>
@@ -163,50 +147,5 @@ export default async function MealsCard() {
         />
       </div>
     </Link>
-  );
-
-  return (
-    <section className="mx-auto mt-[100px] w-full max-w-[1280px] space-y-[30px] px-4 md:px-[75px] pt-16">
-      <div className="text-center">
-        <h1 className="text-[28px] font-bold text-gray-900 dark:text-white">
-          Makanan Tersedia Hari Ini
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-[#A8A8AB]">
-          Temukan makanan lezat dengan harga terjangkau
-        </p>
-      </div>
-
-      {/* Horizontal Carousel - SSR Friendly */}
-      <div className="relative">
-        {/* Horizontal scroll container */}
-        <div className="overflow-x-auto scrollbar-none">
-          <div className="flex gap-4 pb-4">
-            {serializedMeals.map((meal: MealType) => (
-              <div
-                key={meal._id}
-                className="w-[280px] sm:w-[320px] flex-shrink-0"
-              >
-                <MealCard meal={meal} />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Left gradient overlay */}
-        <div className="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-white dark:from-gray-900 to-transparent pointer-events-none z-10"></div>
-
-        {/* Right gradient overlay */}
-        <div className="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-white dark:from-gray-900 to-transparent pointer-events-none z-10"></div>
-      </div>
-
-      <div className="text-center mt-10">
-        <Link
-          href="/meals"
-          className="inline-block px-8 py-3 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-full transition-colors"
-        >
-          Lihat Semua Makanan
-        </Link>
-      </div>
-    </section>
   );
 }
