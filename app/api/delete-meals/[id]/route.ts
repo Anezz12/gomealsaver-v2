@@ -5,19 +5,19 @@ import Meal from '@/models/Meals';
 import { getSessionUser } from '@/utils/getSessionUser';
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 interface RouteParams {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
+
 export async function DELETE(
   request: NextRequest,
-  { params }: RouteParams
+  props: RouteParams
 ): Promise<NextResponse> {
+  const params = await props.params;
   try {
     await connectDB();
 
