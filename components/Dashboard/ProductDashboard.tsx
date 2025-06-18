@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 import {
   Search,
   Filter,
@@ -13,7 +14,7 @@ import {
 } from 'lucide-react';
 
 interface FoodItem {
-  id: string;
+  _id: string;
   name: string;
   price: number;
   originalPrice: number;
@@ -27,9 +28,63 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
 
   // Handle case when meals is undefined or not an array
   const foodItems = Array.isArray(meals) ? meals : [];
+
+  // Function to handle delete action
+  const handleDelete = async (mealId: string, mealName: string) => {
+    // Confirmation dialog
+    if (
+      !confirm(
+        `Are you sure you want to delete "${mealName}"?\n\nThis action cannot be undone.`
+      )
+    ) {
+      return;
+    }
+
+    console.log('🗑️ [CLIENT] Starting delete process for:', mealId);
+
+    // Add to deleting set to show loading state
+    setDeletingIds((prev) => new Set(prev).add(mealId));
+
+    try {
+      const response = await fetch(`/api/delete-meals/${mealId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('📡 [CLIENT] Delete response status:', response.status);
+
+      const data = await response.json();
+      console.log('📦 [CLIENT] Delete response data:', data);
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || `HTTP ${response.status}: Failed to delete meal`
+        );
+      }
+
+      console.log('✅ [CLIENT] Meal deleted successfully');
+      toast.success(`"${mealName}" deleted successfully!`);
+
+      // Refresh the page to update the list
+      // window.location.reload();
+    } catch (error: any) {
+      console.error('💥 [CLIENT] Delete error:', error);
+      toast.error(`Failed to delete "${mealName}": ${error.message}`);
+    } finally {
+      // Remove from deleting set
+      setDeletingIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(mealId);
+        return newSet;
+      });
+    }
+  };
 
   // Then update the status handling functions
   const getStatusLabel = (available: boolean) => {
@@ -102,7 +157,9 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
                   <span className="text-sm">
                     {filterStatus === 'all'
                       ? 'All Status'
-                      : getStatusLabel(filterStatus)}
+                      : filterStatus === 'available'
+                      ? 'Tersedia'
+                      : 'Tidak Tersedia'}
                   </span>
                 </div>
                 <ChevronDown size={16} className="ml-2 text-gray-500" />
@@ -169,55 +226,79 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredFoodItems.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="border-b border-gray-800 hover:bg-gray-900/50"
-                    >
-                      <td className="p-4">
-                        <div className="flex items-center">
-                          <div className="h-12 w-12 rounded bg-gray-800 mr-3 overflow-hidden relative">
-                            <Image
-                              src={item.image[0] || '/food/placeholder.jpg'}
-                              alt={item.name}
-                              fill
-                              style={{ objectFit: 'cover' }}
-                              className="rounded"
-                            />
+                  {filteredFoodItems.map((item, index) => {
+                    const isDeleting = deletingIds.has(item._id);
+
+                    return (
+                      <tr
+                        key={`${item._id}-${index}`}
+                        className={`border-b border-gray-800 hover:bg-gray-900/50 transition-colors ${
+                          isDeleting ? 'opacity-50' : ''
+                        }`}
+                      >
+                        <td className="p-4">
+                          <div className="flex items-center">
+                            <div className="h-12 w-12 rounded bg-gray-800 mr-3 overflow-hidden relative">
+                              <Image
+                                src={item.image[0] || '/food/placeholder.jpg'}
+                                alt={item.name}
+                                fill
+                                style={{ objectFit: 'cover' }}
+                                className="rounded"
+                              />
+                            </div>
+                            <span className="font-medium">{item.name}</span>
                           </div>
-                          <span>{item.name}</span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div>
+                        </td>
+                        <td className="p-4">
                           <div className="text-amber-500 font-medium">
-                            Rp{item.originalPrice.toLocaleString()}
+                            Rp{item.price.toLocaleString()}
                           </div>
-                        </div>
-                      </td>
-                      <td className="p-4">{item.stockQuantity}</td>
-                      <td className="p-4">{item.expiryDate}</td>
-                      <td className="p-4">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs ${getStatusStyle(
-                            item.available
-                          )}`}
-                        >
-                          {getStatusLabel(item.available)}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex space-x-2">
-                          <button className="p-1.5 rounded-full bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-amber-500">
-                            <Edit size={16} />
-                          </button>
-                          <button className="p-1.5 rounded-full bg-gray-800 hover:bg-red-900 text-gray-400 hover:text-red-400">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                          {item.originalPrice !== item.price && (
+                            <div className="text-xs text-gray-500 line-through">
+                              Rp{item.originalPrice.toLocaleString()}
+                            </div>
+                          )}
+                        </td>
+                        <td className="p-4">{item.stockQuantity}</td>
+                        <td className="p-4 text-sm text-gray-400">
+                          {item.expiryDate}
+                        </td>
+                        <td className="p-4">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs ${getStatusStyle(
+                              item.available
+                            )}`}
+                          >
+                            {getStatusLabel(item.available)}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex space-x-2">
+                            <Link
+                              href={`/dashboard-seller/products/edit/${item._id}`}
+                              className="p-1.5 rounded-full bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-amber-500 transition-colors"
+                              title="Edit meal"
+                            >
+                              <Edit size={16} />
+                            </Link>
+                            <button
+                              onClick={() => handleDelete(item._id, item.name)}
+                              disabled={isDeleting}
+                              className={`p-1.5 rounded-full transition-colors ${
+                                isDeleting
+                                  ? 'bg-gray-600 text-gray-500 cursor-not-allowed'
+                                  : 'bg-gray-800 hover:bg-red-900 text-gray-400 hover:text-red-400'
+                              }`}
+                              title={isDeleting ? 'Deleting...' : 'Delete meal'}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -225,77 +306,91 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
 
           {/* Mobile view */}
           <div className="md:hidden space-y-4">
-            {filteredFoodItems.map((item) => (
-              <div
-                key={item.id}
-                className="bg-black border border-gray-800 rounded-xl overflow-hidden"
-              >
-                <div className="p-4">
-                  <div className="flex">
-                    <div className="h-20 w-20 rounded bg-gray-800 overflow-hidden relative">
-                      <Image
-                        src={item.image[0] || '/food/placeholder.jpg'}
-                        alt={item.name}
-                        fill
-                        style={{ objectFit: 'cover' }}
-                        className="rounded"
-                      />
-                    </div>
-                    <div className="ml-3 flex-1">
-                      <div className="flex justify-between items-start">
-                        <h4 className="font-medium">{item.name}</h4>
-                        <div className="relative group">
-                          <button className="p-1 text-gray-400">
-                            <MoreVertical size={18} />
-                          </button>
-                          <div className="absolute right-0 top-full mt-1 hidden group-hover:block bg-gray-800 rounded-lg shadow-lg overflow-hidden z-10">
-                            <button
-                              key={`edit-${item.id}`}
-                              className="flex items-center px-4 py-2 text-sm hover:bg-gray-700 w-full text-left"
-                            >
-                              <Edit size={14} className="mr-2" />
-                              Edit
+            {filteredFoodItems.map((item, index) => {
+              const isDeleting = deletingIds.has(item._id);
+
+              return (
+                <div
+                  key={`mobile-${item._id}-${index}`}
+                  className={`bg-black border border-gray-800 rounded-xl overflow-hidden transition-opacity ${
+                    isDeleting ? 'opacity-50' : ''
+                  }`}
+                >
+                  <div className="p-4">
+                    <div className="flex">
+                      <div className="h-20 w-20 rounded bg-gray-800 overflow-hidden relative">
+                        <Image
+                          src={item.image[0] || '/food/placeholder.jpg'}
+                          alt={item.name}
+                          fill
+                          style={{ objectFit: 'cover' }}
+                          className="rounded"
+                        />
+                      </div>
+                      <div className="ml-3 flex-1">
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-medium">{item.name}</h4>
+                          <div className="relative group">
+                            <button className="p-1 text-gray-400 hover:text-white transition-colors">
+                              <MoreVertical size={18} />
                             </button>
-                            <button
-                              key={`delete-${item.id}`}
-                              className="flex items-center px-4 py-2 text-sm hover:bg-red-900 hover:text-red-400 w-full text-left"
-                            >
-                              <Trash2 size={14} className="mr-2" />
-                              Delete
-                            </button>
+                            <div className="absolute right-0 top-full mt-1 hidden group-hover:block bg-gray-800 rounded-lg shadow-lg overflow-hidden z-10">
+                              <Link
+                                href={`/dashboard-seller/products/edit/${item._id}`}
+                                className="flex items-center px-4 py-2 text-sm hover:bg-gray-700 w-full text-left transition-colors"
+                              >
+                                <Edit size={14} className="mr-2" />
+                                Edit
+                              </Link>
+                              <button
+                                onClick={() =>
+                                  handleDelete(item._id, item.name)
+                                }
+                                disabled={isDeleting}
+                                className={`flex items-center px-4 py-2 text-sm w-full text-left transition-colors ${
+                                  isDeleting
+                                    ? 'text-gray-500 cursor-not-allowed'
+                                    : 'hover:bg-red-900 hover:text-red-400'
+                                }`}
+                              >
+                                <Trash2 size={14} className="mr-2" />
+                                {isDeleting ? 'Deleting...' : 'Delete'}
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-end mt-1">
-                        <span className="text-amber-500 font-medium">
-                          Rp{item.price.toLocaleString()}
-                        </span>
-                        <span className="text-xs text-gray-500 line-through ml-2">
-                          Rp{item.originalPrice.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap justify-between items-center gap-y-2 mt-3">
-                        <div className="flex items-center text-xs text-gray-400">
-                          <span className="mr-3">
-                            Qty: {item.stockQuantity}
+                        <div className="flex items-end mt-1">
+                          <span className="text-amber-500 font-medium">
+                            Rp{item.price.toLocaleString()}
                           </span>
-                          <span>Exp: {item.expiryDate}</span>
+                          {item.originalPrice !== item.price && (
+                            <span className="text-xs text-gray-500 line-through ml-2">
+                              Rp{item.originalPrice.toLocaleString()}
+                            </span>
+                          )}
                         </div>
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-xs ${getStatusStyle(
-                            item.available
-                          )}`}
-                        >
-                          {getStatusLabel(item.available)}
-                        </span>
+                        <div className="flex flex-wrap justify-between items-center gap-y-2 mt-3">
+                          <div className="flex items-center text-xs text-gray-400">
+                            <span className="mr-3">
+                              Qty: {item.stockQuantity}
+                            </span>
+                            <span>Exp: {item.expiryDate}</span>
+                          </div>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-xs ${getStatusStyle(
+                              item.available
+                            )}`}
+                          >
+                            {getStatusLabel(item.available)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-
           {/* Empty state */}
           {filteredFoodItems.length === 0 && (
             <div className="bg-black border border-gray-800 rounded-xl p-8 text-center">

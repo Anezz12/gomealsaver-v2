@@ -21,7 +21,6 @@ export default async function ProductPage() {
   try {
     const mealsDocs = await Meal.find({ owner: userId }).lean();
     const meals = mealsDocs.map((Meal) => convertToObject(Meal));
-    console.log('Meals:', meals);
     return (
       <>
         <MainContainerDashboard>
