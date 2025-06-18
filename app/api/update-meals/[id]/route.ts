@@ -31,9 +31,9 @@ interface MealData {
 }
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 interface RouteParams {
@@ -43,8 +43,9 @@ interface RouteParams {
 // GET single meal for editing
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  props: RouteParams
 ): Promise<NextResponse> {
+  const params = await props.params;
   try {
     await connectDB();
 
@@ -86,8 +87,9 @@ export async function GET(
 // PUT update meal
 export async function PUT(
   request: NextRequest,
-  { params }: RouteParams
+  props: RouteParams
 ): Promise<NextResponse> {
+  const params = await props.params;
   try {
     await connectDB();
 
