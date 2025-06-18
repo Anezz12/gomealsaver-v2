@@ -72,7 +72,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
       toast.success(`"${mealName}" deleted successfully!`);
 
       // Refresh the page to update the list
-      window.location.reload();
+      // window.location.reload();
     } catch (error: any) {
       console.error('💥 [CLIENT] Delete error:', error);
       toast.error(`Failed to delete "${mealName}": ${error.message}`);
