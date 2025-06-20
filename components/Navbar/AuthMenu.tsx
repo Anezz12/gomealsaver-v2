@@ -59,6 +59,13 @@ export default function AuthMenu({ onOpenLoginModal }: AuthMenuProps) {
             >
               Profile
             </Link>
+            <Link
+              href="/bookmarks"
+              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-zinc-800 hover:text-amber-600 dark:hover:text-amber-400 font-semibold"
+              onClick={() => setIsAuthMenuOpen(false)}
+            >
+              Bookmarks
+            </Link>
             <button
               onClick={handleSignOut}
               className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 font-semibold"

@@ -5,15 +5,13 @@ import MealDetail from '@/components/meals/MealDetail';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 import { convertToObject } from '@/utils/convertToObject';
-// import MealsHeaderImage from '@/components/meals/MealHeaderImage';
+
 import BookmarkButton from '@/components/meals/BookmarkButton';
 import ShareButton from '@/components/meals/ShareButton';
-// import MealsImages from '@/components/meals/MealsImage';
+
 import Review from '@/components/meals/Review';
 import ErrorPage from '@/app/error';
 export const dynamic = 'force-dynamic';
-
-// type Params = Promise<{ slug: string }>;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -30,6 +28,10 @@ export default async function MealPage({ params }: PageProps) {
 
   try {
     const mealDoc = await Meal.findById((await params).slug).lean();
+    console.log(
+      '🔍 [SERVER] Fetching meal details for ID:',
+      (await params).slug
+    );
 
     // Meal Not Found Handler
     if (!mealDoc) {
@@ -75,7 +77,7 @@ export default async function MealPage({ params }: PageProps) {
               <div className="rounded-xl bg-[#141414] p-4 sm:p-6 shadow-xl sticky top-20 border border-gray-800">
                 <div className="space-y-4">
                   <h3 className="text-xl font-bold text-white mb-4">Actions</h3>
-                  <BookmarkButton />
+                  <BookmarkButton meal={meal._id} />
 
                   {/* Desktop Share Button (Hidden on mobile) */}
                   <div className="hidden sm:block">
