@@ -6,10 +6,6 @@ import { toast } from 'react-hot-toast';
 import bookmarkMeal from '@/app/action/bookmarkMeal';
 import checkBookmarkStatus from '@/app/action/checkBookmarkSatatus';
 
-// interface Meal {
-//   _id: string;
-// }
-
 interface BookmarkButtonProps {
   meal: string;
   initialBookmarked?: boolean;

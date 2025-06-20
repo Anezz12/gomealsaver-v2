@@ -49,7 +49,7 @@ export default async function SavedMealsPage() {
     console.log('📚 [SERVER] Found bookmarked meals:', bookmarkedMeals.length);
 
     return (
-      <div className="md:ml-72 lg:ml-80 pt-16 md:pt-6 min-h-screen">
+      <div className="md:ml-72 lg:ml-80 pt-16 md:pt-20 min-h-screen">
         <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
           {/* Header Section */}
           <div className="mb-8">
