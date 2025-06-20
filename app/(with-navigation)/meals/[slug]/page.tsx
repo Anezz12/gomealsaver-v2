@@ -8,7 +8,7 @@ import { convertToObject } from '@/utils/convertToObject';
 
 import BookmarkButton from '@/components/meals/BookmarkButton';
 import ShareButton from '@/components/meals/ShareButton';
-import MessageButton from '@/components/meals/MessageButton';
+import MealContactForm from '@/components/meals/MealContactForm';
 import Review from '@/components/meals/Review';
 import ErrorPage from '@/app/error';
 export const dynamic = 'force-dynamic';
@@ -74,19 +74,16 @@ export default async function MealPage({ params }: PageProps) {
             {/* Sidebar Section - Moved above on mobile for better UX */}
             <div className="lg:col-span-1 order-1 lg:order-2">
               {/* Booking and Interaction Buttons */}
-              <div className="rounded-xl bg-[#141414] p-4 sm:p-6 shadow-xl sticky top-20 border border-gray-800">
+              <div className="rounded-xl bg-[#141414] p-4 sm:p-6 shadow-xl  top-20 border border-gray-800">
                 <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-white mb-4">Actions</h3>
                   <BookmarkButton meal={meal._id} />
 
                   {/* Add Message Button */}
-                  <MessageButton
+                  <MealContactForm
                     mealId={meal._id}
                     recipientId={meal.owner} // Assuming meal has owner field
-                    recipientName={meal.restaurant.name} // Or actual owner name
+                    recipientName={meal.restaurant.name}
                     mealTitle={meal.name}
-                    variant="secondary"
-                    size="md"
                   />
 
                   {/* Desktop Share Button (Hidden on mobile) */}

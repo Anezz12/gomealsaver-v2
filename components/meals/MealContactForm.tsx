@@ -10,17 +10,15 @@ import {
   Mail,
   Phone,
   MessageSquare,
-  X,
   Loader2,
 } from 'lucide-react';
 
-interface MessageFormProps {
+interface MealContactFormProps {
   mealId: string;
   recipientId: string;
   recipientName: string;
   mealTitle: string;
-  isOpen: boolean;
-  onClose: () => void;
+  className?: string;
 }
 
 interface MessageFormData {
@@ -29,17 +27,16 @@ interface MessageFormData {
   name: string;
   email: string;
   phone: string;
-  message: string;
+  body: string; // Changed from 'message' to 'body' to match API
 }
 
-export default function MessageForm({
+export default function MealContactForm({
   mealId,
   recipientId,
   recipientName,
   mealTitle,
-  isOpen,
-  onClose,
-}: MessageFormProps) {
+  className = '',
+}: MealContactFormProps) {
   const { data: session } = useSession();
   const [isPending, startTransition] = useTransition();
   const [formData, setFormData] = useState<MessageFormData>({
@@ -48,7 +45,7 @@ export default function MessageForm({
     name: session?.user?.name || '',
     email: session?.user?.email || '',
     phone: '',
-    message: '',
+    body: '',
   });
 
   const handleInputChange = (
@@ -65,7 +62,10 @@ export default function MessageForm({
     e.preventDefault();
 
     if (!session) {
-      toast.error('Please login to send a message');
+      toast.error('Please login to send a message', {
+        duration: 3000,
+        position: 'top-center',
+      });
       return;
     }
 
@@ -78,7 +78,7 @@ export default function MessageForm({
       toast.error('Email is required');
       return;
     }
-    if (!formData.message.trim()) {
+    if (!formData.body.trim()) {
       toast.error('Message is required');
       return;
     }
@@ -92,7 +92,15 @@ export default function MessageForm({
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            sender: session.user?.id,
+            recipient: formData.recipient,
+            meal: formData.meal,
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            body: formData.body,
+          }),
         });
 
         const data = await response.json();
@@ -117,12 +125,9 @@ export default function MessageForm({
           // Reset form
           setFormData((prev) => ({
             ...prev,
-            message: '',
+            body: '',
             phone: '',
           }));
-
-          // Close modal
-          onClose();
         }
       } catch (error: any) {
         console.error('❌ [CLIENT] Error sending message:', error);
@@ -141,139 +146,162 @@ export default function MessageForm({
     });
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-md bg-[#141414] rounded-xl border border-gray-800 shadow-2xl">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-800">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-500/20 rounded-lg">
-              <MessageCircle className="w-5 h-5 text-blue-400" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-white">Send Message</h3>
-              <p className="text-sm text-gray-400">to {recipientName}</p>
-            </div>
+    <div
+      className={`bg-black/50 border border-gray-800 rounded-xl p-6 ${className}`}
+    >
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 bg-blue-500/20 rounded-lg">
+            <MessageCircle className="w-5 h-5 text-blue-400" />
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5 text-gray-400" />
-          </button>
+          <div>
+            <h3 className="text-xl font-semibold text-white">Contact Seller</h3>
+            <p className="text-sm text-gray-400">{recipientName}</p>
+          </div>
         </div>
 
         {/* Meal Info */}
-        <div className="p-6 bg-gray-900/50 border-b border-gray-800">
-          <p className="text-sm text-gray-400 mb-1">Regarding meal:</p>
-          <p className="text-white font-medium truncate">{mealTitle}</p>
+        <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-800">
+          <p className="text-sm text-gray-400 mb-1">Regarding:</p>
+          <p className="text-white font-medium">{mealTitle}</p>
+        </div>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Name Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            <User className="w-4 h-4 inline mr-2" />
+            Your Name *
+          </label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            placeholder="Enter your name"
+          />
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Name Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              <User className="w-4 h-4 inline mr-2" />
-              Your Name *
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="Enter your name"
-            />
-          </div>
+        {/* Email Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            <Mail className="w-4 h-4 inline mr-2" />
+            Your Email *
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            placeholder="Enter your email"
+          />
+        </div>
 
-          {/* Email Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              <Mail className="w-4 h-4 inline mr-2" />
-              Your Email *
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="Enter your email"
-            />
-          </div>
+        {/* Phone Field (Optional) */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            <Phone className="w-4 h-4 inline mr-2" />
+            Phone Number (Optional)
+          </label>
+          <input
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            placeholder="Enter your phone number"
+          />
+        </div>
 
-          {/* Phone Field (Optional) */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              <Phone className="w-4 h-4 inline mr-2" />
-              Phone Number (Optional)
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="Enter your phone number"
-            />
-          </div>
-
-          {/* Message Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              <MessageSquare className="w-4 h-4 inline mr-2" />
-              Message *
-            </label>
-            <textarea
-              name="message"
-              value={formData.message}
-              onChange={handleInputChange}
-              required
-              rows={4}
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
-              placeholder="Enter your message..."
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              {formData.message.length}/500 characters
+        {/* Message Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            <MessageSquare className="w-4 h-4 inline mr-2" />
+            Your Message *
+          </label>
+          <textarea
+            name="body"
+            value={formData.body}
+            onChange={handleInputChange}
+            required
+            rows={5}
+            maxLength={500}
+            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+            placeholder="Hi! I'm interested in this meal. Can you provide more details about availability and pickup time?"
+          />
+          <div className="flex justify-between items-center mt-2">
+            <p className="text-xs text-gray-500">
+              {formData.body.length}/500 characters
             </p>
+            {formData.body.length > 450 && (
+              <p className="text-xs text-amber-400">
+                {500 - formData.body.length} characters left
+              </p>
+            )}
           </div>
+        </div>
 
-          {/* Submit Button */}
-          <div className="flex gap-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors border border-gray-700"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isPending}
-              className={`flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center justify-center gap-2 ${
-                isPending ? 'opacity-75 cursor-not-allowed' : ''
-              }`}
-            >
-              {isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                <>
-                  <Send className="w-4 h-4" />
-                  Send Message
-                </>
-              )}
-            </button>
+        {/* Submit Button */}
+        <div className="pt-4">
+          <button
+            type="submit"
+            disabled={isPending || !session}
+            className={`
+              w-full py-4 px-6 rounded-lg font-semibold text-white
+              transition-all duration-200 ease-in-out
+              flex items-center justify-center gap-3
+              ${
+                !session
+                  ? 'bg-gray-700 cursor-not-allowed opacity-50'
+                  : isPending
+                  ? 'bg-blue-400 cursor-not-allowed opacity-75'
+                  : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-blue-500/20 hover:-translate-y-0.5'
+              }
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900
+            `}
+          >
+            {!session ? (
+              <>
+                <User className="w-5 h-5" />
+                Please Login to Send Message
+              </>
+            ) : isPending ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Sending Message...
+              </>
+            ) : (
+              <>
+                <Send className="w-5 h-5" />
+                Send Message to Seller
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Help Text */}
+        {session && (
+          <div className="mt-4 p-4 bg-blue-900/20 border border-blue-800/30 rounded-lg">
+            <h4 className="text-sm font-medium text-blue-300 mb-2">
+              💡 Tips for contacting seller:
+            </h4>
+            <ul className="text-xs text-blue-200 space-y-1">
+              <li>• Ask about meal availability and pickup times</li>
+              <li>• Inquire about portion sizes and ingredients</li>
+              <li>• Confirm pickup location and payment methods</li>
+              <li>• Be polite and specific about your needs</li>
+            </ul>
           </div>
-        </form>
-      </div>
+        )}
+      </form>
     </div>
   );
 }
