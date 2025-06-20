@@ -12,7 +12,8 @@ export async function middleware(request: NextRequest) {
   if (session) {
     if (
       request.nextUrl.pathname === '/register' ||
-      request.nextUrl.pathname === '/login'
+      request.nextUrl.pathname === '/login' ||
+      request
     ) {
       return NextResponse.redirect(new URL('/', request.url));
     }
@@ -24,5 +25,5 @@ export async function middleware(request: NextRequest) {
 
 // Konfigurasi jalur yang perlu di-cek oleh middleware
 export const config = {
-  matcher: ['/register', '/login'],
+  matcher: ['/register', '/login', '/dashboard-seller/:path*'],
 };
