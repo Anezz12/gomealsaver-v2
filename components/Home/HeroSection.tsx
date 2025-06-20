@@ -118,7 +118,7 @@ export default function HeroSection() {
               </span>
             </Link>
             <Link
-              href="/about"
+              href="/aboutus"
               className="text-white bg-white/5 backdrop-blur-sm hover:bg-white/10 border border-white/10 px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 group"
             >
               Tentang Kami
