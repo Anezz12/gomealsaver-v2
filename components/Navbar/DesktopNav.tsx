@@ -10,6 +10,7 @@ export default function DesktopNav() {
     { href: '/meals', label: 'Makanan' },
     { href: '/promo', label: 'Promo' },
     { href: '/aboutus', label: 'About Us' },
+    { href: '/contact', label: 'Contact' },
   ];
 
   return (
