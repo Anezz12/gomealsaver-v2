@@ -27,6 +27,12 @@ const UserSchema = new Schema(
     address: {
       type: String,
     },
+    bookmarks: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Meal',
+      },
+    ],
     role: {
       type: String,
       required: true,

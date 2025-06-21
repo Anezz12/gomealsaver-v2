@@ -5,15 +5,12 @@ import MealDetail from '@/components/meals/MealDetail';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 import { convertToObject } from '@/utils/convertToObject';
-// import MealsHeaderImage from '@/components/meals/MealHeaderImage';
 import BookmarkButton from '@/components/meals/BookmarkButton';
 import ShareButton from '@/components/meals/ShareButton';
-// import MealsImages from '@/components/meals/MealsImage';
+import MealContactForm from '@/components/meals/MealContactForm';
 import Review from '@/components/meals/Review';
 import ErrorPage from '@/app/error';
 export const dynamic = 'force-dynamic';
-
-// type Params = Promise<{ slug: string }>;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -21,7 +18,6 @@ interface PageProps {
 
 export default async function MealPage({ params }: PageProps) {
   await connectDB();
-  // Check if the slug is valid
 
   // Invalid Meal ID Handler
   if (!isValidObjectId((await params).slug)) {
@@ -30,6 +26,10 @@ export default async function MealPage({ params }: PageProps) {
 
   try {
     const mealDoc = await Meal.findById((await params).slug).lean();
+    console.log(
+      '🔍 [SERVER] Fetching meal details for ID:',
+      (await params).slug
+    );
 
     // Meal Not Found Handler
     if (!mealDoc) {
@@ -72,10 +72,16 @@ export default async function MealPage({ params }: PageProps) {
             {/* Sidebar Section - Moved above on mobile for better UX */}
             <div className="lg:col-span-1 order-1 lg:order-2">
               {/* Booking and Interaction Buttons */}
-              <div className="rounded-xl bg-[#141414] p-4 sm:p-6 shadow-xl sticky top-20 border border-gray-800">
+              <div className="rounded-xl bg-[#141414] p-4 sm:p-6 shadow-xl  top-20 border border-gray-800">
                 <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-white mb-4">Actions</h3>
-                  <BookmarkButton />
+                  <BookmarkButton meal={meal._id} />
+                  {/* Add Message Button */}
+                  <MealContactForm
+                    mealId={meal._id}
+                    recipientId={meal.owner}
+                    recipientName={meal.restaurant.name}
+                    mealTitle={meal.name}
+                  />
 
                   {/* Desktop Share Button (Hidden on mobile) */}
                   <div className="hidden sm:block">
@@ -104,12 +110,6 @@ export default async function MealPage({ params }: PageProps) {
               </div>
             </div>
           </div>
-
-          {/* Image Gallery Section */}
-          {/* <div className="bg-[#141414] rounded-xl p-4 sm:p-6 md:p-8 shadow-xl mb-8 border border-gray-800">
-            <h2 className="text-2xl font-bold text-white mb-6">Gallery</h2>
-            <MealsImages images={meal.image} />
-          </div> */}
           {/* Review Section */}
           <div>
             <h2 className="text-2xl font-bold text-white mb-6">Reviews</h2>
