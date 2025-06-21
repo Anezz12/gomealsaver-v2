@@ -5,7 +5,6 @@ import MealDetail from '@/components/meals/MealDetail';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 import { convertToObject } from '@/utils/convertToObject';
-
 import BookmarkButton from '@/components/meals/BookmarkButton';
 import ShareButton from '@/components/meals/ShareButton';
 import MealContactForm from '@/components/meals/MealContactForm';
@@ -19,7 +18,6 @@ interface PageProps {
 
 export default async function MealPage({ params }: PageProps) {
   await connectDB();
-  // Check if the slug is valid
 
   // Invalid Meal ID Handler
   if (!isValidObjectId((await params).slug)) {
@@ -77,11 +75,10 @@ export default async function MealPage({ params }: PageProps) {
               <div className="rounded-xl bg-[#141414] p-4 sm:p-6 shadow-xl  top-20 border border-gray-800">
                 <div className="space-y-4">
                   <BookmarkButton meal={meal._id} />
-
                   {/* Add Message Button */}
                   <MealContactForm
                     mealId={meal._id}
-                    recipientId={meal.owner} // Assuming meal has owner field
+                    recipientId={meal.owner}
                     recipientName={meal.restaurant.name}
                     mealTitle={meal.name}
                   />

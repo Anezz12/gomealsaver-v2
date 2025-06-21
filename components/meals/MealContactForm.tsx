@@ -27,7 +27,7 @@ interface MessageFormData {
   name: string;
   email: string;
   phone: string;
-  body: string; // Changed from 'message' to 'body' to match API
+  message: string;
 }
 
 export default function MealContactForm({
@@ -45,7 +45,7 @@ export default function MealContactForm({
     name: session?.user?.name || '',
     email: session?.user?.email || '',
     phone: '',
-    body: '',
+    message: '',
   });
 
   const handleInputChange = (
@@ -78,7 +78,7 @@ export default function MealContactForm({
       toast.error('Email is required');
       return;
     }
-    if (!formData.body.trim()) {
+    if (!formData.message.trim()) {
       toast.error('Message is required');
       return;
     }
@@ -99,7 +99,7 @@ export default function MealContactForm({
             name: formData.name,
             email: formData.email,
             phone: formData.phone,
-            body: formData.body,
+            message: formData.message,
           }),
         });
 
@@ -228,8 +228,8 @@ export default function MealContactForm({
             Your Message *
           </label>
           <textarea
-            name="body"
-            value={formData.body}
+            name="message"
+            value={formData.message}
             onChange={handleInputChange}
             required
             rows={5}
@@ -239,11 +239,11 @@ export default function MealContactForm({
           />
           <div className="flex justify-between items-center mt-2">
             <p className="text-xs text-gray-500">
-              {formData.body.length}/500 characters
+              {formData.message.length}/500 characters
             </p>
-            {formData.body.length > 450 && (
+            {formData.message.length > 450 && (
               <p className="text-xs text-amber-400">
-                {500 - formData.body.length} characters left
+                {500 - formData.message.length} characters left
               </p>
             )}
           </div>

@@ -10,7 +10,7 @@ interface MessageData {
   name: string;
   email: string;
   phone: string;
-  body: string;
+  message: string;
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       name,
       email,
       phone: phone || '',
-      body: message,
+      message: message,
     };
 
     const newMessage = new Message(messageData);
