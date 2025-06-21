@@ -28,7 +28,7 @@ const MessageSchema = new Schema(
     phone: {
       type: String,
     },
-    body: {
+    message: {
       type: String,
     },
     read: {
