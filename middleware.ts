@@ -25,5 +25,5 @@ export async function middleware(request: NextRequest) {
 
 // Konfigurasi jalur yang perlu di-cek oleh middleware
 export const config = {
-  matcher: ['/register', '/login', '/dashboard-seller/:path*'],
+  matcher: ['/register', '/login'],
 };

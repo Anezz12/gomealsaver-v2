@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from './authOptions';
 
 interface SessionUser {
+  role: string;
   userId: string;
   user: {
     id: string;
@@ -26,6 +27,7 @@ export const getSessionUser = async (): Promise<SessionUser | null> => {
     return {
       user: session.user,
       userId: session.user.id,
+      role: session.user.role || '',
     };
   } catch (error) {
     console.error('Error in getSessionUser:', error);

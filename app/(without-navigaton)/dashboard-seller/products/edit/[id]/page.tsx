@@ -5,6 +5,7 @@ import Meal from '@/models/Meals';
 import { convertToObject } from '@/utils/convertToObject';
 import UpdateMealForm from '@/components/meals/UpdateMeals';
 import NotFound from '@/app/not-found';
+
 interface UpdateMealPageProps {
   params: Promise<{
     id: string;
@@ -19,27 +20,39 @@ export default async function UpdateMealPage({ params }: UpdateMealPageProps) {
     resolvedParams.id
   );
 
-  // Check authentication
+  // ✅ Check authentication
   const sessionUser = await getSessionUser();
   if (!sessionUser) {
+    console.log('❌ [SERVER] No session user, redirecting to login');
     redirect('/login');
   }
 
   try {
     await connectDB();
 
-    // Fetch meal data
-    const mealData = await Meal.findById(resolvedParams.id).lean();
+    // ✅ Fetch meal data with owner information
+    const mealData = await Meal.findById(resolvedParams.id)
+      .populate('owner', 'name email')
+      .lean();
 
-    if (!mealData) {
+    if (!mealData || Array.isArray(mealData)) {
       console.log('❌ [SERVER] Meal not found:', resolvedParams.id);
       notFound();
+    }
+
+    // ✅ Authorization check - Only owner or admin can edit
+    const isOwner =
+      mealData.owner?._id?.toString() === sessionUser.userId ||
+      mealData.owner?.toString() === sessionUser.userId;
+
+    if (!isOwner) {
+      return <NotFound />;
     }
 
     // Convert to plain object
     const meal = convertToObject(mealData);
 
-    // Format meal data for the form
+    // ✅ Format meal data for the form
     const formattedMeal = {
       id: meal._id.toString(),
       name: meal.name || '',
@@ -61,11 +74,17 @@ export default async function UpdateMealPage({ params }: UpdateMealPageProps) {
         phone: meal.restaurant?.phone || '',
         email: meal.restaurant?.email || '',
       },
+      // ✅ Add owner info for additional checks
+      owner: {
+        id: meal.owner?._id?.toString() || meal.owner?.toString(),
+        name: meal.owner?.name || 'Restaurant Owner',
+      },
     };
 
+    console.log('✅ [SERVER] Access granted - rendering edit form');
     return <UpdateMealForm meal={formattedMeal} />;
   } catch (error) {
     console.error('❌ [SERVER] Error loading meal:', error);
-    NotFound();
+    return <NotFound />;
   }
 }
