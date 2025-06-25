@@ -19,19 +19,30 @@ const MessageSchema = new Schema(
     },
     name: {
       type: String,
-      required: [true, 'Name is required'],
+      required: true,
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],
+      required: true,
     },
     phone: {
       type: String,
     },
     message: {
       type: String,
+      required: true,
     },
     read: {
+      type: Boolean,
+      default: false,
+    },
+    // New fields for reply functionality
+    originalMessage: {
+      type: Schema.Types.ObjectId,
+      ref: 'Message',
+      default: null,
+    },
+    isReply: {
       type: Boolean,
       default: false,
     },
@@ -42,5 +53,4 @@ const MessageSchema = new Schema(
 );
 
 const Message = models.Message || model('Message', MessageSchema);
-
 export default Message;
