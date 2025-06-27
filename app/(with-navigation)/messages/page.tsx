@@ -1,9 +1,9 @@
-// app/(with-navigation)/messages/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
+import Swal from 'sweetalert2';
 import MessagesHeader from '@/components/Messages/MessagesHeader';
 import MessagesTabs from '@/components/Messages/MessagesTabs';
 import MessagesList from '@/components/Messages/MessagesList';
@@ -50,6 +50,7 @@ export default function MessagesPage() {
     if (session) {
       fetchMessages();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, session]);
 
   const fetchMessages = async () => {
@@ -96,9 +97,46 @@ export default function MessagesPage() {
   };
 
   const handleDeleteMessage = async (messageId: string) => {
-    if (!confirm('Are you sure you want to delete this message?')) {
+    // SweetAlert2 confirmation
+    const result = await Swal.fire({
+      title: 'Delete Message?',
+      text: 'This action cannot be undone. Are you sure you want to delete this message?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      background: '#1f2937',
+      color: '#f9fafb',
+      customClass: {
+        popup: 'border border-gray-700',
+        confirmButton: 'hover:bg-red-600 transition-colors',
+        cancelButton: 'hover:bg-gray-600 transition-colors',
+      },
+    });
+
+    if (!result.isConfirmed) {
       return;
     }
+
+    // Show loading during deletion
+    Swal.fire({
+      title: 'Deleting...',
+      text: 'Please wait while we delete your message.',
+      icon: 'info',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      background: '#1f2937',
+      color: '#f9fafb',
+      customClass: {
+        popup: 'border border-gray-700',
+      },
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
 
     try {
       const response = await fetch(`/api/messages/delete/${messageId}`, {
@@ -107,12 +145,56 @@ export default function MessagesPage() {
 
       if (response.ok) {
         setMessages((prev) => prev.filter((msg) => msg._id !== messageId));
+
+        // Success message
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'Your message has been deleted successfully.',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+          background: '#1f2937',
+          color: '#f9fafb',
+          customClass: {
+            popup: 'border border-gray-700',
+          },
+        });
+
         toast.success('Message deleted successfully');
       } else {
+        // Error message
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to delete the message. Please try again.',
+          icon: 'error',
+          confirmButtonColor: '#f59e0b',
+          background: '#1f2937',
+          color: '#f9fafb',
+          customClass: {
+            popup: 'border border-gray-700',
+            confirmButton: 'hover:bg-amber-600 transition-colors',
+          },
+        });
+
         toast.error('Failed to delete message');
       }
     } catch (error) {
       console.error('Error deleting message:', error);
+
+      // Network error message
+      Swal.fire({
+        title: 'Network Error!',
+        text: 'Unable to connect to the server. Please check your connection and try again.',
+        icon: 'error',
+        confirmButtonColor: '#f59e0b',
+        background: '#1f2937',
+        color: '#f9fafb',
+        customClass: {
+          popup: 'border border-gray-700',
+          confirmButton: 'hover:bg-amber-600 transition-colors',
+        },
+      });
+
       toast.error('Failed to delete message');
     }
   };

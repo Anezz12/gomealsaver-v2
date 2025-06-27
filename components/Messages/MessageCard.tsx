@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import MessageActions from './MessageActions';
 import ReplyForm from './ReplyForm';
+import ProfileDefault from '@/public/profile.png';
 
 export interface Message {
   _id: string;
@@ -77,7 +78,7 @@ export default function MessageCard({
             {activeTab === 'received' ? (
               message.sender.image ? (
                 <Image
-                  src={message.sender.image}
+                  src={message.sender.image || ProfileDefault}
                   alt=""
                   className="w-12 h-12 rounded-full"
                   width={48}
@@ -90,8 +91,8 @@ export default function MessageCard({
               )
             ) : message.recipient.image ? (
               <Image
-                src={message.recipient.image}
-                alt=""
+                src={message.recipient.image || ProfileDefault}
+                alt="image"
                 className="w-12 h-12 rounded-full"
                 width={48}
                 height={48}
@@ -132,7 +133,7 @@ export default function MessageCard({
         </h4>
         {message.meal.images && message.meal.images[0] && (
           <Image
-            src={message.meal.images[0]}
+            src={message.meal.images[0] || ProfileDefault}
             alt={message.meal.title}
             className="w-16 h-16 rounded-lg object-cover"
             width={64}

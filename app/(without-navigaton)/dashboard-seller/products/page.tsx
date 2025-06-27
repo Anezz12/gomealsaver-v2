@@ -5,6 +5,7 @@ import Meal from '@/models/Meals';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { convertToObject } from '@/utils/convertToObject';
 import { redirect } from 'next/navigation';
+export const dynamic = 'force-dynamic';
 export default async function ProductPage() {
   await connectDB();
   const sessionUser = await getSessionUser();
