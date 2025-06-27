@@ -31,7 +31,7 @@ export default function LoginForm() {
         return;
       }
 
-      // Redirect to home page
+      // Redirect to role selection page
       router.push('/');
     } catch {
       setError('An error occurred, please try again');

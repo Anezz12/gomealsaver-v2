@@ -111,7 +111,7 @@ export default function RegisterPage() {
         if (result?.error) {
           throw new Error(result.error);
         }
-        router.push('/');
+        router.push('/role-selection');
       });
     } catch (error: any) {
       console.error('Registration error:', error);
