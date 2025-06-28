@@ -1,7 +1,9 @@
+// components/Dashboard/ProductDashboard.tsx
 'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Swal from 'sweetalert2';
 import { toast } from 'react-hot-toast';
 import {
   Search,
@@ -21,7 +23,7 @@ interface FoodItem {
   stockQuantity: number;
   expiryDate: string;
   image: string[];
-  available: boolean; // Updated status values
+  available: boolean;
 }
 
 export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
@@ -33,23 +35,64 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
   // Handle case when meals is undefined or not an array
   const foodItems = Array.isArray(meals) ? meals : [];
 
-  // Function to handle delete action
-  const handleDelete = async (mealId: string, mealName: string) => {
-    // Confirmation dialog
-    if (
-      !confirm(
-        `Are you sure you want to delete "${mealName}"?\n\nThis action cannot be undone.`
-      )
-    ) {
-      return;
+  // SweetAlert2 theme configuration
+  const swalDarkTheme = {
+    background: '#1f2937',
+    color: '#f9fafb',
+    customClass: {
+      popup: 'border border-gray-700',
+      confirmButton: 'hover:bg-red-600 transition-colors',
+      cancelButton: 'hover:bg-gray-600 transition-colors'
     }
+  };
 
+  // Function to handle delete action with SweetAlert2
+  const handleDelete = async (mealId: string, mealName: string) => {
     console.log('🗑️ [CLIENT] Starting delete process for:', mealId);
 
     // Add to deleting set to show loading state
     setDeletingIds((prev) => new Set(prev).add(mealId));
 
     try {
+      // Step 1: Confirmation dialog
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: `You are about to delete "${mealName}". This action cannot be undone.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel',
+        ...swalDarkTheme
+      });
+
+      if (!result.isConfirmed) {
+        console.log('❌ [CLIENT] Delete cancelled by user');
+        // Remove from deleting set if cancelled
+        setDeletingIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(mealId);
+          return newSet;
+        });
+        return;
+      }
+
+      // Step 2: Show loading during deletion
+      Swal.fire({
+        title: 'Deleting...',
+        text: 'Please wait while we delete your meal.',
+        icon: 'info',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        ...swalDarkTheme,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      // Step 3: Make API call
       const response = await fetch(`/api/delete-meals/${mealId}`, {
         method: 'DELETE',
         headers: {
@@ -62,19 +105,64 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
       const data = await response.json();
       console.log('📦 [CLIENT] Delete response data:', data);
 
-      if (!response.ok) {
+      if (response.ok) {
+        console.log('✅ [CLIENT] Meal deleted successfully:', data);
+        
+        // Step 4: Success message
+        Swal.fire({
+          title: 'Deleted!',
+          text: `"${mealName}" has been deleted successfully.`,
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+          ...swalDarkTheme
+        });
+
+        toast.success(`"${mealName}" deleted successfully!`);
+
+        // Refresh the page to update the list
+        window.location.reload();
+      } else {
+        console.error(
+          '❌ [CLIENT] Delete failed with status:',
+          response.status,
+          data
+        );
+        
+        // Step 5: Error message
+        Swal.fire({
+          title: 'Error!',
+          text: data.error || 'Failed to delete the meal. Please try again.',
+          icon: 'error',
+          confirmButtonColor: '#f59e0b',
+          ...swalDarkTheme,
+          customClass: {
+            ...swalDarkTheme.customClass,
+            confirmButton: 'hover:bg-amber-600 transition-colors'
+          }
+        });
+
         throw new Error(
           data.error || `HTTP ${response.status}: Failed to delete meal`
         );
       }
 
-      console.log('✅ [CLIENT] Meal deleted successfully');
-      toast.success(`"${mealName}" deleted successfully!`);
-
-      // Refresh the page to update the list
-      // window.location.reload();
     } catch (error: any) {
       console.error('💥 [CLIENT] Delete error:', error);
+      
+      // Network error message
+      Swal.fire({
+        title: 'Network Error!',
+        text: `Failed to delete "${mealName}": ${error.message}`,
+        icon: 'error',
+        confirmButtonColor: '#f59e0b',
+        ...swalDarkTheme,
+        customClass: {
+          ...swalDarkTheme.customClass,
+          confirmButton: 'hover:bg-amber-600 transition-colors'
+        }
+      });
+
       toast.error(`Failed to delete "${mealName}": ${error.message}`);
     } finally {
       // Remove from deleting set
@@ -86,7 +174,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
     }
   };
 
-  // Then update the status handling functions
+  // Status handling functions
   const getStatusLabel = (available: boolean) => {
     return available === true ? 'Tersedia' : 'Tidak Tersedia';
   };
@@ -97,7 +185,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
       : 'bg-red-900 text-red-300';
   };
 
-  // Update the filter code
+  // Filter function
   const filteredFoodItems = foodItems.filter((item) => {
     // Filter by search query
     const matchesSearch = item.name
@@ -343,9 +431,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
                                 Edit
                               </Link>
                               <button
-                                onClick={() =>
-                                  handleDelete(item._id, item.name)
-                                }
+                                onClick={() => handleDelete(item._id, item.name)}
                                 disabled={isDeleting}
                                 className={`flex items-center px-4 py-2 text-sm w-full text-left transition-colors ${
                                   isDeleting
@@ -391,6 +477,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
               );
             })}
           </div>
+
           {/* Empty state */}
           {filteredFoodItems.length === 0 && (
             <div className="bg-black border border-gray-800 rounded-xl p-8 text-center">
