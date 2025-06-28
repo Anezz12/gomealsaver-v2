@@ -42,8 +42,8 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
     customClass: {
       popup: 'border border-gray-700',
       confirmButton: 'hover:bg-red-600 transition-colors',
-      cancelButton: 'hover:bg-gray-600 transition-colors'
-    }
+      cancelButton: 'hover:bg-gray-600 transition-colors',
+    },
   };
 
   // Function to handle delete action with SweetAlert2
@@ -64,7 +64,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
         cancelButtonColor: '#6b7280',
         confirmButtonText: 'Yes, delete it!',
         cancelButtonText: 'Cancel',
-        ...swalDarkTheme
+        ...swalDarkTheme,
       });
 
       if (!result.isConfirmed) {
@@ -89,7 +89,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
         ...swalDarkTheme,
         didOpen: () => {
           Swal.showLoading();
-        }
+        },
       });
 
       // Step 3: Make API call
@@ -107,7 +107,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
 
       if (response.ok) {
         console.log('✅ [CLIENT] Meal deleted successfully:', data);
-        
+
         // Step 4: Success message
         Swal.fire({
           title: 'Deleted!',
@@ -115,7 +115,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
           icon: 'success',
           timer: 2000,
           showConfirmButton: false,
-          ...swalDarkTheme
+          ...swalDarkTheme,
         });
 
         toast.success(`"${mealName}" deleted successfully!`);
@@ -128,7 +128,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
           response.status,
           data
         );
-        
+
         // Step 5: Error message
         Swal.fire({
           title: 'Error!',
@@ -138,18 +138,17 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
           ...swalDarkTheme,
           customClass: {
             ...swalDarkTheme.customClass,
-            confirmButton: 'hover:bg-amber-600 transition-colors'
-          }
+            confirmButton: 'hover:bg-amber-600 transition-colors',
+          },
         });
 
         throw new Error(
           data.error || `HTTP ${response.status}: Failed to delete meal`
         );
       }
-
     } catch (error: any) {
       console.error('💥 [CLIENT] Delete error:', error);
-      
+
       // Network error message
       Swal.fire({
         title: 'Network Error!',
@@ -159,8 +158,8 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
         ...swalDarkTheme,
         customClass: {
           ...swalDarkTheme.customClass,
-          confirmButton: 'hover:bg-amber-600 transition-colors'
-        }
+          confirmButton: 'hover:bg-amber-600 transition-colors',
+        },
       });
 
       toast.error(`Failed to delete "${mealName}": ${error.message}`);
@@ -210,7 +209,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
             <p className="text-gray-400">Manage your food items</p>
           </div>
           <Link
-            href="/dashboard-seller/products/add"
+            href="/dashboard-seller/products/add-meals"
             className="bg-amber-500 hover:bg-amber-600 text-black font-medium py-2 px-4 rounded-lg text-sm flex items-center"
           >
             <Plus size={18} className="mr-1" />
@@ -431,7 +430,9 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
                                 Edit
                               </Link>
                               <button
-                                onClick={() => handleDelete(item._id, item.name)}
+                                onClick={() =>
+                                  handleDelete(item._id, item.name)
+                                }
                                 disabled={isDeleting}
                                 className={`flex items-center px-4 py-2 text-sm w-full text-left transition-colors ${
                                   isDeleting
@@ -494,7 +495,7 @@ export default function ProductsPage({ meals }: { meals: FoodItem[] }) {
               </p>
               {foodItems.length === 0 ? (
                 <Link
-                  href="/dashboard-seller/products/add"
+                  href="/dashboard-seller/products/add-meals"
                   className="bg-amber-500 hover:bg-amber-600 text-black font-medium py-2 px-4 rounded-lg text-sm"
                 >
                   Add Product
