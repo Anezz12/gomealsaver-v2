@@ -137,7 +137,7 @@ export default function RegisterPage() {
         <div className="flex justify-center mb-8">
           <div className="bg-[#141414] rounded-full p-3 shadow-lg shadow-amber-500/20">
             <Image
-              src="/images/logos/logo.svg"
+              src="/images/logos/GMS-transparent.png"
               alt="GoMealSaver Logo"
               width={48}
               height={48}
