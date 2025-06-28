@@ -87,7 +87,7 @@ export default function MealContactForm({
       try {
         console.log('📤 [CLIENT] Sending message:', formData);
 
-        const response = await fetch('/api/messages', {
+        const response = await fetch('/api/messages/postmessage', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

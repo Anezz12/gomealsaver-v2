@@ -22,21 +22,17 @@ const HeroSection: React.FC = () => {
                 loop={true}
               />
             </h1>
-
             <motion.p
               variants={SlideUp(0.2)}
               whileInView="animate"
               initial="initial"
               className="text-base md:text-lg lg:text-xl text-zinc-100 max-w-xl mx-auto lg:mx-0"
             >
-              "Transform yesterday's leftovers into delightful meals for today,
-              turning what might have gone to waste into something truly
-              enjoyable. Embrace the joy of saving money while savoring tasty
-              dishes, all while making a positive impact through sustainable
-              food choices."
+              {
+                '"Transform yesterdays leftovers into delightful meals for today, turning what might have gone to waste into something truly enjoyable. Embrace the joy of saving money while savoring tasty dishes, all while making a positive impact through sustainable food choices."'
+              }
             </motion.p>
-
-            {/* Buttons Container */}
+            {/* Buttons Container */}as
             <motion.div
               variants={SlideUp(0.2)}
               whileInView="animate"

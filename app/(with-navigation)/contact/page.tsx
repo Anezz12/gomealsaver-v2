@@ -56,8 +56,8 @@ export default function ContactPage() {
       toast.success('Your message has been sent successfully!', {
         id: loadingToast,
       });
-      reset(); // Reset form fields
-      setRecaptchaValue(null); // Reset reCAPTCHA
+      reset();
+      setRecaptchaValue(null);
     } catch (error) {
       console.error('Error submitting form:', error);
       toast.error('Failed to send your message. Please try again.', {
