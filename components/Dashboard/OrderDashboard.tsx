@@ -1,4 +1,3 @@
-// components/Dashboard/OrderDashboard.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -21,13 +20,6 @@ import {
 } from 'lucide-react';
 import CheckPaymentButton from '@/components/Orders/CheckPaymentButton';
 import { toast } from 'react-hot-toast';
-
-interface OrderItem {
-  _id: string;
-  title: string;
-  quantity: number;
-  price: number;
-}
 
 interface Order {
   _id: string;
@@ -570,7 +562,6 @@ export default function OrderDashboard() {
                         <CheckPaymentButton
                           orderId={order._id}
                           onStatusUpdate={() => fetchOrders()}
-                          variant="default"
                         />
                       )}
 

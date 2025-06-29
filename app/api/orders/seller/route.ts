@@ -1,10 +1,9 @@
-// app/api/orders/seller/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import connectDB from '@/config/database';
 import Order from '@/models/Orders';
 import { getSessionUser } from '@/utils/getSessionUser';
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(): Promise<NextResponse> {
   try {
     await connectDB();
 
