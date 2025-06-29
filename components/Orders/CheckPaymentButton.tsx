@@ -43,12 +43,17 @@ export default function CheckPaymentButton({
         if (data.updated) {
           // Status was updated
           if (data.order.paymentStatus === 'paid') {
-            toast.success('✅ Payment confirmed! Status updated to PAID');
+            toast.success('✅ Payment confirmed! Order is now being processed');
             onStatusUpdate?.(data.order.paymentStatus);
 
+            // ✅ Refresh without reload
             setTimeout(() => {
-              window.location.reload();
-            }, 1500);
+              if (onStatusUpdate) {
+                onStatusUpdate('refresh');
+              } else {
+                window.location.reload();
+              }
+            }, 2000);
           } else if (data.order.paymentStatus === 'expired') {
             toast.error('⏰ Payment has expired');
             onStatusUpdate?.(data.order.paymentStatus);
@@ -67,11 +72,10 @@ export default function CheckPaymentButton({
             .replace('_', ' ')
             .toUpperCase();
 
-          // ✅ Handle different scenarios
           if (data.reason === 'transaction_not_found') {
-            toast('⚠️ Transaction not found in payment system');
+            toast.error('⚠️ Transaction not found in payment system');
           } else if (data.reason === 'expired_transaction') {
-            toast('⏰ Payment has expired');
+            toast.error('⏰ Payment has expired');
           } else if (data.order.paymentStatus === 'paid') {
             toast.success(`✅ Payment already confirmed: ${statusMessage}`);
           } else if (data.order.paymentStatus === 'pending') {
@@ -81,11 +85,13 @@ export default function CheckPaymentButton({
           }
         }
 
-        // Show additional info if available
-        if (data.suggestion) {
-          setTimeout(() => {
-            toast(data.suggestion);
-          }, 2000);
+        // Show Midtrans transaction info for debugging
+        if (data.midtransStatus) {
+          console.log('🔍 [CHECK PAYMENT] Midtrans Status:', {
+            transaction_status: data.midtransStatus.transaction_status,
+            payment_type: data.midtransStatus.payment_type,
+            transaction_id: data.midtransStatus.transaction_id,
+          });
         }
       } else {
         console.error('❌ Payment check failed:', data);

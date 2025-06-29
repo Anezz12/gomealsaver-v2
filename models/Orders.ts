@@ -1,13 +1,14 @@
+// models/Orders.ts
 import mongoose from 'mongoose';
 
 const OrderSchema = new mongoose.Schema(
   {
-    owner: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    user: {
+    owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
@@ -16,12 +17,6 @@ const OrderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Meal',
       required: true,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-      min: 1,
-      default: 1,
     },
     name: {
       type: String,
@@ -47,13 +42,10 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    orderType: {
-      type: String,
-      enum: ['dine_in', 'takeaway'],
+    quantity: {
+      type: Number,
       required: true,
-    },
-    specialInstructions: {
-      type: String,
+      min: 1,
     },
     totalPrice: {
       type: Number,
@@ -64,14 +56,12 @@ const OrderSchema = new mongoose.Schema(
       enum: [
         'pending',
         'awaiting_payment',
-        'paid',
         'processing',
         'completed',
         'cancelled',
       ],
       default: 'pending',
     },
-    // Payment fields
     paymentStatus: {
       type: String,
       enum: ['pending', 'paid', 'failed', 'expired', 'cancelled'],
@@ -80,30 +70,48 @@ const OrderSchema = new mongoose.Schema(
     paymentMethod: {
       type: String,
       enum: [
+        'cash',
         'credit_card',
+        'debit_card',
         'bank_transfer',
         'gopay',
         'shopeepay',
         'ovo',
         'dana',
+        'linkaja',
+        'jenius',
+        'qris', // ✅ Add qris
+        'bca_va',
+        'bni_va',
+        'bri_va',
+        'mandiri_va',
+        'permata_va',
+        'cimb_va',
+        'danamon_va',
+        'other_va',
+        'alfamart',
+        'indomaret',
+        'kioson',
+        'pos_indonesia',
       ],
+      default: 'cash',
+    },
+    orderType: {
+      type: String,
+      enum: ['dine_in', 'takeaway'],
+      required: true,
+    },
+    specialInstructions: {
+      type: String,
     },
     midtransOrderId: {
       type: String,
-      unique: true,
     },
     midtransTransactionId: {
       type: String,
     },
-    snapToken: {
-      type: String,
-    },
     paidAt: {
       type: Date,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
     },
     confirmedAt: {
       type: Date,
@@ -114,5 +122,9 @@ const OrderSchema = new mongoose.Schema(
   }
 );
 
-const Order = mongoose.models.Order || mongoose.model('Order', OrderSchema);
-export default Order;
+// Add index for better query performance
+OrderSchema.index({ user: 1, createdAt: -1 });
+OrderSchema.index({ owner: 1, createdAt: -1 });
+OrderSchema.index({ midtransOrderId: 1 });
+
+export default mongoose.models.Order || mongoose.model('Order', OrderSchema);

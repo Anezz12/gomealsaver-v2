@@ -1,9 +1,41 @@
+// app/api/orders/[id]/check-payment/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/config/database';
 import Order from '@/models/Orders';
 import Meal from '@/models/Meals';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { coreApi } from '@/config/midtrans';
+
+// ✅ Helper function to map Midtrans payment types to our enum
+const mapPaymentMethod = (midtransPaymentType: string): string => {
+  const paymentMethodMap: { [key: string]: string } = {
+    qris: 'qris',
+    credit_card: 'credit_card',
+    debit_card: 'debit_card',
+    bank_transfer: 'bank_transfer',
+    echannel: 'bank_transfer',
+    gopay: 'gopay',
+    shopeepay: 'shopeepay',
+    ovo: 'ovo',
+    dana: 'dana',
+    linkaja: 'linkaja',
+    jenius: 'jenius',
+    bca_va: 'bca_va',
+    bni_va: 'bni_va',
+    bri_va: 'bri_va',
+    mandiri_va: 'mandiri_va',
+    permata_va: 'permata_va',
+    cimb_va: 'cimb_va',
+    danamon_va: 'danamon_va',
+    other_va: 'other_va',
+    alfamart: 'alfamart',
+    indomaret: 'indomaret',
+    kioson: 'kioson',
+    pos_indonesia: 'pos_indonesia',
+  };
+
+  return paymentMethodMap[midtransPaymentType] || 'bank_transfer';
+};
 
 export async function POST(
   request: NextRequest,
@@ -33,7 +65,7 @@ export async function POST(
       userRole: sessionUser.role || 'user',
     });
 
-    // Authorization logic - allow both user and owner
+    // Authorization logic
     const isOrderUser = order.user?.toString() === sessionUser.userId;
     const isOrderOwner = order.owner?.toString() === sessionUser.userId;
 
@@ -54,7 +86,7 @@ export async function POST(
       midtransOrderId: order.midtransOrderId,
     });
 
-    // Check payment status from Midtrans directly
+    // Check payment status from Midtrans
     if (order.midtransOrderId) {
       try {
         const midtransStatus = await coreApi.transaction.status(
@@ -69,9 +101,18 @@ export async function POST(
           transaction_id: midtransStatus.transaction_id,
         });
 
-        // Update order based on current Midtrans status
         let shouldUpdate = false;
         let stockUpdated = false;
+
+        // ✅ Map payment method before saving
+        const mappedPaymentMethod = mapPaymentMethod(
+          midtransStatus.payment_type
+        );
+
+        console.log('🔄 [CHECK] Payment method mapping:', {
+          original: midtransStatus.payment_type,
+          mapped: mappedPaymentMethod,
+        });
 
         // Handle Settlement Status
         if (
@@ -82,7 +123,7 @@ export async function POST(
           order.status = 'processing';
           order.paidAt = new Date();
           order.midtransTransactionId = midtransStatus.transaction_id;
-          order.paymentMethod = midtransStatus.payment_type;
+          order.paymentMethod = mappedPaymentMethod; // ✅ Use mapped method
           shouldUpdate = true;
 
           // Update meal stock
@@ -101,7 +142,7 @@ export async function POST(
             console.error('❌ [CHECK] Error updating stock:', stockError);
           }
         }
-        // Handle other statuses...
+        // Handle Capture Status
         else if (midtransStatus.transaction_status === 'capture') {
           if (
             midtransStatus.fraud_status === 'accept' &&
@@ -111,16 +152,68 @@ export async function POST(
             order.status = 'processing';
             order.paidAt = new Date();
             order.midtransTransactionId = midtransStatus.transaction_id;
-            order.paymentMethod = midtransStatus.payment_type;
+            order.paymentMethod = mappedPaymentMethod; // ✅ Use mapped method
+            shouldUpdate = true;
+
+            // Update stock logic same as settlement
+            try {
+              const meal = await Meal.findById(order.meal);
+              if (meal && meal.stockQuantity >= order.quantity) {
+                meal.stockQuantity -= order.quantity;
+                if (meal.stockQuantity === 0) {
+                  meal.available = false;
+                }
+                await meal.save();
+                stockUpdated = true;
+                console.log('📦 [CHECK] Stock updated for meal:', meal._id);
+              }
+            } catch (stockError) {
+              console.error('❌ [CHECK] Error updating stock:', stockError);
+            }
+          } else if (midtransStatus.fraud_status === 'challenge') {
+            order.paymentStatus = 'pending';
+            order.status = 'awaiting_payment';
             shouldUpdate = true;
           }
-        } else if (midtransStatus.transaction_status === 'pending') {
+        }
+        // Handle Authorize Status
+        else if (
+          midtransStatus.transaction_status === 'authorize' &&
+          order.paymentStatus !== 'paid'
+        ) {
+          order.paymentStatus = 'paid';
+          order.status = 'processing';
+          order.paidAt = new Date();
+          order.midtransTransactionId = midtransStatus.transaction_id;
+          order.paymentMethod = mappedPaymentMethod; // ✅ Use mapped method
+          shouldUpdate = true;
+
+          // Update stock
+          try {
+            const meal = await Meal.findById(order.meal);
+            if (meal && meal.stockQuantity >= order.quantity) {
+              meal.stockQuantity -= order.quantity;
+              if (meal.stockQuantity === 0) {
+                meal.available = false;
+              }
+              await meal.save();
+              stockUpdated = true;
+              console.log('📦 [CHECK] Stock updated for meal:', meal._id);
+            }
+          } catch (stockError) {
+            console.error('❌ [CHECK] Error updating stock:', stockError);
+          }
+        }
+        // Handle Pending Status
+        else if (midtransStatus.transaction_status === 'pending') {
           if (order.paymentStatus !== 'pending') {
             order.paymentStatus = 'pending';
             order.status = 'awaiting_payment';
             shouldUpdate = true;
           }
-        } else if (
+        }
+        // Handle Failed/Cancelled Status
+        else if (
           ['deny', 'cancel', 'expire', 'failure'].includes(
             midtransStatus.transaction_status
           )
@@ -133,12 +226,31 @@ export async function POST(
         }
 
         if (shouldUpdate) {
-          await order.save();
-          console.log('✅ [CHECK] Order status updated:', {
-            orderId: order._id,
-            newStatus: order.status,
-            newPaymentStatus: order.paymentStatus,
-          });
+          try {
+            await order.save();
+            console.log('✅ [CHECK] Order status updated successfully:', {
+              orderId: order._id,
+              newStatus: order.status,
+              newPaymentStatus: order.paymentStatus,
+              paymentMethod: order.paymentMethod,
+              transactionId: order.midtransTransactionId,
+              stockUpdated,
+            });
+          } catch (saveError: any) {
+            console.error('❌ [CHECK] Error saving order:', saveError);
+            return NextResponse.json(
+              {
+                error: 'Failed to update order status',
+                details: saveError.message,
+                order: {
+                  _id: order._id,
+                  status: order.status,
+                  paymentStatus: order.paymentStatus,
+                },
+              },
+              { status: 500 }
+            );
+          }
         }
 
         return NextResponse.json({
@@ -170,19 +282,16 @@ export async function POST(
           ApiResponse: midtransError.ApiResponse,
         });
 
-        // ✅ Handle 404 - Transaction doesn't exist
+        // Handle 404 - Transaction doesn't exist
         if (
           midtransError.httpStatusCode === '404' ||
           midtransError.httpStatusCode === 404
         ) {
-          console.log(
-            '⚠️ [CHECK] Transaction not found in Midtrans, checking order age...'
-          );
+          console.log('⚠️ [CHECK] Transaction not found in Midtrans');
 
           const orderAge = Date.now() - new Date(order.createdAt).getTime();
           const hoursAge = orderAge / (1000 * 60 * 60);
 
-          // If order is older than 2 hours and still pending, mark as expired
           if (hoursAge > 2 && order.paymentStatus === 'pending') {
             order.paymentStatus = 'expired';
             order.status = 'cancelled';
@@ -196,13 +305,12 @@ export async function POST(
                 paymentStatus: order.paymentStatus,
                 paidAt: order.paidAt,
               },
-              error: 'Transaction not found in Midtrans (possibly expired)',
+              error: 'Transaction not found in Midtrans (expired)',
               updated: true,
               reason: 'expired_transaction',
             });
           }
 
-          // For newer orders, return current status
           return NextResponse.json({
             message: 'Transaction not found in Midtrans system',
             order: {
@@ -212,14 +320,11 @@ export async function POST(
               paidAt: order.paidAt,
             },
             error: 'Transaction not found in Midtrans',
-            details:
-              'This might be because the payment was never initiated or the transaction has expired',
             updated: false,
             reason: 'transaction_not_found',
           });
         }
 
-        // Handle other Midtrans errors
         return NextResponse.json(
           {
             order: {
@@ -237,19 +342,14 @@ export async function POST(
       }
     }
 
-    // ✅ Handle orders without Midtrans order ID
     return NextResponse.json({
-      message:
-        'No Midtrans order ID found - this might be a Cash on Delivery order',
+      message: 'No Midtrans order ID found',
       order: {
         _id: order._id,
         status: order.status,
         paymentStatus: order.paymentStatus,
         paidAt: order.paidAt,
       },
-      suggestion: order.paymentMethod
-        ? 'Contact customer service if this should be an online payment'
-        : 'This appears to be a Cash on Delivery order',
     });
   } catch (error: any) {
     console.error('❌ [CHECK] Error:', error);
