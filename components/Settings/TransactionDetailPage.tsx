@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // components/Settings/TransactionDetailPage.tsx
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
@@ -24,7 +25,6 @@ import {
   Copy,
   Check,
   ChevronDown,
-  ChevronUp,
 } from 'lucide-react';
 import Image from 'next/image';
 import CheckPaymentButton from '@/components/Orders/CheckPaymentButton';
@@ -833,7 +833,14 @@ export default function TransactionDetailsContent() {
 
               {/* Rate Order Button */}
               {displayStatus === 'completed' && (
-                <button className="w-full flex items-center justify-center space-x-2 bg-amber-500 hover:bg-amber-600 text-black px-4 py-3 rounded-lg font-medium text-sm sm:text-base">
+                <button
+                  onClick={() =>
+                    router.push(
+                      `/profile/transaction/rate-order?transactionId=${transaction._id}`
+                    )
+                  }
+                  className="w-full flex items-center justify-center space-x-2 bg-amber-500 hover:bg-amber-600 text-black px-4 py-3 rounded-lg font-medium text-sm sm:text-base"
+                >
                   <Star size={16} />
                   <span>Rate This Order</span>
                 </button>
