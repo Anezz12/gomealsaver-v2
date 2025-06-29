@@ -36,10 +36,8 @@ const mapPaymentMethod = (midtransPaymentType: string): string => {
   return paymentMethodMap[midtransPaymentType] || 'bank_transfer';
 };
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-): Promise<NextResponse> {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  const params = await props.params;
   try {
     await connectDB();
 
