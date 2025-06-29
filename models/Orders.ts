@@ -1,3 +1,4 @@
+// models/Orders.ts
 import mongoose from 'mongoose';
 
 const OrderSchema = new mongoose.Schema(
@@ -12,20 +13,10 @@ const OrderSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    review: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Review',
-      required: false,
-    },
     meal: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Meal',
       required: true,
-    },
-    transaction: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Order',
-      required: false,
     },
     quantity: {
       type: Number,
@@ -71,8 +62,45 @@ const OrderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'processing', 'completed', 'cancelled'],
+      enum: [
+        'pending',
+        'awaiting_payment',
+        'paid',
+        'processing',
+        'completed',
+        'cancelled',
+      ],
       default: 'pending',
+    },
+    // Payment fields
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'paid', 'failed', 'expired', 'cancelled'],
+      default: 'pending',
+    },
+    paymentMethod: {
+      type: String,
+      enum: [
+        'credit_card',
+        'bank_transfer',
+        'gopay',
+        'shopeepay',
+        'ovo',
+        'dana',
+      ],
+    },
+    midtransOrderId: {
+      type: String,
+      unique: true,
+    },
+    midtransTransactionId: {
+      type: String,
+    },
+    snapToken: {
+      type: String,
+    },
+    paidAt: {
+      type: Date,
     },
     createdAt: {
       type: Date,
@@ -87,4 +115,5 @@ const OrderSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.models.Order || mongoose.model('Order', OrderSchema);
+const Order = mongoose.models.Order || mongoose.model('Order', OrderSchema);
+export default Order;
