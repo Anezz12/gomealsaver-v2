@@ -5,10 +5,8 @@ import Order from '@/models/Orders';
 import Meal from '@/models/Meals';
 import { getSessionUser } from '@/utils/getSessionUser';
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-): Promise<NextResponse> {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  const params = await props.params;
   try {
     await connectDB();
 
