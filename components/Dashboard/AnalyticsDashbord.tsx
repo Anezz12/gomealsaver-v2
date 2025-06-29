@@ -114,6 +114,7 @@ export default function SellerAnalyticsPage() {
 
   useEffect(() => {
     fetchAnalytics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPeriod]);
 
   const formatCurrency = (value: number) => {
