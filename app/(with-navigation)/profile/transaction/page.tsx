@@ -34,7 +34,7 @@ interface Transaction {
   postalCode: string;
   meal: {
     _id: string;
-    title: string;
+    name: string;
     price: number;
     image: string[];
     owner: {
@@ -168,9 +168,7 @@ export default function TransactionPage() {
     const orderIdDisplay = `ORD-${transaction._id.slice(-8).toUpperCase()}`;
     const matchesSearch =
       orderIdDisplay.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      transaction.meal.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
+      transaction.meal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       transaction.owner.username
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
@@ -469,7 +467,7 @@ export default function TransactionPage() {
                             transaction.meal.image.length > 0 ? (
                               <Image
                                 src={transaction.meal.image[0]}
-                                alt={transaction.meal.title}
+                                alt={transaction.meal.name}
                                 fill
                                 className="object-cover"
                               />
@@ -481,7 +479,7 @@ export default function TransactionPage() {
                           </div>
                           <div className="flex-1">
                             <h3 className="font-medium text-white mb-1">
-                              {transaction.meal.title}
+                              {transaction.meal.name}
                             </h3>
                             <p className="text-gray-400 text-sm mb-2">
                               by {transaction.owner.username}

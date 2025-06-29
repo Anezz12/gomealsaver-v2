@@ -1,11 +1,13 @@
-// app/api/orders/[id]/cancel/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/config/database';
 import Order from '@/models/Orders';
 import Meal from '@/models/Meals';
 import { getSessionUser } from '@/utils/getSessionUser';
 
-export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+export async function PATCH(
+  request: NextRequest,
+  props: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
   const params = await props.params;
   try {
     await connectDB();

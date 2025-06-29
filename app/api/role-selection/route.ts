@@ -1,4 +1,3 @@
-// app/api/role-selection/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/config/database';
 import User from '@/models/User';

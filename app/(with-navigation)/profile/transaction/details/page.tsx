@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // app/(with-navigation)/profile/transaction/details/page.tsx
 'use client';
 
@@ -134,6 +135,7 @@ export default function TransactionDetailsPage() {
       setCopied(true);
       toast.success('Order ID copied to clipboard');
       setTimeout(() => setCopied(false), 2000);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('Failed to copy order ID');
     }

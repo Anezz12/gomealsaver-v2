@@ -15,7 +15,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Get URL params for filtering
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const paymentStatus = searchParams.get('paymentStatus');
@@ -23,7 +22,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const limit = parseInt(searchParams.get('limit') || '10');
     const skip = (page - 1) * limit;
 
-    // Build filter
     const filter: any = { user: sessionUser.userId };
 
     if (status && status !== 'all') {
@@ -34,9 +32,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       filter.paymentStatus = paymentStatus;
     }
 
-    // Get user's orders
+    // ✅ Fix: Populate dengan field yang benar dari Meal model
     const orders = await Order.find(filter)
-      .populate('meal', 'title price images description owner')
+      .populate('meal', 'name price image description owner') // ✅ 'name' dan 'image'
       .populate('owner', 'username email')
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -49,6 +47,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       `📊 [USER TRANSACTIONS] Found ${orders.length} orders for user:`,
       sessionUser.userId
     );
+
+    // ✅ Debug: Log meal data structure
+    if (orders.length > 0 && orders[0].meal) {
+      console.log('🖼️ [USER TRANSACTIONS] Sample meal data:', {
+        mealId: orders[0].meal._id,
+        name: orders[0].meal.name,
+        image: orders[0].meal.image,
+        imageType: typeof orders[0].meal.image,
+        imageLength: orders[0].meal.image?.length,
+      });
+    }
 
     return NextResponse.json({
       orders,
