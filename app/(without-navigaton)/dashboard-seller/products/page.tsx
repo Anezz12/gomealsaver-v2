@@ -25,7 +25,7 @@ export default async function ProductPage() {
     return (
       <>
         <MainContainerDashboard>
-          <ProductsPage meals={meals} />
+          <ProductsPage initialMeals={meals} />
         </MainContainerDashboard>
       </>
     );

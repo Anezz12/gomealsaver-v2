@@ -1,3 +1,4 @@
+// components/Settings/SideBarNavbar.tsx
 'use client';
 import { useState, useRef } from 'react';
 import Image from 'next/image';
@@ -110,7 +111,7 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex flex-col items-center justify-center p-2 rounded-full transition-colors duration-200 ${
+                  className={`flex flex-col items-center justify-center p-2 rounded-full transition-colors duration-2 00 ${
                     isActive
                       ? 'text-amber-500'
                       : 'text-gray-400 hover:text-gray-300'
@@ -124,8 +125,10 @@ export default function SideBarNavbar({ user, children }: ProfilePageProps) {
           </nav>
         </div>
 
-        {/* Main Content - Menambahkan flex-grow untuk mengisi ruang tersisa */}
-        <div className="lg:pl-8">{children}</div>
+        {/* ✅ Updated Main Content Area */}
+        <div className="flex-1 lg:pl-8">
+          <div className="max-w-7xl mx-auto">{children}</div>
+        </div>
       </div>
     </div>
   );

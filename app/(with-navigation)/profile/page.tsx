@@ -125,7 +125,7 @@ export default async function ProfilePage() {
               </div>
 
               {/* User Stats Summary */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+              {/* <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
                 <div className="bg-[#1E1E1E] rounded-xl px-5 py-4 text-center border border-gray-800 hover:border-amber-900/50 transition-colors">
                   <div className="text-2xl sm:text-3xl font-bold text-white mb-1">
                     0
@@ -150,7 +150,7 @@ export default async function ProfilePage() {
                   </div>
                   <div className="text-sm text-amber-500/90">Following</div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Section Title */}
               <h2 className="text-2xl font-bold text-white mb-5">

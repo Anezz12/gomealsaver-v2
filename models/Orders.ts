@@ -1,37 +1,22 @@
+// models/Orders.ts
 import mongoose from 'mongoose';
 
 const OrderSchema = new mongoose.Schema(
   {
-    owner: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    review: {
+    owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Review',
-      required: false,
+      ref: 'User',
+      required: true,
     },
     meal: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Meal',
       required: true,
-    },
-    transaction: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Order',
-      required: false,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-      min: 1,
-      default: 1,
     },
     name: {
       type: String,
@@ -57,6 +42,60 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    totalPrice: {
+      type: Number,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: [
+        'pending',
+        'awaiting_payment',
+        'processing',
+        'completed',
+        'cancelled',
+      ],
+      default: 'pending',
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'paid', 'failed', 'expired', 'cancelled'],
+      default: 'pending',
+    },
+    paymentMethod: {
+      type: String,
+      enum: [
+        'cash',
+        'credit_card',
+        'debit_card',
+        'bank_transfer',
+        'gopay',
+        'shopeepay',
+        'ovo',
+        'dana',
+        'linkaja',
+        'jenius',
+        'qris', // ✅ Add qris
+        'bca_va',
+        'bni_va',
+        'bri_va',
+        'mandiri_va',
+        'permata_va',
+        'cimb_va',
+        'danamon_va',
+        'other_va',
+        'alfamart',
+        'indomaret',
+        'kioson',
+        'pos_indonesia',
+      ],
+      default: 'cash',
+    },
     orderType: {
       type: String,
       enum: ['dine_in', 'takeaway'],
@@ -65,18 +104,14 @@ const OrderSchema = new mongoose.Schema(
     specialInstructions: {
       type: String,
     },
-    totalPrice: {
-      type: Number,
-      required: true,
-    },
-    status: {
+    midtransOrderId: {
       type: String,
-      enum: ['pending', 'processing', 'completed', 'cancelled'],
-      default: 'pending',
     },
-    createdAt: {
+    midtransTransactionId: {
+      type: String,
+    },
+    paidAt: {
       type: Date,
-      default: Date.now,
     },
     confirmedAt: {
       type: Date,
@@ -86,5 +121,10 @@ const OrderSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Add index for better query performance
+OrderSchema.index({ user: 1, createdAt: -1 });
+OrderSchema.index({ owner: 1, createdAt: -1 });
+OrderSchema.index({ midtransOrderId: 1 });
 
 export default mongoose.models.Order || mongoose.model('Order', OrderSchema);
