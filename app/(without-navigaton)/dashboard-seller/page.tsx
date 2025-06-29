@@ -1,6 +1,8 @@
 import MainContainerDashboard from '@/components/Dashboard/MainContainerDashboard';
 import { ChefHat, Menu, ShoppingBag, BarChart3 } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default function HomeDashboard() {
   return (
     <MainContainerDashboard>
