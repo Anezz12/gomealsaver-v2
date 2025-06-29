@@ -3,10 +3,8 @@ import connectDB from '@/config/database';
 import Review from '@/models/Review';
 import { getSessionUser } from '@/utils/getSessionUser';
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const sessionUser = await getSessionUser();
     if (!sessionUser) {
