@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/config/database';
-import Order from '@/models/Orders';
+import Meal from '@/models/Meals';
 import { getSessionUser } from '@/utils/getSessionUser';
 
 export async function GET(): Promise<NextResponse> {
   try {
     await connectDB();
 
-    const sessionUser: any = await getSessionUser();
+    const sessionUser = await getSessionUser();
     if (!sessionUser || !sessionUser.userId) {
       return NextResponse.json(
         { error: 'You must be logged in' },
@@ -15,26 +15,26 @@ export async function GET(): Promise<NextResponse> {
       );
     }
 
-    // Get orders where current user is the meal owner
-    const orders = await Order.find({ owner: sessionUser.userId })
-      .populate('meal', 'title price images description')
-      .populate('user', 'username email')
-      .sort({ createdAt: -1 });
+    const meals = await Meal.find({ owner: sessionUser.userId })
+      .sort({ createdAt: -1 })
+      .lean();
 
     console.log(
-      `📊 [SELLER ORDERS] Found ${orders.length} orders for seller:`,
-      sessionUser.userId
+      `✅ [API] Found ${meals.length} meals for seller ${sessionUser.userId}`
     );
 
     return NextResponse.json({
-      orders,
-      count: orders.length,
+      meals: meals.map((meal: any) => ({
+        ...meal,
+        _id: meal._id.toString(),
+        owner: meal.owner.toString(),
+      })),
     });
   } catch (error: any) {
-    console.error('❌ [SELLER ORDERS] Error:', error);
+    console.error('❌ [API] Error fetching meals:', error);
     return NextResponse.json(
       {
-        error: 'Failed to fetch orders',
+        error: 'Failed to fetch meals',
         details: error.message,
       },
       { status: 500 }

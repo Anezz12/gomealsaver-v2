@@ -252,7 +252,7 @@ export default function TransactionPage() {
   }
 
   return (
-    <main className="md:ml-72 lg:ml-80 pt-16 md:pt-6 min-h-screen">
+    <main className="md:ml-72 lg:ml-80 pt-20 md:pt-20 min-h-screen">
       <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -543,7 +543,7 @@ export default function TransactionPage() {
 
                       {/* Right: Delivery Info */}
                       <div className="flex-1">
-                        <h3 className="font-medium text-gray-400 mb-2 text-sm">
+                        <h3 className="font-medium text-gray-400 mb-2 text-sm pt-0 md:pt-20">
                           Delivery Information
                         </h3>
                         <div className="bg-gray-900 rounded-lg p-4 space-y-3">
