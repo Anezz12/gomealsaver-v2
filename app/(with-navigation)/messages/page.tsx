@@ -57,13 +57,16 @@ export default function MessagesPage() {
     try {
       setLoading(true);
 
-      const response = await fetch(`/api/messages/read?type=${activeTab}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Important untuk session cookies
-      });
+      const response = await fetch(
+        `/api/messages/read/read?type=${activeTab}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Important untuk session cookies
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch messages');
