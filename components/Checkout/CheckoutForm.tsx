@@ -314,20 +314,20 @@ export default function CheckoutForm({
     setShowPaymentModal(false);
     toast.success('Payment successful!');
     onPaymentSuccess?.(orderId);
-    router.push(`/orders/${orderId}`);
+    router.push(`/profile/transaction`);
   };
 
   const handlePaymentError = () => {
     setShowPaymentModal(false);
     toast.error('Payment failed. You can retry payment later.');
     onPaymentError?.(orderId);
-    router.push(`/orders/${orderId}`);
+    router.push(`/profile/transaction`);
   };
 
   const handlePaymentPending = () => {
     setShowPaymentModal(false);
     toast('Payment is being processed...');
-    router.push(`/orders/${orderId}`);
+    router.push(`/profile/transaction`);
   };
 
   return (
