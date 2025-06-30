@@ -36,7 +36,10 @@ const mapPaymentMethod = (midtransPaymentType: string): string => {
   return paymentMethodMap[midtransPaymentType] || 'bank_transfer';
 };
 
-export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+export async function POST(
+  request: NextRequest,
+  props: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
   const params = await props.params;
   try {
     await connectDB();
@@ -120,20 +123,30 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
           order.status = 'processing';
           order.paidAt = new Date();
           order.midtransTransactionId = midtransStatus.transaction_id;
-          order.paymentMethod = mappedPaymentMethod; // ✅ Use mapped method
+          order.paymentMethod = mappedPaymentMethod;
           shouldUpdate = true;
 
-          // Update meal stock
+          // Update meal stock and totalOrders ✅
           try {
             const meal = await Meal.findById(order.meal);
             if (meal && meal.stockQuantity >= order.quantity) {
               meal.stockQuantity -= order.quantity;
+              meal.totalOrders += order.quantity; // ✅ Tambah totalOrders
               if (meal.stockQuantity === 0) {
                 meal.available = false;
               }
               await meal.save();
               stockUpdated = true;
-              console.log('📦 [CHECK] Stock updated for meal:', meal._id);
+              console.log(
+                '📦 [CHECK] Stock and totalOrders updated for meal:',
+                {
+                  mealId: meal._id,
+                  stockReduced: order.quantity,
+                  totalOrdersIncreased: order.quantity,
+                  newStock: meal.stockQuantity,
+                  newTotalOrders: meal.totalOrders,
+                }
+              );
             }
           } catch (stockError) {
             console.error('❌ [CHECK] Error updating stock:', stockError);
@@ -149,20 +162,30 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
             order.status = 'processing';
             order.paidAt = new Date();
             order.midtransTransactionId = midtransStatus.transaction_id;
-            order.paymentMethod = mappedPaymentMethod; // ✅ Use mapped method
+            order.paymentMethod = mappedPaymentMethod;
             shouldUpdate = true;
 
-            // Update stock logic same as settlement
+            // Update stock and totalOrders ✅
             try {
               const meal = await Meal.findById(order.meal);
               if (meal && meal.stockQuantity >= order.quantity) {
                 meal.stockQuantity -= order.quantity;
+                meal.totalOrders += order.quantity; // ✅ Tambah totalOrders
                 if (meal.stockQuantity === 0) {
                   meal.available = false;
                 }
                 await meal.save();
                 stockUpdated = true;
-                console.log('📦 [CHECK] Stock updated for meal:', meal._id);
+                console.log(
+                  '📦 [CHECK] Stock and totalOrders updated for meal:',
+                  {
+                    mealId: meal._id,
+                    stockReduced: order.quantity,
+                    totalOrdersIncreased: order.quantity,
+                    newStock: meal.stockQuantity,
+                    newTotalOrders: meal.totalOrders,
+                  }
+                );
               }
             } catch (stockError) {
               console.error('❌ [CHECK] Error updating stock:', stockError);
@@ -182,20 +205,30 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
           order.status = 'processing';
           order.paidAt = new Date();
           order.midtransTransactionId = midtransStatus.transaction_id;
-          order.paymentMethod = mappedPaymentMethod; // ✅ Use mapped method
+          order.paymentMethod = mappedPaymentMethod;
           shouldUpdate = true;
 
-          // Update stock
+          // Update stock and totalOrders ✅
           try {
             const meal = await Meal.findById(order.meal);
             if (meal && meal.stockQuantity >= order.quantity) {
               meal.stockQuantity -= order.quantity;
+              meal.totalOrders += order.quantity; // ✅ Tambah totalOrders
               if (meal.stockQuantity === 0) {
                 meal.available = false;
               }
               await meal.save();
               stockUpdated = true;
-              console.log('📦 [CHECK] Stock updated for meal:', meal._id);
+              console.log(
+                '📦 [CHECK] Stock and totalOrders updated for meal:',
+                {
+                  mealId: meal._id,
+                  stockReduced: order.quantity,
+                  totalOrdersIncreased: order.quantity,
+                  newStock: meal.stockQuantity,
+                  newTotalOrders: meal.totalOrders,
+                }
+              );
             }
           } catch (stockError) {
             console.error('❌ [CHECK] Error updating stock:', stockError);
