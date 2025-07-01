@@ -292,7 +292,7 @@ export default function CheckoutForm({
           // Cash on delivery success
           toast.success('Order placed successfully!');
           onOrderSuccess?.(data.order._id);
-          router.push(`/orders/${data.order._id}`);
+          router.push(`/profile/transaction`);
         }
       } else {
         const errorMessage = data.error || 'Failed to place order';

@@ -80,7 +80,7 @@ const OrderSchema = new mongoose.Schema(
         'dana',
         'linkaja',
         'jenius',
-        'qris', // ✅ Add qris
+        'qris',
         'bca_va',
         'bni_va',
         'bri_va',
@@ -93,8 +93,9 @@ const OrderSchema = new mongoose.Schema(
         'indomaret',
         'kioson',
         'pos_indonesia',
+        'cash_on_delivery',
       ],
-      default: 'cash',
+      default: 'cash_on_delivery',
     },
     orderType: {
       type: String,
@@ -106,6 +107,7 @@ const OrderSchema = new mongoose.Schema(
     },
     midtransOrderId: {
       type: String,
+      unique: true,
     },
     midtransTransactionId: {
       type: String,
@@ -125,6 +127,5 @@ const OrderSchema = new mongoose.Schema(
 // Add index for better query performance
 OrderSchema.index({ user: 1, createdAt: -1 });
 OrderSchema.index({ owner: 1, createdAt: -1 });
-OrderSchema.index({ midtransOrderId: 1 });
 
 export default mongoose.models.Order || mongoose.model('Order', OrderSchema);
