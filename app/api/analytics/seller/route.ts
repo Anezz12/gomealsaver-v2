@@ -188,14 +188,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   } catch (error: any) {
     console.error('❌ [SELLER ANALYTICS] Error:', error);
 
-    // 🔧 FIX: More detailed error logging
-    if (error.message?.includes("Schema hasn't been registered")) {
-      console.error(
-        '🔍 [DEBUG] Available models:',
-        Object.keys(require('mongoose').models)
-      );
-    }
-
     return NextResponse.json(
       {
         error: 'Failed to fetch analytics data',
