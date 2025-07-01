@@ -20,20 +20,15 @@ export default function PaymentModal({
 }: PaymentModalProps) {
   const [isLoading, setIsLoading] = useState(true);
 
-  // ✅ Memoize openPayment function with useCallback
   const openPayment = useCallback(() => {
     if (typeof window !== 'undefined' && (window as any).snap) {
-      console.log('🚀 [PAYMENT] Opening SANDBOX payment for Order:', orderId);
-
       (window as any).snap.pay(snapToken, {
-        onSuccess: async (result: any) => {
-          console.log('✅ [PAYMENT] SANDBOX payment success:', result);
-          toast.success('Payment successful! (Sandbox Mode)');
+        onSuccess: async () => {
+          toast.success('Payment successful!');
 
           // Enhanced success handling
           setTimeout(async () => {
             try {
-              // ✅ Use correct API endpoint for status check
               const response = await fetch(
                 `/api/orders/${orderId}/check-payment`,
                 {
@@ -46,18 +41,11 @@ export default function PaymentModal({
 
               if (response.ok) {
                 const data = await response.json();
-                console.log('📊 [PAYMENT] SANDBOX status check:', data);
 
                 if (data.order?.paymentStatus === 'paid') {
-                  console.log(
-                    '✅ [PAYMENT] SANDBOX payment confirmed by webhook'
-                  );
                   onSuccess();
                   return;
                 } else {
-                  console.log(
-                    '⏳ [PAYMENT] Waiting for SANDBOX webhook confirmation...'
-                  );
                   // Recheck after delay
                   setTimeout(async () => {
                     try {
@@ -70,38 +58,33 @@ export default function PaymentModal({
                       );
                       if (recheckResponse.ok) {
                         const recheckData = await recheckResponse.json();
-                        console.log(
-                          '🔄 [PAYMENT] SANDBOX recheck result:',
-                          recheckData
-                        );
                         if (recheckData.order?.paymentStatus === 'paid') {
                           onSuccess();
                           return;
                         }
                       }
                     } catch (error) {
-                      console.error('Error on SANDBOX recheck:', error);
+                      // Silent error handling
+                      console.error('Recheck payment failed:', error);
                     }
                     // Refresh to show updated status
                     window.location.reload();
                   }, 3000);
                 }
               } else {
-                console.error('Failed to check SANDBOX payment status');
                 // Still call onSuccess as Snap confirmed success
                 onSuccess();
               }
             } catch (error) {
-              console.error('Error checking SANDBOX payment status:', error);
               // Still call onSuccess as Snap confirmed success
+              console.error('Payment check failed:', error);
               onSuccess();
             }
           }, 2000); // Wait 2 seconds for webhook
         },
 
-        onPending: (result: any) => {
-          console.log('⏳ [PAYMENT] SANDBOX payment pending:', result);
-          toast('Payment is being processed... (Sandbox Mode)', {
+        onPending: () => {
+          toast('Payment is being processed...', {
             icon: '⏳',
             duration: 4000,
           });
@@ -109,41 +92,34 @@ export default function PaymentModal({
         },
 
         onError: (result: any) => {
-          console.error('❌ [PAYMENT] SANDBOX payment error:', result);
-
-          // Enhanced error handling for sandbox
+          // Enhanced error handling
           if (result.status_code === '404') {
             toast.error('Transaction not found. Please try again.');
           } else if (result.status_code === '402') {
-            toast.error('Payment method not available in sandbox.');
+            toast.error('Payment method not available.');
           } else if (result.status_code === '403') {
-            toast.error(
-              'Domain not allowed. Check Midtrans sandbox configuration.'
-            );
+            toast.error('Domain not allowed. Please contact support.');
           } else {
-            toast.error('Sandbox payment failed. Please try again.');
+            toast.error('Payment failed. Please try again.');
           }
 
           onError();
         },
 
         onClose: () => {
-          console.log('❌ [PAYMENT] SANDBOX payment popup closed');
           toast('Payment cancelled by user', { icon: '❌' });
-          // Don't call onError on manual close
         },
       });
     } else {
-      console.error('❌ [PAYMENT] Snap object not available');
       toast.error('Payment system not ready. Please try again.');
     }
-  }, [snapToken, orderId, onSuccess, onError, onPending]); // ✅ Include all dependencies
+  }, [snapToken, orderId, onSuccess, onError, onPending]);
 
   useEffect(() => {
     // Load Midtrans Snap script
     const script = document.createElement('script');
 
-    // ✅ FORCE SANDBOX: Always use sandbox URL regardless of environment
+    // Always use sandbox URL
     script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
 
     script.setAttribute(
@@ -151,16 +127,7 @@ export default function PaymentModal({
       process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY!
     );
 
-    console.log('🧪 [PAYMENT] Loading Midtrans SANDBOX script:', {
-      url: script.src,
-      clientKey:
-        process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY?.substring(0, 15) + '...',
-      environment: process.env.NODE_ENV,
-      mode: 'SANDBOX (FORCED)',
-    });
-
     script.onload = () => {
-      console.log('✅ [PAYMENT] Midtrans SANDBOX script loaded successfully');
       setIsLoading(false);
       // Auto-open payment popup
       setTimeout(() => {
@@ -168,11 +135,7 @@ export default function PaymentModal({
       }, 500);
     };
 
-    script.onerror = (error) => {
-      console.error(
-        '❌ [PAYMENT] Failed to load Midtrans SANDBOX script:',
-        error
-      );
+    script.onerror = () => {
       toast.error('Failed to load payment system');
       setIsLoading(false);
     };
@@ -185,7 +148,7 @@ export default function PaymentModal({
         document.head.removeChild(script);
       }
     };
-  }, [openPayment]); // ✅ Include openPayment as dependency
+  }, [openPayment]);
 
   if (isLoading) {
     return (
@@ -196,10 +159,7 @@ export default function PaymentModal({
             <h3 className="text-lg font-semibold text-white mb-2">
               Loading Payment
             </h3>
-            <p className="text-gray-400 mb-2">Preparing secure payment...</p>
-            <p className="text-xs text-amber-400">
-              🧪 Sandbox Mode (Test Environment)
-            </p>
+            <p className="text-gray-400">Preparing secure payment...</p>
           </div>
         </div>
       </div>
@@ -232,37 +192,10 @@ export default function PaymentModal({
             Click the button below to proceed with payment
           </p>
 
-          {/* Sandbox Mode Indicator */}
+          {/* Order Details */}
           <div className="bg-gray-800 rounded-lg p-4 mb-4">
-            <div className="flex items-center justify-center mb-2">
-              <span className="text-amber-400 text-lg">🧪</span>
-              <span className="text-amber-400 text-sm font-medium ml-2">
-                Test Mode Active
-              </span>
-            </div>
-            <p className="text-xs text-gray-400 mb-3">
-              This is a sandbox environment. No real money will be charged.
-            </p>
-            <div className="bg-gray-700 rounded-lg p-2">
-              <p className="text-xs text-gray-500 mb-1">Order ID:</p>
-              <p className="text-sm text-white font-mono">{orderId}</p>
-            </div>
-          </div>
-
-          {/* Test Card Info */}
-          <div className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-3 mb-4">
-            <p className="text-xs text-blue-300 font-medium mb-1">
-              💳 Test Card Numbers:
-            </p>
-            <p className="text-xs text-blue-200">
-              Success: 4811 1111 1111 1114
-            </p>
-            <p className="text-xs text-blue-200">
-              Failure: 4911 1111 1111 1113
-            </p>
-            <p className="text-xs text-blue-200">
-              CVV: 123 | Expire: Any future date
-            </p>
+            <p className="text-xs text-gray-500 mb-1">Order ID:</p>
+            <p className="text-sm text-white font-mono">{orderId}</p>
           </div>
         </div>
 
@@ -271,7 +204,7 @@ export default function PaymentModal({
             onClick={openPayment}
             className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-medium py-3 px-4 rounded-lg transition-colors"
           >
-            Pay Now (Test Mode)
+            Pay Now
           </button>
           <button
             onClick={onError}
