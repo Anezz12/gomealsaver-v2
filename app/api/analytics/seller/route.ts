@@ -1,8 +1,6 @@
-// app/api/analytics/seller/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/config/database';
 import Order from '@/models/Orders';
-
 import { getSessionUser } from '@/utils/getSessionUser';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -32,9 +30,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     };
 
-    // Get all orders in period
+    // Get all orders in period with proper population
     const orders = await Order.find(baseFilter)
-      .populate('meal', 'name price')
+      .populate({
+        path: 'meal',
+        select: 'name price image', // Add specific fields you need
+        model: 'Meal', // Explicitly specify the model
+      })
       .sort({ createdAt: -1 });
 
     // Calculate metrics
@@ -89,21 +91,27 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       });
     }
 
-    // Top selling meals
+    // Top selling meals with null check
     const mealSales: { [key: string]: any } = {};
     orders.forEach((order) => {
-      if (order.meal && order.paymentStatus === 'paid') {
+      // 🔧 FIX: Add null check for meal
+      if (order.meal && order.meal._id && order.paymentStatus === 'paid') {
         const mealId = order.meal._id.toString();
         if (!mealSales[mealId]) {
           mealSales[mealId] = {
-            meal: order.meal,
+            meal: {
+              _id: order.meal._id,
+              name: order.meal.name || 'Unknown Meal',
+              price: order.meal.price || 0,
+              image: order.meal.image || [],
+            },
             quantity: 0,
             revenue: 0,
             orders: 0,
           };
         }
-        mealSales[mealId].quantity += order.quantity;
-        mealSales[mealId].revenue += order.totalPrice;
+        mealSales[mealId].quantity += order.quantity || 0;
+        mealSales[mealId].revenue += order.totalPrice || 0;
         mealSales[mealId].orders += 1;
       }
     });
@@ -112,8 +120,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       .sort((a: any, b: any) => b.revenue - a.revenue)
       .slice(0, 5);
 
-    // Recent orders
-    const recentOrders = orders.slice(0, 10);
+    // Recent orders with safe population
+    const recentOrders = orders.slice(0, 10).map((order) => ({
+      ...order.toObject(),
+      meal: order.meal
+        ? {
+            _id: order.meal._id,
+            name: order.meal.name || 'Unknown Meal',
+            price: order.meal.price || 0,
+          }
+        : null,
+    }));
 
     // Compare with previous period
     const prevStartDate = new Date(startDate);
@@ -170,6 +187,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
   } catch (error: any) {
     console.error('❌ [SELLER ANALYTICS] Error:', error);
+
+    // 🔧 FIX: More detailed error logging
+    if (error.message?.includes("Schema hasn't been registered")) {
+      console.error(
+        '🔍 [DEBUG] Available models:',
+        Object.keys(require('mongoose').models)
+      );
+    }
+
     return NextResponse.json(
       {
         error: 'Failed to fetch analytics data',

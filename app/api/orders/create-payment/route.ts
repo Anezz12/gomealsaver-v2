@@ -129,20 +129,43 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     await order.save();
 
-    // Generate expiry time (30 minutes from now)
-    const currentTime = new Date();
+    // 🔧 FIX: Proper timezone handling for Indonesia (WIB/UTC+7)
+    const getIndonesiaTime = (): Date => {
+      const now = new Date();
+      // Convert to Indonesia timezone (UTC+7)
+      const indonesiaTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+      return indonesiaTime;
+    };
 
-    // Format expiry time for Midtrans (YYYY-MM-DD HH:MM:SS +0700)
+    // 🔧 FIX: Format expiry time with proper timezone handling
     const formatExpiryTime = (date: Date): string => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
+      // Get time in Indonesia timezone
+      const indonesiaTime = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+
+      const year = indonesiaTime.getUTCFullYear();
+      const month = String(indonesiaTime.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(indonesiaTime.getUTCDate()).padStart(2, '0');
+      const hours = String(indonesiaTime.getUTCHours()).padStart(2, '0');
+      const minutes = String(indonesiaTime.getUTCMinutes()).padStart(2, '0');
+      const seconds = String(indonesiaTime.getUTCSeconds()).padStart(2, '0');
 
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} +0700`;
     };
+
+    // Get current time in Indonesia timezone
+    const currentTime = getIndonesiaTime();
+
+    // Add 2 minutes buffer to ensure expiry time is in the future
+    const expiryTime = new Date(currentTime.getTime() + 2 * 60 * 1000); // Add 2 minutes buffer
+
+    console.log('🕐 [DEBUG] Timezone Info:', {
+      serverUTC: new Date().toISOString(),
+      serverLocal: new Date().toString(),
+      indonesiaTime: currentTime.toISOString(),
+      expiryTime: expiryTime.toISOString(),
+      formattedExpiry: formatExpiryTime(expiryTime),
+      timezoneOffset: new Date().getTimezoneOffset(),
+    });
 
     // Parse name properly
     const nameParts = name.trim().split(' ');
@@ -206,7 +229,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         pending: `${process.env.NEXT_PUBLIC_BASE_URL}/orders/${order._id}/payment-pending`,
       },
       expiry: {
-        start_time: formatExpiryTime(currentTime),
+        start_time: formatExpiryTime(expiryTime), // Use expiry time with buffer
         unit: 'minutes',
         duration: 30,
       },
