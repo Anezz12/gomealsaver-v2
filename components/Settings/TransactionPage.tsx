@@ -19,11 +19,13 @@ import {
   Eye,
   Star,
   RefreshCw,
+  DollarSign,
 } from 'lucide-react';
 import CheckPaymentButton from '@/components/Orders/CheckPaymentButton';
 import { toast } from 'react-hot-toast';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 interface Transaction {
   _id: string;
   name: string;
@@ -54,7 +56,13 @@ interface Transaction {
     | 'processing'
     | 'completed'
     | 'cancelled';
-  paymentStatus: 'pending' | 'paid' | 'failed' | 'expired' | 'cancelled';
+  paymentStatus:
+    | 'pending'
+    | 'paid'
+    | 'failed'
+    | 'expired'
+    | 'cancelled'
+    | 'pending_cod';
   paymentMethod?: string;
   orderType: 'dine_in' | 'takeaway';
   specialInstructions?: string;
@@ -75,13 +83,13 @@ interface Pagination {
 
 export default function TransactionPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterPaymentStatus, setFilterPaymentStatus] = useState<string>('all');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isPaymentFilterOpen, setIsPaymentFilterOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -94,6 +102,94 @@ export default function TransactionPage() {
     hasNextPage: false,
     hasPrevPage: false,
   });
+
+  // Loading states for actions
+  const [cancellingOrders, setCancellingOrders] = useState<Set<string>>(
+    new Set()
+  );
+  const [confirmingPayments, setConfirmingPayments] = useState<Set<string>>(
+    new Set()
+  );
+
+  // Cancel Order Function
+  const handleCancelOrder = async (orderId: string) => {
+    if (!confirm('Are you sure you want to cancel this order?')) {
+      return;
+    }
+
+    setCancellingOrders((prev) => new Set(prev).add(orderId));
+
+    try {
+      const response = await fetch(`/api/orders/${orderId}/cancel`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          reason: 'Cancelled by customer',
+        }),
+      });
+
+      if (response.ok) {
+        toast.success('Order cancelled successfully');
+        fetchTransactions(); // Refresh transactions
+      } else {
+        const error = await response.json();
+        toast.error(error.error || 'Failed to cancel order');
+      }
+    } catch (error) {
+      console.error('Error cancelling order:', error);
+      toast.error('Failed to cancel order');
+    } finally {
+      setCancellingOrders((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(orderId);
+        return newSet;
+      });
+    }
+  };
+
+  // Confirm Cash Payment Function
+  const handleConfirmCashPayment = async (orderId: string) => {
+    if (
+      !confirm(
+        'Confirm that you have received the cash payment for this order?'
+      )
+    ) {
+      return;
+    }
+
+    setConfirmingPayments((prev) => new Set(prev).add(orderId));
+
+    try {
+      const response = await fetch(
+        `/api/orders/${orderId}/confirm-cash-payment`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.ok) {
+        toast.success('Cash payment confirmed successfully');
+        fetchTransactions(); // Refresh transactions
+      } else {
+        const error = await response.json();
+        toast.error(error.error || 'Failed to confirm payment');
+      }
+    } catch (error) {
+      console.error('Error confirming cash payment:', error);
+      toast.error('Failed to confirm payment');
+    } finally {
+      setConfirmingPayments((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(orderId);
+        return newSet;
+      });
+    }
+  };
 
   // Fetch transactions
   const fetchTransactions = async (showRefreshToast = false) => {
@@ -133,7 +229,6 @@ export default function TransactionPage() {
 
   useEffect(() => {
     fetchTransactions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, filterStatus, filterPaymentStatus]);
 
   // Get display status
@@ -158,9 +253,30 @@ export default function TransactionPage() {
       transaction.paymentStatus === 'pending'
     ) {
       return 'pending';
+    } else if (transaction.paymentStatus === 'pending_cod') {
+      return 'pending_cod';
     } else {
       return transaction.status;
     }
+  };
+
+  // Check if order can be cancelled
+  const canCancelOrder = (transaction: Transaction) => {
+    const nonCancellableStatuses = ['completed', 'cancelled'];
+    return (
+      !nonCancellableStatuses.includes(transaction.status) &&
+      !nonCancellableStatuses.includes(transaction.paymentStatus)
+    );
+  };
+
+  // Check if cash payment can be confirmed
+  const canConfirmCashPayment = (transaction: Transaction) => {
+    return (
+      transaction.paymentStatus === 'pending_cod' &&
+      transaction.status === 'processing' &&
+      (!transaction.paymentMethod ||
+        transaction.paymentMethod === 'cash_on_delivery')
+    );
   };
 
   // Filter transactions by search query
@@ -184,6 +300,12 @@ export default function TransactionPage() {
         return (
           <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-amber-900/40 text-amber-300">
             <Clock size={12} /> Awaiting Payment
+          </span>
+        );
+      case 'pending_cod':
+        return (
+          <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-blue-900/40 text-blue-300">
+            <DollarSign size={12} /> Cash on Delivery
           </span>
         );
       case 'processing':
@@ -224,7 +346,7 @@ export default function TransactionPage() {
   };
 
   const formatPaymentMethod = (method?: string) => {
-    if (!method) return 'Cash on Delivery';
+    if (!method || method === 'cash_on_delivery') return 'Cash on Delivery';
 
     const methodMap: { [key: string]: string } = {
       credit_card: 'Credit Card',
@@ -255,7 +377,7 @@ export default function TransactionPage() {
     <main className="md:ml-72 lg:ml-0 pt-20 md:pt-0 min-h-screen">
       <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start  mb-6 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start mb-6 gap-4">
           <div>
             <h1 className="text-2xl font-bold text-white">My Transactions</h1>
             <p className="text-gray-400">
@@ -273,7 +395,7 @@ export default function TransactionPage() {
           </button>
         </div>
 
-        {/* Search and Filters */}
+        {/* Search and Filters - Same as before */}
         <div className="bg-black rounded-xl border border-gray-800 p-4 mb-6">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="relative flex-grow">
@@ -368,27 +490,34 @@ export default function TransactionPage() {
 
                 {isPaymentFilterOpen && (
                   <div className="absolute z-10 mt-1 w-full bg-gray-900 border border-gray-800 rounded-lg shadow-lg py-1">
-                    {['all', 'pending', 'paid', 'failed', 'expired'].map(
-                      (status) => (
-                        <button
-                          key={status}
-                          className={`px-4 py-2 text-sm w-full text-left hover:bg-gray-800 ${
-                            filterPaymentStatus === status
-                              ? 'text-amber-500'
-                              : 'text-white'
-                          }`}
-                          onClick={() => {
-                            setFilterPaymentStatus(status);
-                            setIsPaymentFilterOpen(false);
-                            setCurrentPage(1);
-                          }}
-                        >
-                          {status === 'all'
-                            ? 'All Payment'
-                            : status.charAt(0).toUpperCase() + status.slice(1)}
-                        </button>
-                      )
-                    )}
+                    {[
+                      'all',
+                      'pending',
+                      'paid',
+                      'failed',
+                      'expired',
+                      'pending_cod',
+                    ].map((status) => (
+                      <button
+                        key={status}
+                        className={`px-4 py-2 text-sm w-full text-left hover:bg-gray-800 ${
+                          filterPaymentStatus === status
+                            ? 'text-amber-500'
+                            : 'text-white'
+                        }`}
+                        onClick={() => {
+                          setFilterPaymentStatus(status);
+                          setIsPaymentFilterOpen(false);
+                          setCurrentPage(1);
+                        }}
+                      >
+                        {status === 'all'
+                          ? 'All Payment'
+                          : status === 'pending_cod'
+                          ? 'Cash on Delivery'
+                          : status.charAt(0).toUpperCase() + status.slice(1)}
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>
@@ -430,6 +559,10 @@ export default function TransactionPage() {
                 .slice(-8)
                 .toUpperCase()}`;
               const displayStatus = getDisplayStatus(transaction);
+              const isCancelling = cancellingOrders.has(transaction._id);
+              const isConfirmingPayment = confirmingPayments.has(
+                transaction._id
+              );
 
               return (
                 <div
@@ -456,7 +589,7 @@ export default function TransactionPage() {
                     </div>
                   </div>
 
-                  {/* Transaction Content */}
+                  {/* Transaction Content - Same as before */}
                   <div className="p-5">
                     <div className="flex flex-col md:flex-row gap-6">
                       {/* Left: Meal Info */}
@@ -522,12 +655,15 @@ export default function TransactionPage() {
                               className={`font-medium ${
                                 transaction.paymentStatus === 'paid'
                                   ? 'text-green-400'
-                                  : transaction.paymentStatus === 'pending'
+                                  : transaction.paymentStatus === 'pending' ||
+                                    transaction.paymentStatus === 'pending_cod'
                                   ? 'text-amber-400'
                                   : 'text-red-400'
                               }`}
                             >
-                              {transaction.paymentStatus.toUpperCase()}
+                              {transaction.paymentStatus === 'pending_cod'
+                                ? 'CASH ON DELIVERY'
+                                : transaction.paymentStatus.toUpperCase()}
                             </span>
                           </div>
                           {transaction.paidAt && (
@@ -541,7 +677,7 @@ export default function TransactionPage() {
                         </div>
                       </div>
 
-                      {/* Right: Delivery Info */}
+                      {/* Right: Delivery Info - Same as before */}
                       <div className="flex-1">
                         <h3 className="font-medium text-gray-400 mb-2 text-sm pt-0 md:pt-20">
                           Delivery Information
@@ -591,7 +727,7 @@ export default function TransactionPage() {
                     </div>
                   </div>
 
-                  {/* Transaction Footer */}
+                  {/* Transaction Footer with Enhanced Action Buttons */}
                   <div className="bg-gray-900/30 px-5 py-4 flex flex-col sm:flex-row justify-between gap-4 border-t border-gray-800">
                     <div className="flex flex-wrap gap-2">
                       {/* Pending Payment - Show Check Payment Button */}
@@ -604,9 +740,48 @@ export default function TransactionPage() {
                           />
                         )}
 
+                      {/* Cash on Delivery - Confirm Payment Button */}
+                      {canConfirmCashPayment(transaction) && (
+                        <button
+                          onClick={() =>
+                            handleConfirmCashPayment(transaction._id)
+                          }
+                          disabled={isConfirmingPayment}
+                          className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
+                        >
+                          <DollarSign size={16} />
+                          <span>
+                            {isConfirmingPayment
+                              ? 'Confirming...'
+                              : 'Confirm Cash Payment'}
+                          </span>
+                        </button>
+                      )}
+
+                      {/* Cancel Order Button */}
+                      {canCancelOrder(transaction) && (
+                        <button
+                          onClick={() => handleCancelOrder(transaction._id)}
+                          disabled={isCancelling}
+                          className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 disabled:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
+                        >
+                          <XCircle size={16} />
+                          <span>
+                            {isCancelling ? 'Cancelling...' : 'Cancel Order'}
+                          </span>
+                        </button>
+                      )}
+
                       {/* Completed - Rate Order */}
                       {displayStatus === 'completed' && (
-                        <button className="flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg text-sm font-medium">
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/profile/transaction/rate-order?transactionId=${transaction._id}`
+                            )
+                          }
+                          className="flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg text-sm font-medium"
+                        >
                           <Star size={16} />
                           <span>Rate Order</span>
                         </button>
@@ -633,7 +808,7 @@ export default function TransactionPage() {
           )}
         </div>
 
-        {/* Pagination */}
+        {/* Pagination - Same as before */}
         {pagination.totalPages > 1 && (
           <div className="flex items-center justify-between mt-8">
             <div className="text-sm text-gray-400">

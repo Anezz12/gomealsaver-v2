@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { RiDashboardLine } from 'react-icons/ri';
 import { MdOutlineInventory2 } from 'react-icons/md';
-import { FiSettings } from 'react-icons/fi';
 import { BiHistory } from 'react-icons/bi';
 import { IoStatsChartOutline } from 'react-icons/io5';
 import { RxHamburgerMenu } from 'react-icons/rx';
@@ -67,11 +66,11 @@ export default function NavbarDashboard({
       href: '/dashboard-seller/analytics',
       icon: <IoStatsChartOutline className="w-5 h-5" />,
     },
-    {
-      name: 'Settings',
-      href: '/dashboard-seller/settings',
-      icon: <FiSettings className="w-5 h-5" />,
-    },
+    // {
+    //   name: 'Settings',
+    //   href: '/dashboard-seller/settings',
+    //   icon: <FiSettings className="w-5 h-5" />,
+    // },
   ];
 
   const toggleNav = () => setIsNavOpen(!isNavOpen);
