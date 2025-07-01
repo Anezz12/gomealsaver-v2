@@ -20,12 +20,13 @@ import {
   Star,
   RefreshCw,
   DollarSign,
+  Router,
 } from 'lucide-react';
 import CheckPaymentButton from '@/components/Orders/CheckPaymentButton';
 import { toast } from 'react-hot-toast';
 import Image from 'next/image';
 import Link from 'next/link';
-
+import { useRouter } from 'next/navigation';
 interface Transaction {
   _id: string;
   name: string;
@@ -83,6 +84,7 @@ interface Pagination {
 
 export default function TransactionPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -773,7 +775,14 @@ export default function TransactionPage() {
 
                       {/* Completed - Rate Order */}
                       {displayStatus === 'completed' && (
-                        <button className="flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg text-sm font-medium">
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/profile/transaction/rate-order?transactionId=${transaction._id}`
+                            )
+                          }
+                          className="flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg text-sm font-medium"
+                        >
                           <Star size={16} />
                           <span>Rate Order</span>
                         </button>
