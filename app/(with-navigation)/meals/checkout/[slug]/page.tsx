@@ -1,4 +1,3 @@
-// app/(with-navigation)/meals/checkout/[slug]/page.tsx
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import connectDB from '@/config/database';
