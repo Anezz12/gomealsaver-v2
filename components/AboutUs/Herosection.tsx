@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import TypedText from './Typing';
-import ImageHero from '@/public/images/backgrounds/bg-hero.jpg';
+import ImageHero from '@/public/images/logos/GMS-transparent.png';
 import { motion } from 'framer-motion';
 import { SlideUp } from '@/utility/animation';
 import Link from 'next/link';
@@ -32,7 +32,7 @@ const HeroSection: React.FC = () => {
                 '"Transform yesterdays leftovers into delightful meals for today, turning what might have gone to waste into something truly enjoyable. Embrace the joy of saving money while savoring tasty dishes, all while making a positive impact through sustainable food choices."'
               }
             </motion.p>
-            {/* Buttons Container */}as
+            {/* Buttons Container */}
             <motion.div
               variants={SlideUp(0.2)}
               whileInView="animate"
@@ -70,8 +70,8 @@ const HeroSection: React.FC = () => {
             <Image
               src={ImageHero}
               alt="Go Meal Saver Illustration"
-              width={800}
-              height={100}
+              width={400}
+              height={80}
               className="relative z-10 lg:top-24 xl:top-0 overflow-x-visible max-w-full h-auto object-contain"
               priority
             />
