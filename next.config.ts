@@ -21,13 +21,39 @@ const nextConfig = {
     ],
   },
 
-  // 🔧 FIX: Add CORS and CSP headers for Midtrans
+  // 🔧 FIX: Environment-specific headers
   async headers() {
+    const isDevelopment = process.env.NODE_ENV === 'development';
+
+    // Development headers (more permissive)
+    if (isDevelopment) {
+      return [
+        {
+          source: '/(.*)',
+          headers: [
+            {
+              key: 'Access-Control-Allow-Origin',
+              value: '*',
+            },
+            {
+              key: 'Access-Control-Allow-Methods',
+              value: 'GET, POST, PUT, DELETE, OPTIONS',
+            },
+            {
+              key: 'Access-Control-Allow-Headers',
+              value: 'Content-Type, Authorization',
+            },
+          ],
+        },
+      ];
+    }
+
+    // Production headers (more secure)
     return [
       {
         source: '/(.*)',
         headers: [
-          // CORS Headers
+          // CORS Headers for production
           {
             key: 'Access-Control-Allow-Origin',
             value: '*',
@@ -45,13 +71,14 @@ const nextConfig = {
             value: '86400',
           },
 
-          // Content Security Policy for Midtrans
+          // 🔧 FIX: Production-optimized CSP
           {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.sandbox.midtrans.com https://app.midtrans.com https://js-agent.newrelic.com https://bam-cell.nr-data.net",
-              "connect-src 'self' https://api.sandbox.midtrans.com https://api.midtrans.com https://app.sandbox.midtrans.com https://app.midtrans.com https://bam.nr-data.net https://bam-cell.nr-data.net wss:",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.sandbox.midtrans.com https://app.midtrans.com *.newrelic.com *.nr-data.net",
+              "script-src-elem 'self' 'unsafe-inline' https://app.sandbox.midtrans.com https://app.midtrans.com *.newrelic.com *.nr-data.net",
+              "connect-src 'self' https://api.sandbox.midtrans.com https://api.midtrans.com https://app.sandbox.midtrans.com https://app.midtrans.com *.newrelic.com *.nr-data.net wss: ws:",
               "img-src 'self' data: https: blob:",
               "style-src 'self' 'unsafe-inline' https://app.sandbox.midtrans.com https://app.midtrans.com",
               "font-src 'self' data: https:",
@@ -59,18 +86,12 @@ const nextConfig = {
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self' https://app.sandbox.midtrans.com https://app.midtrans.com",
+              "worker-src 'self' blob:",
+              "child-src 'self' blob:",
             ].join('; '),
           },
 
-          // Additional Security Headers
-          {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
+          // Security Headers
           {
             key: 'X-Frame-Options',
             value: 'SAMEORIGIN',
@@ -86,7 +107,7 @@ const nextConfig = {
         ],
       },
 
-      // Specific headers for API routes
+      // API routes headers
       {
         source: '/api/(.*)',
         headers: [
@@ -105,13 +126,13 @@ const nextConfig = {
         ],
       },
 
-      // Headers for Midtrans webhook
+      // Midtrans webhook headers
       {
         source: '/api/webhook/midtrans',
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: 'https://api.sandbox.midtrans.com, https://api.midtrans.com',
+            value: '*', // 🔧 FIX: Use wildcard for production
           },
           {
             key: 'Access-Control-Allow-Methods',
@@ -126,23 +147,20 @@ const nextConfig = {
     ];
   },
 
-  // 🔧 FIX: Handle rewrites for better routing
-  async rewrites() {
-    return [
-      // Proxy untuk Midtrans API jika diperlukan
-      {
-        source: '/api/midtrans/:path*',
-        destination: 'https://api.sandbox.midtrans.com/:path*',
-      },
-    ];
-  },
+  // 🔧 FIX: Remove rewrites for production
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/api/midtrans/:path*',
+  //       destination: 'https://api.sandbox.midtrans.com/:path*',
+  //     },
+  //   ];
+  // },
 
-  // 🔧 FIX: Environment variables validation
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
 
-  // 🔧 FIX: Experimental features untuk better performance
   experimental: {
     serverActions: {
       allowedOrigins: ['localhost:3000', '*.vercel.app', '*.netlify.app'],
