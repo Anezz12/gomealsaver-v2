@@ -8,7 +8,6 @@ export default function DesktopNav() {
   const navLinks = [
     { href: '/', label: 'Beranda' },
     { href: '/meals', label: 'Makanan' },
-    { href: '/promo', label: 'Promo' },
     { href: '/aboutus', label: 'About Us' },
     { href: '/contact', label: 'Contact' },
   ];
