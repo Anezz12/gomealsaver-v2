@@ -4,6 +4,13 @@ import Order from '@/models/Orders';
 import Meal from '@/models/Meals';
 import { getSessionUser } from '@/utils/getSessionUser';
 
+// Helper function to generate unique order ID
+function generateOrderId(): string {
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `GMS-${timestamp}-${random}`;
+}
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     await connectDB();
@@ -76,6 +83,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Calculate total price
     const totalPrice = meal.price * quantity;
 
+    // ✅ Generate unique order ID for all orders
+    const midtransOrderId = generateOrderId();
+
     // Create order
     const order = new Order({
       owner: meal.owner._id,
@@ -91,10 +101,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       orderType,
       specialInstructions: specialInstructions || '',
       totalPrice,
+      // ✅ Add midtransOrderId for all orders
+      midtransOrderId,
       status:
         paymentMethod === 'cash_on_delivery' ? 'pending' : 'awaiting_payment',
       paymentStatus:
         paymentMethod === 'cash_on_delivery' ? 'pending' : 'pending',
+      // ✅ Add payment method field
+      paymentMethod,
     });
 
     await order.save();
@@ -112,6 +126,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       response.message =
         'Order created. Use /api/orders/create-payment for online payment.';
       response.requiresPayment = true;
+      response.midtransOrderId = midtransOrderId;
     } else {
       // For cash on delivery, update stock immediately
       meal.stockQuantity -= quantity;
@@ -124,6 +139,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json(response, { status: 201 });
   } catch (error: any) {
     console.error('Error creating order:', error);
+
+    // ✅ Better error handling for duplicate key
+    if (error.code === 11000) {
+      if (error.keyPattern?.midtransOrderId) {
+        return NextResponse.json(
+          {
+            error: 'Order ID conflict. Please try again.',
+            details: 'Duplicate order ID generated',
+          },
+          { status: 409 }
+        );
+      }
+    }
+
     return NextResponse.json(
       {
         error: 'Failed to create order',

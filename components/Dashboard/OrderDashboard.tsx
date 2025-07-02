@@ -17,9 +17,11 @@ import {
   MoreVertical,
   Phone,
   RefreshCw,
+  DollarSign,
 } from 'lucide-react';
 import CheckPaymentButton from '@/components/Orders/CheckPaymentButton';
 import { toast } from 'react-hot-toast';
+import Swal from 'sweetalert2';
 
 interface Order {
   _id: string;
@@ -40,12 +42,15 @@ interface Order {
   status:
     | 'pending'
     | 'awaiting_payment'
+    | 'confirmed'
+    | 'in_progress'
     | 'processing'
+    | 'ready'
     | 'completed'
     | 'cancelled';
   paymentStatus: 'pending' | 'paid' | 'failed' | 'expired' | 'cancelled';
   paymentMethod?: string;
-  orderType: 'dine_in' | 'takeaway';
+  orderType: 'pickup' | 'delivery';
   specialInstructions?: string;
   midtransOrderId?: string;
   midtransTransactionId?: string;
@@ -63,6 +68,7 @@ export default function OrderDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [acceptingPayment, setAcceptingPayment] = useState<string | null>(null);
 
   // Fetch orders from API
   const fetchOrders = async (showRefreshToast = false) => {
@@ -96,6 +102,29 @@ export default function OrderDashboard() {
 
   // Convert database status to display status
   const getDisplayStatus = (order: Order) => {
+    // COD Orders
+    if (order.paymentMethod === 'cash_on_delivery') {
+      if (order.status === 'pending' && order.paymentStatus === 'pending') {
+        return 'pending_cod'; // New COD order
+      } else if (
+        order.status === 'confirmed' &&
+        order.paymentStatus === 'pending'
+      ) {
+        return 'confirmed_cod'; // COD order confirmed but payment not received
+      } else if (
+        order.status === 'processing' &&
+        order.paymentStatus === 'paid'
+      ) {
+        return 'processing'; // COD paid, in processing
+      } else if (
+        order.status === 'completed' &&
+        order.paymentStatus === 'paid'
+      ) {
+        return 'completed'; // COD completed
+      }
+    }
+
+    // Online Payment Orders
     if (order.paymentStatus === 'paid' && order.status === 'processing') {
       return 'processing';
     } else if (order.paymentStatus === 'paid' && order.status === 'completed') {
@@ -107,7 +136,8 @@ export default function OrderDashboard() {
       return 'cancelled';
     } else if (
       order.status === 'awaiting_payment' ||
-      order.paymentStatus === 'pending'
+      (order.paymentStatus === 'pending' &&
+        order.paymentMethod !== 'cash_on_delivery')
     ) {
       return 'pending';
     } else {
@@ -127,8 +157,16 @@ export default function OrderDashboard() {
 
       // Filter by status
       const displayStatus = getDisplayStatus(order);
-      const matchesStatus =
-        filterStatus === 'all' || displayStatus === filterStatus;
+      let matchesStatus = filterStatus === 'all';
+
+      if (filterStatus === 'pending') {
+        matchesStatus =
+          displayStatus === 'pending' || displayStatus === 'pending_cod';
+      } else if (filterStatus === 'confirmed') {
+        matchesStatus = displayStatus === 'confirmed_cod';
+      } else if (filterStatus !== 'all') {
+        matchesStatus = displayStatus === filterStatus;
+      }
 
       return matchesSearch && matchesStatus;
     })
@@ -147,6 +185,18 @@ export default function OrderDashboard() {
         return (
           <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-amber-900/40 text-amber-300">
             <Clock size={12} /> Pending Payment
+          </span>
+        );
+      case 'pending_cod':
+        return (
+          <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-orange-900/40 text-orange-300 animate-pulse">
+            <DollarSign size={12} /> New COD Order
+          </span>
+        );
+      case 'confirmed_cod':
+        return (
+          <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-purple-900/40 text-purple-300">
+            <Clock size={12} /> Awaiting COD Payment
           </span>
         );
       case 'processing':
@@ -194,11 +244,199 @@ export default function OrderDashboard() {
         toast.success(`Order ${newStatus} successfully`);
         fetchOrders(); // Refresh orders
       } else {
-        toast.error('Failed to update order status');
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to update order status');
       }
     } catch (error) {
       console.error('Error updating order status:', error);
       toast.error('Error updating order status');
+    }
+  };
+
+  // ✅ Handle COD Payment Acceptance
+  const handleAcceptCODPayment = async (orderId: string, notes?: string) => {
+    try {
+      setAcceptingPayment(orderId);
+
+      console.log('💰 [DASHBOARD] Accepting COD payment for order:', orderId);
+
+      const response = await fetch(
+        `/api/orders/${orderId}/accept-cod-payment`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            notes: notes || '',
+            paymentReceivedAt: new Date().toISOString(),
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log('📥 [DASHBOARD] COD acceptance response:', data);
+
+      if (response.ok) {
+        toast.success(data.message || 'COD payment accepted successfully!');
+
+        // Show detailed success info
+        if (data.changes) {
+          console.log('✅ [DASHBOARD] Order status updated:', data.changes);
+        }
+
+        fetchOrders(); // Refresh orders list
+      } else {
+        console.error('❌ [DASHBOARD] COD acceptance failed:', data);
+
+        // More specific error messages
+        if (response.status === 400) {
+          toast.error(
+            data.details ||
+              data.error ||
+              'Invalid order state for payment acceptance'
+          );
+        } else if (response.status === 403) {
+          toast.error(
+            'You are not authorized to accept payment for this order'
+          );
+        } else {
+          toast.error(data.error || 'Failed to accept COD payment');
+        }
+      }
+    } catch (error) {
+      console.error(
+        '❌ [DASHBOARD] Network error accepting COD payment:',
+        error
+      );
+      toast.error('Network error - please try again');
+    } finally {
+      setAcceptingPayment(null);
+    }
+  };
+
+  // ✅ Add optional notes dialog for COD payment acceptance
+  const handleAcceptCODPaymentWithNotes = async (orderId: string) => {
+    const { value: notes } = await Swal.fire({
+      title: 'Accept COD Payment',
+      input: 'textarea',
+      inputLabel: 'Payment Notes (Optional)',
+      inputPlaceholder: 'Any notes about the payment received...',
+      showCancelButton: true,
+      confirmButtonText: 'Accept Payment',
+      confirmButtonColor: '#f59e0b',
+      cancelButtonColor: '#6b7280',
+      background: 'rgb(17 24 39)',
+      color: 'rgb(243 244 246)',
+      inputAttributes: {
+        'aria-label': 'Payment notes',
+      },
+    });
+
+    if (notes !== undefined) {
+      // User clicked confirm (even with empty notes)
+      await handleAcceptCODPayment(orderId, notes);
+    }
+  };
+
+  // ✅ Handle COD Order Confirmation (TAMBAHAN BARU)
+  const handleConfirmCODOrder = async (orderId: string) => {
+    try {
+      setAcceptingPayment(orderId);
+
+      console.log('✅ [DASHBOARD] Confirming COD order:', orderId);
+
+      const response = await fetch(`/api/orders/${orderId}/confirm-cod`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          confirmationNotes: 'Order confirmed by seller',
+          confirmedAt: new Date().toISOString(),
+        }),
+      });
+
+      const data = await response.json();
+      console.log('📥 [DASHBOARD] COD confirmation response:', data);
+
+      if (response.ok) {
+        toast.success(data.message || 'COD order confirmed successfully!');
+
+        // Show stock reservation info if available
+        if (data.stockReservation) {
+          console.log('📦 [DASHBOARD] Stock reserved:', data.stockReservation);
+        }
+
+        fetchOrders(); // Refresh orders list
+      } else {
+        console.error('❌ [DASHBOARD] COD confirmation failed:', data);
+
+        if (response.status === 400) {
+          toast.error(data.error || 'Invalid order state for confirmation');
+        } else if (response.status === 403) {
+          toast.error('You are not authorized to confirm this order');
+        } else {
+          toast.error(data.error || 'Failed to confirm COD order');
+        }
+      }
+    } catch (error) {
+      console.error(
+        '❌ [DASHBOARD] Network error confirming COD order:',
+        error
+      );
+      toast.error('Network error - please try again');
+    } finally {
+      setAcceptingPayment(null);
+    }
+  };
+
+  // ✅ Handle COD Order Rejection (TAMBAHAN BARU)
+  const handleRejectCODOrder = async (orderId: string) => {
+    const { value: rejectionReason } = await Swal.fire({
+      title: 'Reject COD Order',
+      input: 'textarea',
+      inputLabel: 'Rejection Reason (Optional)',
+      inputPlaceholder: 'Reason for rejecting this order...',
+      showCancelButton: true,
+      confirmButtonText: 'Reject Order',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      background: 'rgb(17 24 39)',
+      color: 'rgb(243 244 246)',
+      inputAttributes: {
+        'aria-label': 'Rejection reason',
+      },
+    });
+
+    if (rejectionReason !== undefined) {
+      try {
+        console.log('❌ [DASHBOARD] Rejecting COD order:', orderId);
+
+        const response = await fetch(`/api/orders/${orderId}/update-status`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: 'cancelled',
+            rejectionReason: rejectionReason || 'Order rejected by seller',
+            cancelledAt: new Date().toISOString(),
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          toast.success('Order rejected successfully');
+          fetchOrders();
+        } else {
+          toast.error(data.error || 'Failed to reject order');
+        }
+      } catch (error) {
+        console.error('❌ [DASHBOARD] Error rejecting order:', error);
+        toast.error('Network error - please try again');
+      }
     }
   };
 
@@ -211,7 +449,7 @@ export default function OrderDashboard() {
   };
 
   const formatPaymentMethod = (method?: string) => {
-    if (!method) return 'Cash on Delivery';
+    if (!method || method === 'cash_on_delivery') return 'Cash on Delivery';
 
     const methodMap: { [key: string]: string } = {
       credit_card: 'Credit Card',
@@ -241,6 +479,7 @@ export default function OrderDashboard() {
   return (
     <main className="md:ml-72 lg:ml-80 pt-16 md:pt-6 min-h-screen">
       <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+        {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
             <h1 className="text-2xl font-bold text-white">Orders</h1>
@@ -290,6 +529,8 @@ export default function OrderDashboard() {
                     <span className="text-sm text-white">
                       {filterStatus === 'all'
                         ? 'All Status'
+                        : filterStatus === 'confirmed'
+                        ? 'Awaiting Payment'
                         : filterStatus.charAt(0).toUpperCase() +
                           filterStatus.slice(1)}
                     </span>
@@ -302,6 +543,7 @@ export default function OrderDashboard() {
                     {[
                       'all',
                       'pending',
+                      'confirmed',
                       'processing',
                       'completed',
                       'cancelled',
@@ -320,6 +562,8 @@ export default function OrderDashboard() {
                       >
                         {status === 'all'
                           ? 'All Status'
+                          : status === 'confirmed'
+                          ? 'Awaiting Payment'
                           : status.charAt(0).toUpperCase() + status.slice(1)}
                       </button>
                     ))}
@@ -408,13 +652,13 @@ export default function OrderDashboard() {
             filteredOrders.map((order) => {
               const orderIdDisplay = `ORD-${order._id.slice(-8).toUpperCase()}`;
               const displayStatus = getDisplayStatus(order);
-              const isNewOrder = displayStatus === 'pending' && !order.paidAt;
+              const isNewOrder = displayStatus === 'pending_cod';
 
               return (
                 <div
                   key={order._id}
                   className={`bg-black border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition-colors ${
-                    isNewOrder ? 'ring-1 ring-amber-500/30' : ''
+                    isNewOrder ? 'ring-1 ring-orange-500/30' : ''
                   }`}
                 >
                   {/* Order Header */}
@@ -554,10 +798,10 @@ export default function OrderDashboard() {
                     </div>
                   </div>
 
-                  {/* Order Footer */}
+                  {/* Order Footer - Action Buttons */}
                   <div className="bg-gray-900/30 px-5 py-4 flex flex-col sm:flex-row justify-between gap-4 border-t border-gray-800">
                     <div className="flex flex-wrap gap-2">
-                      {/* Pending Payment - Show Check Payment Button */}
+                      {/* Online Payment - Check Payment Button */}
                       {displayStatus === 'pending' && order.midtransOrderId && (
                         <CheckPaymentButton
                           orderId={order._id}
@@ -565,7 +809,73 @@ export default function OrderDashboard() {
                         />
                       )}
 
-                      {/* New Order - Accept/Reject */}
+                      {/* ✅ NEW COD Order - Confirm Order Button (TAMBAHAN BARU) */}
+                      {displayStatus === 'pending_cod' && (
+                        <>
+                          <button
+                            className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg text-sm font-medium disabled:bg-gray-600 disabled:text-gray-400"
+                            onClick={() => handleConfirmCODOrder(order._id)}
+                            disabled={acceptingPayment === order._id}
+                          >
+                            {acceptingPayment === order._id ? (
+                              <div className="flex items-center gap-2">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+                                Confirming...
+                              </div>
+                            ) : (
+                              <>
+                                <CheckCircle2
+                                  size={16}
+                                  className="inline mr-1"
+                                />
+                                Confirm Order
+                              </>
+                            )}
+                          </button>
+                          <button
+                            className="bg-transparent hover:bg-gray-800 text-white border border-gray-700 px-4 py-2 rounded-lg text-sm"
+                            onClick={() => handleRejectCODOrder(order._id)}
+                          >
+                            <XCircle size={16} className="inline mr-1" />
+                            Reject Order
+                          </button>
+                        </>
+                      )}
+
+                      {/* COD - Accept Payment (goes to processing) */}
+                      {displayStatus === 'confirmed_cod' && (
+                        <>
+                          <button
+                            className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg text-sm font-medium disabled:bg-gray-600 disabled:text-gray-400"
+                            onClick={() =>
+                              handleAcceptCODPaymentWithNotes(order._id)
+                            }
+                            disabled={acceptingPayment === order._id}
+                          >
+                            {acceptingPayment === order._id ? (
+                              <div className="flex items-center gap-2">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+                                Processing...
+                              </div>
+                            ) : (
+                              <>
+                                <DollarSign size={16} className="inline mr-1" />
+                                Accept COD Payment
+                              </>
+                            )}
+                          </button>
+                          <button
+                            className="bg-transparent hover:bg-gray-800 text-white border border-gray-700 px-4 py-2 rounded-lg text-sm"
+                            onClick={() =>
+                              handleOrderStatusUpdate(order._id, 'cancelled')
+                            }
+                          >
+                            Cancel Order
+                          </button>
+                        </>
+                      )}
+
+                      {/* Online Payment - Accept/Reject */}
                       {displayStatus === 'pending' &&
                         order.paymentStatus === 'paid' && (
                           <>
@@ -588,7 +898,7 @@ export default function OrderDashboard() {
                           </>
                         )}
 
-                      {/* Processing - Mark as Completed */}
+                      {/* Processing - Mark as Completed (both COD and Online) */}
                       {displayStatus === 'processing' && (
                         <button
                           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
@@ -597,14 +907,6 @@ export default function OrderDashboard() {
                           }
                         >
                           Mark as Completed
-                        </button>
-                      )}
-
-                      {/* Completed/Cancelled - View Details */}
-                      {(displayStatus === 'completed' ||
-                        displayStatus === 'cancelled') && (
-                        <button className="bg-transparent hover:bg-gray-800 text-white border border-gray-700 px-4 py-2 rounded-lg text-sm">
-                          View Details
                         </button>
                       )}
                     </div>

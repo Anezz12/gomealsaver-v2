@@ -51,17 +51,42 @@ export async function PATCH(
       );
     }
 
+    // ✅ Restore meal stock and totalOrders if order was already confirmed/processing
+    const shouldRestoreStock = ['confirmed', 'processing'].includes(
+      order.status
+    );
+
+    if (shouldRestoreStock) {
+      const meal = await Meal.findById(order.meal._id);
+      if (meal) {
+        // ✅ Restore stock quantity
+        meal.stockQuantity += order.quantity;
+
+        // ✅ Reduce total orders (kembalikan ke semula)
+        meal.totalOrders = Math.max(0, meal.totalOrders - order.quantity);
+
+        // ✅ Make meal available again if stock > 0
+        if (meal.stockQuantity > 0) {
+          meal.available = true;
+        }
+
+        await meal.save();
+
+        console.log('📦 [CANCEL] Stock and totalOrders restored for meal:', {
+          mealId: meal._id,
+          stockRestored: order.quantity,
+          totalOrdersReduced: order.quantity,
+          newStock: meal.stockQuantity,
+          newTotalOrders: meal.totalOrders,
+          availabilityStatus: meal.available,
+        });
+      }
+    }
+
     // Cancel the order
     order.status = 'cancelled';
+    order.paymentStatus = 'cancelled';
     await order.save();
-
-    // Restore meal stock quantity
-    const meal = await Meal.findById(order.meal._id);
-    if (meal) {
-      meal.stockQuantity += order.quantity;
-      meal.available = true; // Make meal available again
-      await meal.save();
-    }
 
     const populatedOrder = await Order.findById(order._id)
       .populate('user', 'username email')
@@ -72,6 +97,8 @@ export async function PATCH(
       {
         message: 'Order cancelled successfully',
         order: populatedOrder,
+        stockRestored: shouldRestoreStock,
+        restoredQuantity: shouldRestoreStock ? order.quantity : 0,
       },
       { status: 200 }
     );
