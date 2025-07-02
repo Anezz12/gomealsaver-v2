@@ -48,7 +48,7 @@ export default function LoginForm({ onClose }: LoginFormProps) {
 
   const handleGoogleSignIn = async (): Promise<void> => {
     try {
-      await signIn('google', { callbackUrl: '/' });
+      await signIn('google', { callbackUrl: '/role-selection' });
     } catch {
       setError('An error occurred, please try again');
     }
