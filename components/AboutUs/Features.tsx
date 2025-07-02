@@ -68,7 +68,7 @@ const Features: React.FC = () => {
                   <Image
                     width={600}
                     height={200}
-                    src="/images/abouts/harga.png"
+                    src="/images/abouts/harga-2.png"
                     alt="Cheapest Price"
                     className="relative z-10"
                   />
@@ -103,7 +103,7 @@ const Features: React.FC = () => {
                   <Image
                     width={600}
                     height={500}
-                    src="/images/abouts/kualitas.png"
+                    src="/images/abouts/kualitas-2.png"
                     alt="Quality Guaranteed"
                     className="relative z-10"
                   />
@@ -136,7 +136,7 @@ const Features: React.FC = () => {
                   <Image
                     width={400}
                     height={200}
-                    src="/images/abouts/pesan.png"
+                    src="/images/abouts/pesan-2.png"
                     alt="Order with Ease"
                     className="relative z-10"
                   />
