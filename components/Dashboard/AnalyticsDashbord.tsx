@@ -13,8 +13,6 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  ArrowUpRight,
-  ArrowDownRight,
 } from 'lucide-react';
 import {
   XAxis,
@@ -281,18 +279,6 @@ export default function SellerAnalyticsPage() {
               <div className="p-2 bg-blue-500/20 rounded-lg">
                 <ShoppingCart size={24} className="text-blue-400" />
               </div>
-              <div
-                className={`flex items-center space-x-1 text-sm ${
-                  summary.ordersChange >= 0 ? 'text-green-400' : 'text-red-400'
-                }`}
-              >
-                {summary.ordersChange >= 0 ? (
-                  <ArrowUpRight size={16} />
-                ) : (
-                  <ArrowDownRight size={16} />
-                )}
-                <span>{Math.abs(summary.ordersChange).toFixed(1)}%</span>
-              </div>
             </div>
             <div className="space-y-1">
               <p className="text-2xl font-bold text-white">
@@ -306,18 +292,6 @@ export default function SellerAnalyticsPage() {
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 bg-green-500/20 rounded-lg">
                 <DollarSign size={24} className="text-green-400" />
-              </div>
-              <div
-                className={`flex items-center space-x-1 text-sm ${
-                  summary.revenueChange >= 0 ? 'text-green-400' : 'text-red-400'
-                }`}
-              >
-                {summary.revenueChange >= 0 ? (
-                  <ArrowUpRight size={16} />
-                ) : (
-                  <ArrowDownRight size={16} />
-                )}
-                <span>{Math.abs(summary.revenueChange).toFixed(1)}%</span>
               </div>
             </div>
             <div className="space-y-1">
