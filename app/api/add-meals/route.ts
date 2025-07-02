@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import cloudinary from '@/config/cloudinary';
 import connectDB from '@/config/database';
 import Meal from '@/models/Meals';
@@ -133,16 +134,51 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const newMeal = new Meal(mealData);
     await newMeal.save();
 
+    // ✅ REVALIDATE PATHS AND TAGS AFTER SUCCESSFUL CREATION
+    try {
+      console.log(
+        '🔄 [REVALIDATION] Starting revalidation after meal creation...'
+      );
+
+      // Revalidate specific paths
+      revalidatePath('/');
+      revalidatePath('/meals');
+      revalidatePath('/dashboard-seller');
+      revalidatePath('/dashboard-seller/products');
+      revalidatePath('/dashboard-seller/add-meal');
+
+      // Revalidate by tags
+      revalidateTag('meals');
+      revalidateTag('seller-meals');
+      revalidateTag('homepage-meals');
+
+      console.log('✅ [REVALIDATION] Revalidation completed successfully');
+    } catch (revalidationError) {
+      console.error(
+        '❌ [REVALIDATION] Error during revalidation:',
+        revalidationError
+      );
+      // Don't fail the request if revalidation fails
+    }
+
+    console.log('✅ [MEAL CREATION] New meal created successfully:', {
+      mealId: newMeal._id,
+      name: newMeal.name,
+      owner: userId,
+    });
+
     return NextResponse.json(
       {
         message: 'Meal added successfully',
         meal: newMeal,
         mealId: newMeal._id,
+        // ✅ Add timestamp for debugging
+        timestamp: new Date().toISOString(),
       },
       { status: 201 }
     );
   } catch (error: any) {
-    console.error('Error in meal creation:', error);
+    console.error('❌ [MEAL CREATION] Error in meal creation:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to add meal' },
       { status: 500 }
