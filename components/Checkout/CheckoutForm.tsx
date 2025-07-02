@@ -34,7 +34,7 @@ interface MealOwner {
 
 interface Meal {
   _id: string;
-  title: string;
+  name: string;
   description?: string;
   price: number;
   originalPrice?: number;
@@ -330,24 +330,33 @@ export default function CheckoutForm({
       specificPaymentMethod
     );
 
-    // Show confirmation
+    // ✅ Show confirmation - Fixed undefined variables
     const result = await Swal.fire({
       title: 'Confirm Your Order',
       html: `
-        <div class="text-left">
-          <p><strong>Meal:</strong> ${meal.title}</p>
-          <p><strong>Quantity:</strong> ${quantity}</p>
-          <p><strong>Total:</strong> Rp${totalPrice.toLocaleString()}</p>
-          <p><strong>Payment:</strong> ${
-            paymentCategory === 'online' ? 'Online Payment' : 'Cash on Delivery'
-          }</p>
-          <p><strong>Endpoint:</strong> ${
-            paymentCategory === 'online'
-              ? '/api/orders/create-payment'
-              : '/api/orders/create'
-          }</p>
-        </div>
-      `,
+      <div class="text-left" style="color: inherit;">
+        <p><strong>Meal:</strong> ${meal.name}</p>
+        <p><strong>Quantity:</strong> ${quantity}</p>
+        <p><strong>Subtotal:</strong> Rp${itemPrice.toLocaleString()}</p>
+        ${
+          showServiceFee
+            ? `<p><strong>Service Fee:</strong> Rp${serviceFee.toLocaleString()}</p>`
+            : ''
+        }
+        <p><strong>Total:</strong> Rp${totalPrice.toLocaleString()}</p>
+        <p><strong>Payment:</strong> ${
+          paymentCategory === 'online' ? 'Online Payment' : 'Cash on Delivery'
+        }</p>
+        <p><strong>Order Type:</strong> ${
+          formData.orderType === 'takeaway' ? 'Takeaway' : 'Dine In'
+        }</p>
+        ${
+          formData.specialInstructions
+            ? `<p><strong>Note:</strong> ${formData.specialInstructions}</p>`
+            : ''
+        }
+      </div>
+    `,
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#f59e0b',
@@ -356,6 +365,9 @@ export default function CheckoutForm({
       cancelButtonText: 'Cancel',
       background: theme === 'dark' ? '#1f2937' : '#ffffff',
       color: theme === 'dark' ? '#f9fafb' : '#1f2937',
+      customClass: {
+        htmlContainer: theme === 'dark' ? 'text-gray-100' : 'text-gray-900',
+      },
     });
 
     if (!result.isConfirmed) return;
@@ -468,14 +480,14 @@ export default function CheckoutForm({
               <div className="relative w-16 h-16 rounded-lg overflow-hidden">
                 <Image
                   src={meal.image[0] || NotFoundImage}
-                  alt={meal.title || 'Meal Image'}
+                  alt={meal.name || 'Meal Image'}
                   fill
                   style={{ objectFit: 'cover' }}
                 />
               </div>
               <div className="flex-1">
                 <h4 className={`font-medium ${currentTheme.text}`}>
-                  {meal.title}
+                  {meal.name}
                 </h4>
 
                 {/* ✅ Enhanced quantity display with controls */}
