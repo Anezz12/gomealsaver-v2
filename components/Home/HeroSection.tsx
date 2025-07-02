@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FiMapPin, FiSearch } from 'react-icons/fi';
+import SearchMeals from '../meals/SearchMeals';
 // import { FaLocationDot } from 'react-icons/fa6';
 import { motion } from 'framer-motion';
 
@@ -80,7 +80,7 @@ export default function HeroSection() {
             transition={{ duration: 0.7, delay: 0.6 }}
             className="relative flex flex-col sm:flex-row gap-4 w-full max-w-xl mx-auto"
           >
-            <div className="flex-1 relative z-10">
+            {/* <div className="flex-1 relative z-10">
               <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                 <FiMapPin className="text-amber-500" />
               </div>
@@ -98,7 +98,8 @@ export default function HeroSection() {
                 <FiSearch className="h-5 w-5" />
                 <span>Jelajahi</span>
               </div>
-            </button>
+            </button> */}
+            <SearchMeals />
           </motion.div>
 
           {/* Quick Action Buttons */}
