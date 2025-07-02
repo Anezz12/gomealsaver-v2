@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -16,6 +17,8 @@ import {
   ShoppingBag,
   Utensils,
   ChevronRight,
+  Plus,
+  Minus,
 } from 'lucide-react';
 import NotFoundImage from '@/public/food/not-found.png';
 
@@ -104,7 +107,7 @@ interface CheckoutFormProps {
 
 export default function CheckoutForm({
   meal,
-  quantity,
+  quantity: initialQuantity, // ✅ Rename prop untuk clarity
   sessionUser,
   showServiceFee = true,
   serviceFeeRate = 0.05,
@@ -124,6 +127,10 @@ export default function CheckoutForm({
   theme = 'dark',
 }: CheckoutFormProps) {
   const router = useRouter();
+
+  // ✅ Add quantity state (tambahan baru)
+  const [quantity, setQuantity] = useState(initialQuantity);
+  const [maxQuantity, setMaxQuantity] = useState(meal.stockQuantity);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -190,7 +197,34 @@ export default function CheckoutForm({
   const [snapToken, setSnapToken] = useState('');
   const [orderId, setOrderId] = useState('');
 
-  // Calculate pricing
+  // ✅ Add quantity handlers (tambahan baru)
+  const handleQuantityIncrease = () => {
+    if (quantity < maxQuantity) {
+      setQuantity((prev) => prev + 1);
+    } else {
+      toast.error(`Only ${maxQuantity} items available in stock`);
+    }
+  };
+
+  const handleQuantityDecrease = () => {
+    if (quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    }
+  };
+
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    if (value >= 1 && value <= maxQuantity) {
+      setQuantity(value);
+    } else if (value > maxQuantity) {
+      toast.error(`Only ${maxQuantity} items available in stock`);
+      setQuantity(maxQuantity);
+    } else {
+      setQuantity(1);
+    }
+  };
+
+  // ✅ Update pricing calculations to use dynamic quantity
   const itemPrice = meal.price * quantity;
   const serviceFee = showServiceFee
     ? Math.round(itemPrice * serviceFeeRate)
@@ -429,7 +463,7 @@ export default function CheckoutForm({
               Order Summary
             </h3>
 
-            {/* Meal Item */}
+            {/* ✅ Enhanced Meal Item with Quantity Controls */}
             <div className="flex items-start space-x-4 mb-6">
               <div className="relative w-16 h-16 rounded-lg overflow-hidden">
                 <Image
@@ -443,25 +477,94 @@ export default function CheckoutForm({
                 <h4 className={`font-medium ${currentTheme.text}`}>
                   {meal.title}
                 </h4>
+
+                {/* ✅ Enhanced quantity display with controls */}
+                <div className="flex items-center justify-between mt-2">
+                  <p className={`text-sm ${currentTheme.textSecondary}`}>
+                    Rp{meal.price.toLocaleString()} each
+                  </p>
+
+                  {/* ✅ Quantity Controls (TAMBAHAN BARU) */}
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={handleQuantityDecrease}
+                      disabled={quantity <= 1}
+                      className={`w-8 h-8 rounded-full border ${
+                        theme === 'dark'
+                          ? 'border-gray-700 hover:border-gray-600'
+                          : 'border-gray-300 hover:border-gray-400'
+                      } flex items-center justify-center text-sm font-medium transition-colors ${
+                        quantity <= 1
+                          ? 'opacity-50 cursor-not-allowed'
+                          : `${currentTheme.text} hover:bg-gray-${
+                              theme === 'dark' ? '800' : '100'
+                            }`
+                      }`}
+                    >
+                      <Minus size={14} />
+                    </button>
+
+                    <input
+                      type="number"
+                      value={quantity}
+                      onChange={handleQuantityChange}
+                      min="1"
+                      max={maxQuantity}
+                      className={`w-12 h-8 text-center text-sm ${currentTheme.input} rounded border-0 focus:outline-none focus:ring-1 focus:ring-amber-500`}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={handleQuantityIncrease}
+                      disabled={quantity >= maxQuantity}
+                      className={`w-8 h-8 rounded-full border ${
+                        theme === 'dark'
+                          ? 'border-gray-700 hover:border-gray-600'
+                          : 'border-gray-300 hover:border-gray-400'
+                      } flex items-center justify-center text-sm font-medium transition-colors ${
+                        quantity >= maxQuantity
+                          ? 'opacity-50 cursor-not-allowed'
+                          : `${currentTheme.text} hover:bg-gray-${
+                              theme === 'dark' ? '800' : '100'
+                            }`
+                      }`}
+                    >
+                      <Plus size={14} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* ✅ Total for this item */}
                 <p className={`text-sm ${currentTheme.textSecondary} mt-1`}>
-                  Qty: {quantity} × Rp{meal.price.toLocaleString()}
+                  Total: Rp{(meal.price * quantity).toLocaleString()}
                 </p>
+
+                {/* ✅ Stock indicator */}
+                <p
+                  className={`text-xs ${
+                    quantity >= maxQuantity ? 'text-red-400' : 'text-gray-500'
+                  } mt-1`}
+                >
+                  {maxQuantity - quantity} of {maxQuantity} remaining
+                </p>
+
                 {discount > 0 && (
-                  <p className="text-sm text-green-400">
+                  <p className="text-sm text-green-400 mt-1">
                     Saved: Rp{discount.toLocaleString()}
                   </p>
                 )}
               </div>
             </div>
 
-            {/* Price Breakdown */}
+            {/* ✅ Price Breakdown - updated automatically */}
             <div
               className={`space-y-3 mb-6 pt-4 border-t ${
                 theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
               }`}
             >
               <div className={`flex justify-between ${currentTheme.textMuted}`}>
-                <span>Subtotal</span>
+                <span>Subtotal ({quantity} items)</span>
                 <span>Rp{itemPrice.toLocaleString()}</span>
               </div>
               {showServiceFee && (
@@ -503,10 +606,6 @@ export default function CheckoutForm({
                     ? 'Online Payment'
                     : 'Cash on Delivery'}
                 </span>
-              </div>
-              {/* ✅ Debug info */}
-              <div className="text-xs text-gray-500 mt-2">
-                Category: {paymentCategory} | Method: {specificPaymentMethod}
               </div>
             </div>
 
@@ -772,13 +871,6 @@ export default function CheckoutForm({
                   Payment Method
                 </h3>
 
-                {/* ✅ Debug Current State */}
-                <div className="mb-4 p-2 bg-gray-800 rounded text-xs text-gray-300">
-                  Debug: Category={paymentCategory} | Method=
-                  {specificPaymentMethod} | Available=
-                  {availablePaymentCategories.join(', ')}
-                </div>
-
                 <div className="grid md:grid-cols-2 gap-4">
                   {allowOnlinePayment && (
                     <label
@@ -885,7 +977,7 @@ export default function CheckoutForm({
                   </>
                 ) : (
                   <>
-                    Place Order
+                    Place Order (Rp{totalPrice.toLocaleString()})
                     <ChevronRight size={20} className="ml-2" />
                   </>
                 )}

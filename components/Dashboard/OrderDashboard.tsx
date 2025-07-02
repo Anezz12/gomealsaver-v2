@@ -189,14 +189,14 @@ export default function OrderDashboard() {
         );
       case 'pending_cod':
         return (
-          <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-orange-900/40 text-orange-300">
+          <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-orange-900/40 text-orange-300 animate-pulse">
             <DollarSign size={12} /> New COD Order
           </span>
         );
       case 'confirmed_cod':
         return (
           <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-purple-900/40 text-purple-300">
-            <Clock size={12} /> Awaiting Payment
+            <Clock size={12} /> Awaiting COD Payment
           </span>
         );
       case 'processing':
@@ -314,6 +314,7 @@ export default function OrderDashboard() {
       setAcceptingPayment(null);
     }
   };
+
   // ✅ Add optional notes dialog for COD payment acceptance
   const handleAcceptCODPaymentWithNotes = async (orderId: string) => {
     const { value: notes } = await Swal.fire({
@@ -335,6 +336,107 @@ export default function OrderDashboard() {
     if (notes !== undefined) {
       // User clicked confirm (even with empty notes)
       await handleAcceptCODPayment(orderId, notes);
+    }
+  };
+
+  // ✅ Handle COD Order Confirmation (TAMBAHAN BARU)
+  const handleConfirmCODOrder = async (orderId: string) => {
+    try {
+      setAcceptingPayment(orderId);
+
+      console.log('✅ [DASHBOARD] Confirming COD order:', orderId);
+
+      const response = await fetch(`/api/orders/${orderId}/confirm-cod`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          confirmationNotes: 'Order confirmed by seller',
+          confirmedAt: new Date().toISOString(),
+        }),
+      });
+
+      const data = await response.json();
+      console.log('📥 [DASHBOARD] COD confirmation response:', data);
+
+      if (response.ok) {
+        toast.success(data.message || 'COD order confirmed successfully!');
+
+        // Show stock reservation info if available
+        if (data.stockReservation) {
+          console.log('📦 [DASHBOARD] Stock reserved:', data.stockReservation);
+        }
+
+        fetchOrders(); // Refresh orders list
+      } else {
+        console.error('❌ [DASHBOARD] COD confirmation failed:', data);
+
+        if (response.status === 400) {
+          toast.error(data.error || 'Invalid order state for confirmation');
+        } else if (response.status === 403) {
+          toast.error('You are not authorized to confirm this order');
+        } else {
+          toast.error(data.error || 'Failed to confirm COD order');
+        }
+      }
+    } catch (error) {
+      console.error(
+        '❌ [DASHBOARD] Network error confirming COD order:',
+        error
+      );
+      toast.error('Network error - please try again');
+    } finally {
+      setAcceptingPayment(null);
+    }
+  };
+
+  // ✅ Handle COD Order Rejection (TAMBAHAN BARU)
+  const handleRejectCODOrder = async (orderId: string) => {
+    const { value: rejectionReason } = await Swal.fire({
+      title: 'Reject COD Order',
+      input: 'textarea',
+      inputLabel: 'Rejection Reason (Optional)',
+      inputPlaceholder: 'Reason for rejecting this order...',
+      showCancelButton: true,
+      confirmButtonText: 'Reject Order',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      background: 'rgb(17 24 39)',
+      color: 'rgb(243 244 246)',
+      inputAttributes: {
+        'aria-label': 'Rejection reason',
+      },
+    });
+
+    if (rejectionReason !== undefined) {
+      try {
+        console.log('❌ [DASHBOARD] Rejecting COD order:', orderId);
+
+        const response = await fetch(`/api/orders/${orderId}/update-status`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: 'cancelled',
+            rejectionReason: rejectionReason || 'Order rejected by seller',
+            cancelledAt: new Date().toISOString(),
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          toast.success('Order rejected successfully');
+          fetchOrders();
+        } else {
+          toast.error(data.error || 'Failed to reject order');
+        }
+      } catch (error) {
+        console.error('❌ [DASHBOARD] Error rejecting order:', error);
+        toast.error('Network error - please try again');
+      }
     }
   };
 
@@ -707,6 +809,39 @@ export default function OrderDashboard() {
                         />
                       )}
 
+                      {/* ✅ NEW COD Order - Confirm Order Button (TAMBAHAN BARU) */}
+                      {displayStatus === 'pending_cod' && (
+                        <>
+                          <button
+                            className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg text-sm font-medium disabled:bg-gray-600 disabled:text-gray-400"
+                            onClick={() => handleConfirmCODOrder(order._id)}
+                            disabled={acceptingPayment === order._id}
+                          >
+                            {acceptingPayment === order._id ? (
+                              <div className="flex items-center gap-2">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+                                Confirming...
+                              </div>
+                            ) : (
+                              <>
+                                <CheckCircle2
+                                  size={16}
+                                  className="inline mr-1"
+                                />
+                                Confirm Order
+                              </>
+                            )}
+                          </button>
+                          <button
+                            className="bg-transparent hover:bg-gray-800 text-white border border-gray-700 px-4 py-2 rounded-lg text-sm"
+                            onClick={() => handleRejectCODOrder(order._id)}
+                          >
+                            <XCircle size={16} className="inline mr-1" />
+                            Reject Order
+                          </button>
+                        </>
+                      )}
+
                       {/* COD - Accept Payment (goes to processing) */}
                       {displayStatus === 'confirmed_cod' && (
                         <>
@@ -772,14 +907,6 @@ export default function OrderDashboard() {
                           }
                         >
                           Mark as Completed
-                        </button>
-                      )}
-
-                      {/* Completed/Cancelled - View Details */}
-                      {(displayStatus === 'completed' ||
-                        displayStatus === 'cancelled') && (
-                        <button className="bg-transparent hover:bg-gray-800 text-white border border-gray-700 px-4 py-2 rounded-lg text-sm">
-                          View Details
                         </button>
                       )}
                     </div>
