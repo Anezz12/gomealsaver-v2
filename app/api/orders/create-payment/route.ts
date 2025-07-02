@@ -224,12 +224,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         },
       },
       callbacks: {
-        finish: `${process.env.NEXT_PUBLIC_BASE_URL}/orders/${order._id}/payment-success`,
-        error: `${process.env.NEXT_PUBLIC_BASE_URL}/orders/${order._id}/payment-failed`,
-        pending: `${process.env.NEXT_PUBLIC_BASE_URL}/orders/${order._id}/payment-pending`,
+        finish: `/profile/transaction`,
+        error: `/profile/transaction`,
+        pending: `/profile/transaction`,
       },
       expiry: {
-        start_time: formatExpiryTime(expiryTime), // Use expiry time with buffer
+        start_time: formatExpiryTime(expiryTime),
         unit: 'minutes',
         duration: 30,
       },

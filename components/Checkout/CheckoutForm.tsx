@@ -1,7 +1,6 @@
-// components/Checkout/CheckoutForm.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
@@ -54,28 +53,51 @@ interface SessionUser {
   };
 }
 
+// ✅ Updated to match schema enum values
+type PaymentMethodType =
+  | 'cash'
+  | 'credit_card'
+  | 'debit_card'
+  | 'bank_transfer'
+  | 'gopay'
+  | 'shopeepay'
+  | 'ovo'
+  | 'dana'
+  | 'linkaja'
+  | 'jenius'
+  | 'qris'
+  | 'bca_va'
+  | 'bni_va'
+  | 'bri_va'
+  | 'mandiri_va'
+  | 'permata_va'
+  | 'cimb_va'
+  | 'danamon_va'
+  | 'other_va'
+  | 'alfamart'
+  | 'indomaret'
+  | 'kioson'
+  | 'pos_indonesia'
+  | 'cash_on_delivery';
+
 interface CheckoutFormProps {
   meal: Meal;
   quantity: number;
   sessionUser: SessionUser;
-  // Optional props dengan default values
   showServiceFee?: boolean;
   serviceFeeRate?: number;
   allowCashOnDelivery?: boolean;
   allowOnlinePayment?: boolean;
   defaultOrderType?: 'takeaway' | 'dine_in';
-  defaultPaymentMethod?: 'online' | 'cash_on_delivery';
-  // Event handlers
+  defaultPaymentMethod?: 'online' | 'cash_on_delivery'; // Keep simple for props
   onOrderSuccess?: (orderId: string) => void;
   onOrderError?: (error: string) => void;
   onPaymentSuccess?: (orderId: string) => void;
   onPaymentError?: (orderId: string) => void;
-  // Customization
   enableOrderTypeSelection?: boolean;
   enableSpecialInstructions?: boolean;
   requiredFields?: string[];
   customValidation?: (formData: any) => { isValid: boolean; error?: string };
-  // Styling
   className?: string;
   theme?: 'dark' | 'light';
 }
@@ -84,24 +106,20 @@ export default function CheckoutForm({
   meal,
   quantity,
   sessionUser,
-  // Default props
   showServiceFee = true,
   serviceFeeRate = 0.05,
   allowCashOnDelivery = true,
   allowOnlinePayment = true,
   defaultOrderType = 'takeaway',
   defaultPaymentMethod = 'online',
-  // Event handlers
   onOrderSuccess,
   onOrderError,
   onPaymentSuccess,
   onPaymentError,
-  // Customization
   enableOrderTypeSelection = true,
   enableSpecialInstructions = true,
   requiredFields = ['name', 'email', 'phone', 'address', 'city', 'postalCode'],
   customValidation,
-  // Styling
   className = '',
   theme = 'dark',
 }: CheckoutFormProps) {
@@ -119,18 +137,53 @@ export default function CheckoutForm({
     specialInstructions: '',
   });
 
-  // Determine available payment methods
-  const availablePaymentMethods = [];
-  if (allowOnlinePayment) availablePaymentMethods.push('online');
-  if (allowCashOnDelivery) availablePaymentMethods.push('cash_on_delivery');
+  // ✅ Available payment categories for UI
+  const availablePaymentCategories: ('online' | 'cash_on_delivery')[] = [];
+  if (allowOnlinePayment) availablePaymentCategories.push('online');
+  if (allowCashOnDelivery) availablePaymentCategories.push('cash_on_delivery');
 
-  const [paymentMethod, setPaymentMethod] = useState<
+  // ✅ Get initial payment category
+  const getInitialPaymentCategory = (): 'online' | 'cash_on_delivery' => {
+    console.log('🔍 Available payment categories:', availablePaymentCategories);
+    console.log('🔍 Default payment method:', defaultPaymentMethod);
+
+    if (
+      availablePaymentCategories.includes(
+        defaultPaymentMethod as 'online' | 'cash_on_delivery'
+      )
+    ) {
+      console.log('✅ Using default payment category:', defaultPaymentMethod);
+      return defaultPaymentMethod as 'online' | 'cash_on_delivery';
+    }
+
+    const fallback = availablePaymentCategories[0];
+    console.log('⚠️ Using fallback payment category:', fallback);
+    return fallback;
+  };
+
+  // ✅ State for payment category selection
+  const [paymentCategory, setPaymentCategory] = useState<
     'online' | 'cash_on_delivery'
-  >(
-    availablePaymentMethods.includes(defaultPaymentMethod)
-      ? defaultPaymentMethod
-      : (availablePaymentMethods[0] as 'online' | 'cash_on_delivery')
-  );
+  >(getInitialPaymentCategory());
+
+  // ✅ State for specific payment method (will be set by Midtrans)
+  const [specificPaymentMethod, setSpecificPaymentMethod] =
+    useState<PaymentMethodType>('cash_on_delivery');
+
+  // ✅ Update specific payment method when category changes
+  useEffect(() => {
+    if (paymentCategory === 'cash_on_delivery') {
+      setSpecificPaymentMethod('cash_on_delivery');
+    } else {
+      // For online payments, we'll let Midtrans determine the specific method
+      setSpecificPaymentMethod('credit_card');
+    }
+  }, [paymentCategory]);
+
+  useEffect(() => {
+    console.log('💳 Payment category changed to:', paymentCategory);
+    console.log('💳 Specific payment method:', specificPaymentMethod);
+  }, [paymentCategory, specificPaymentMethod]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -179,9 +232,21 @@ export default function CheckoutForm({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ✅ Enhanced payment category change handler
+  const handlePaymentCategoryChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value as 'online' | 'cash_on_delivery';
+    console.log('🔄 Payment category input changed to:', value);
+
+    if (e.target.checked) {
+      setPaymentCategory(value);
+      console.log('✅ Payment category updated to:', value);
+    }
+  };
+
   // Validate form
   const validateForm = () => {
-    // Check required fields
     for (const field of requiredFields) {
       if (!formData[field as keyof typeof formData]) {
         const fieldName =
@@ -192,7 +257,6 @@ export default function CheckoutForm({
       }
     }
 
-    // Email validation
     if (requiredFields.includes('email') && formData.email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.email)) {
@@ -201,7 +265,6 @@ export default function CheckoutForm({
       }
     }
 
-    // Phone validation
     if (requiredFields.includes('phone') && formData.phone) {
       const phoneRegex = /^[\+]?[0-9\-\(\)\s]+$/;
       if (!phoneRegex.test(formData.phone)) {
@@ -210,7 +273,6 @@ export default function CheckoutForm({
       }
     }
 
-    // Custom validation
     if (customValidation) {
       const validation = customValidation(formData);
       if (!validation.isValid) {
@@ -228,6 +290,12 @@ export default function CheckoutForm({
 
     if (!validateForm()) return;
 
+    console.log('🚀 Final payment category before submit:', paymentCategory);
+    console.log(
+      '🚀 Specific payment method before submit:',
+      specificPaymentMethod
+    );
+
     // Show confirmation
     const result = await Swal.fire({
       title: 'Confirm Your Order',
@@ -237,7 +305,12 @@ export default function CheckoutForm({
           <p><strong>Quantity:</strong> ${quantity}</p>
           <p><strong>Total:</strong> Rp${totalPrice.toLocaleString()}</p>
           <p><strong>Payment:</strong> ${
-            paymentMethod === 'online' ? 'Online Payment' : 'Cash on Delivery'
+            paymentCategory === 'online' ? 'Online Payment' : 'Cash on Delivery'
+          }</p>
+          <p><strong>Endpoint:</strong> ${
+            paymentCategory === 'online'
+              ? '/api/orders/create-payment'
+              : '/api/orders/create'
           }</p>
         </div>
       `,
@@ -249,12 +322,6 @@ export default function CheckoutForm({
       cancelButtonText: 'Cancel',
       background: theme === 'dark' ? '#1f2937' : '#ffffff',
       color: theme === 'dark' ? '#f9fafb' : '#1f2937',
-      customClass: {
-        popup:
-          theme === 'dark'
-            ? 'border border-gray-700'
-            : 'border border-gray-200',
-      },
     });
 
     if (!result.isConfirmed) return;
@@ -262,45 +329,59 @@ export default function CheckoutForm({
     setIsSubmitting(true);
 
     try {
+      // ✅ Select endpoint based on payment category
       const endpoint =
-        paymentMethod === 'online'
+        paymentCategory === 'online'
           ? '/api/orders/create-payment'
           : '/api/orders/create';
+
+      // ✅ Send the specific payment method for the backend
+      const payload = {
+        mealId: meal._id,
+        quantity,
+        ...formData,
+        paymentMethod: specificPaymentMethod, // ✅ Send actual enum value
+        paymentCategory, // ✅ Also send category for backend logic
+      };
+
+      console.log('📤 [CHECKOUT] Using endpoint:', endpoint);
+      console.log('📤 [CHECKOUT] Sending payload:', payload);
 
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          mealId: meal._id,
-          quantity,
-          ...formData,
-          paymentMethod,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
+      console.log('📥 [CHECKOUT] Response status:', response.status);
+      console.log('📥 [CHECKOUT] Response data:', data);
 
       if (response.ok) {
-        if (paymentMethod === 'online' && data.snapToken) {
-          // Show payment modal
+        if (paymentCategory === 'online' && data.snapToken) {
+          console.log(
+            '💳 [CHECKOUT] Opening payment modal with token:',
+            data.snapToken
+          );
           setSnapToken(data.snapToken);
           setOrderId(data.order._id);
           setShowPaymentModal(true);
         } else {
-          // Cash on delivery success
+          console.log('💰 [CHECKOUT] COD order created successfully');
           toast.success('Order placed successfully!');
           onOrderSuccess?.(data.order._id);
           router.push(`/profile/transaction`);
         }
       } else {
+        console.error('❌ [CHECKOUT] API Error:', data);
         const errorMessage = data.error || 'Failed to place order';
         toast.error(errorMessage);
         onOrderError?.(errorMessage);
       }
     } catch (error: any) {
-      console.error('Error placing order:', error);
+      console.error('❌ [CHECKOUT] Network Error:', error);
       const errorMessage = 'Failed to place order. Please try again.';
       toast.error(errorMessage);
       onOrderError?.(errorMessage);
@@ -310,9 +391,15 @@ export default function CheckoutForm({
   };
 
   // Payment modal handlers
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = (finalPaymentMethod?: string) => {
     setShowPaymentModal(false);
     toast.success('Payment successful!');
+
+    // ✅ Update specific payment method if provided by Midtrans callback
+    if (finalPaymentMethod) {
+      setSpecificPaymentMethod(finalPaymentMethod as PaymentMethodType);
+    }
+
     onPaymentSuccess?.(orderId);
     router.push(`/profile/transaction`);
   };
@@ -398,6 +485,28 @@ export default function CheckoutForm({
                 <span className="text-amber-500">
                   Rp{totalPrice.toLocaleString()}
                 </span>
+              </div>
+            </div>
+
+            {/* ✅ Enhanced Payment Method Display */}
+            <div
+              className={`pt-4 border-t ${
+                theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <span className={`font-medium ${currentTheme.text}`}>
+                  Payment Method:
+                </span>
+                <span className="text-amber-500 font-medium">
+                  {paymentCategory === 'online'
+                    ? 'Online Payment'
+                    : 'Cash on Delivery'}
+                </span>
+              </div>
+              {/* ✅ Debug info */}
+              <div className="text-xs text-gray-500 mt-2">
+                Category: {paymentCategory} | Method: {specificPaymentMethod}
               </div>
             </div>
 
@@ -653,8 +762,8 @@ export default function CheckoutForm({
               </div>
             )}
 
-            {/* Payment Method */}
-            {availablePaymentMethods.length > 1 && (
+            {/* ✅ Enhanced Payment Method Section */}
+            {availablePaymentCategories.length > 1 && (
               <div className={`${currentTheme.container} rounded-xl p-6`}>
                 <h3
                   className={`text-xl font-semibold ${currentTheme.text} mb-6 flex items-center`}
@@ -663,11 +772,18 @@ export default function CheckoutForm({
                   Payment Method
                 </h3>
 
+                {/* ✅ Debug Current State */}
+                <div className="mb-4 p-2 bg-gray-800 rounded text-xs text-gray-300">
+                  Debug: Category={paymentCategory} | Method=
+                  {specificPaymentMethod} | Available=
+                  {availablePaymentCategories.join(', ')}
+                </div>
+
                 <div className="grid md:grid-cols-2 gap-4">
                   {allowOnlinePayment && (
                     <label
                       className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
-                        paymentMethod === 'online'
+                        paymentCategory === 'online'
                           ? 'border-amber-500 bg-amber-500/10'
                           : `border-gray-${
                               theme === 'dark' ? '700' : '300'
@@ -678,12 +794,10 @@ export default function CheckoutForm({
                     >
                       <input
                         type="radio"
-                        name="paymentMethod"
+                        name="paymentCategory"
                         value="online"
-                        checked={paymentMethod === 'online'}
-                        onChange={(e) =>
-                          setPaymentMethod(e.target.value as 'online')
-                        }
+                        checked={paymentCategory === 'online'}
+                        onChange={handlePaymentCategoryChange}
                         className="sr-only"
                       />
                       <CreditCard size={20} className="mr-3 text-amber-500" />
@@ -694,7 +808,7 @@ export default function CheckoutForm({
                         <div
                           className={`text-sm ${currentTheme.textSecondary}`}
                         >
-                          Credit Card, Bank Transfer, E-wallet
+                          Credit Card, Bank Transfer, E-wallet, Virtual Account
                         </div>
                       </div>
                     </label>
@@ -703,7 +817,7 @@ export default function CheckoutForm({
                   {allowCashOnDelivery && (
                     <label
                       className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
-                        paymentMethod === 'cash_on_delivery'
+                        paymentCategory === 'cash_on_delivery'
                           ? 'border-amber-500 bg-amber-500/10'
                           : `border-gray-${
                               theme === 'dark' ? '700' : '300'
@@ -714,12 +828,10 @@ export default function CheckoutForm({
                     >
                       <input
                         type="radio"
-                        name="paymentMethod"
+                        name="paymentCategory"
                         value="cash_on_delivery"
-                        checked={paymentMethod === 'cash_on_delivery'}
-                        onChange={(e) =>
-                          setPaymentMethod(e.target.value as 'cash_on_delivery')
-                        }
+                        checked={paymentCategory === 'cash_on_delivery'}
+                        onChange={handlePaymentCategoryChange}
                         className="sr-only"
                       />
                       <Wallet size={20} className="mr-3 text-amber-500" />
