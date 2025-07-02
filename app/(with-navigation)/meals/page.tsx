@@ -5,32 +5,53 @@ import Meal from '@/models/Meals';
 import Image from 'next/image';
 import { convertToObject } from '@/utils/convertToObject';
 
+// ✅ Add revalidation and cache configuration
+export const revalidate = 60; // Revalidate every 60 seconds
+export const dynamic = 'force-dynamic'; // Force dynamic rendering
+export const fetchCache = 'force-no-store'; // Disable caching
+
+async function getMeals() {
+  try {
+    await connectDB();
+
+    // ✅ Query untuk meals tanpa discount
+    const meals = await Meal.find({
+      $and: [
+        {
+          $or: [
+            { discountPercentage: { $exists: false } },
+            { discountPercentage: 0 },
+            { discountPercentage: null },
+          ],
+        },
+        {
+          $or: [
+            { price: { $exists: false } },
+            { price: 0 },
+            { price: null },
+            { $expr: { $lte: ['$price', '$price'] } }, // price <= price
+          ],
+        },
+      ],
+    })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return convertToObject(meals);
+  } catch (error) {
+    console.error('❌ [MEALS PAGE] Error fetching meals:', error);
+    return [];
+  }
+}
+
 export default async function MealsPage() {
-  await connectDB();
+  const serializedMeals = await getMeals();
 
-  const meals = await Meal.find({
-    $and: [
-      {
-        $or: [
-          { discountPercentage: { $exists: false } },
-          { discountPercentage: 0 },
-          { discountPercentage: null },
-        ],
-      },
-      {
-        $or: [
-          { price: { $exists: false } },
-          { price: 0 },
-          { price: null },
-          { $expr: { $lte: ['$price', '$price'] } }, // price <= price
-        ],
-      },
-    ],
-  })
-    .sort({ createdAt: -1 })
-    .lean();
+  console.log('🔍 [MEALS PAGE] Fetched meals:', {
+    count: serializedMeals.length,
+    timestamp: new Date().toISOString(),
+  });
 
-  const serializedMeals = convertToObject(meals);
   return (
     <>
       <section className="relative bg-[#141414] py-24 md:py-32">
@@ -76,19 +97,28 @@ export default async function MealsPage() {
 
           {serializedMeals.length === 0 ? (
             <div className="bg-[#141414] p-8 rounded-lg text-center">
+              <div className="text-4xl mb-4">🍽️</div>
               <p className="text-gray-400 text-lg">
                 Belum ada makanan tersedia saat ini.
               </p>
               <p className="text-gray-500 mt-2">
                 Silakan cek kembali nanti untuk update terbaru.
               </p>
+              {/* ✅ Debug info in development */}
+              {process.env.NODE_ENV === 'development' && (
+                <p className="text-xs text-gray-600 mt-4">
+                  Debug: Page rendered at {new Date().toLocaleTimeString()}
+                </p>
+              )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {serializedMeals.map((meal: any) => (
-                <MealsPageRender key={meal._id} meal={meal} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {serializedMeals.map((meal: any) => (
+                  <MealsPageRender key={meal._id} meal={meal} />
+                ))}
+              </div>
+            </>
           )}
         </div>
       </section>

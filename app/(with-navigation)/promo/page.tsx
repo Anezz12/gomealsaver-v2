@@ -5,33 +5,50 @@ import Meal from '@/models/Meals';
 import Image from 'next/image';
 import { convertToObject } from '@/utils/convertToObject';
 
-export default async function PromoPage() {
-  await connectDB();
-  // ✅ Query untuk makanan yang MEMILIKI PROMO
-  const meals = await Meal.find({
-    $or: [
-      // Makanan dengan discount percentage > 0
-      {
-        discountPercentage: { $gt: 0 },
-      },
-      // Makanan dengan original price > current price
-      {
-        $expr: { $gt: ['$originalPrice', '$price'] },
-      },
-      // Makanan dengan original price ada dan > 0, dan berbeda dengan price
-      {
-        $and: [
-          { originalPrice: { $exists: true } },
-          { originalPrice: { $gt: 0 } },
-          { $expr: { $ne: ['$originalPrice', '$price'] } },
-        ],
-      },
-    ],
-  })
-    .sort({ discountPercentage: -1, createdAt: -1 }) // Sort by discount tertinggi dulu
-    .lean();
+// ✅ Add revalidation and cache configuration
+export const revalidate = 60; // Revalidate every 60 seconds
+export const dynamic = 'force-dynamic'; // Force dynamic rendering
+export const fetchCache = 'force-no-store'; // Disable caching
 
-  const serializedMeals = convertToObject(meals);
+async function getPromoMeals() {
+  try {
+    await connectDB();
+
+    // ✅ Add explicit cache control
+    const meals = await Meal.find({
+      $or: [
+        {
+          discountPercentage: { $gt: 0 },
+        },
+        {
+          $expr: { $gt: ['$originalPrice', '$price'] },
+        },
+        {
+          $and: [
+            { originalPrice: { $exists: true } },
+            { originalPrice: { $gt: 0 } },
+            { $expr: { $ne: ['$originalPrice', '$price'] } },
+          ],
+        },
+      ],
+    })
+      .sort({ discountPercentage: -1, createdAt: -1 })
+      .lean();
+
+    return convertToObject(meals);
+  } catch (error) {
+    console.error('❌ [PROMO PAGE] Error fetching promo meals:', error);
+    return [];
+  }
+}
+
+export default async function PromoPage() {
+  const serializedMeals = await getPromoMeals();
+
+  console.log('🔍 [PROMO PAGE] Fetched promo meals:', {
+    count: serializedMeals.length,
+    timestamp: new Date().toISOString(),
+  });
 
   return (
     <>
@@ -82,6 +99,7 @@ export default async function PromoPage() {
             </p>
           </div>
 
+          {/* ✅ Add loading state and debug info */}
           {serializedMeals.length === 0 ? (
             <div className="bg-[#141414] p-8 rounded-lg text-center">
               <div className="text-4xl mb-4">😔</div>
@@ -91,13 +109,31 @@ export default async function PromoPage() {
               <p className="text-gray-500 mt-2">
                 Pantau terus halaman ini untuk mendapatkan penawaran menarik!
               </p>
+              {/* ✅ Debug info in development */}
+              {process.env.NODE_ENV === 'development' && (
+                <p className="text-xs text-gray-600 mt-4">
+                  Debug: Page rendered at {new Date().toLocaleTimeString()}
+                </p>
+              )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {serializedMeals.map((meal: any) => (
-                <MealsPromoPageRender key={meal._id} meal={meal} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {serializedMeals.map((meal: any) => (
+                  <MealsPromoPageRender key={meal._id} meal={meal} />
+                ))}
+              </div>
+
+              {/* ✅ Debug info in development */}
+              {process.env.NODE_ENV === 'development' && (
+                <div className="mt-8 text-center">
+                  <p className="text-xs text-gray-600">
+                    Debug: {serializedMeals.length} promo meals loaded at{' '}
+                    {new Date().toLocaleTimeString()}
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
